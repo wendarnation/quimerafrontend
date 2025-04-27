@@ -21,7 +21,9 @@ export default function Navbar({ user }: { user: Auth0User }) {
           <div className="flex">
             {/* Logo o nombre de la app */}
             <div className="flex-shrink-0 flex items-center">
-              <span className="text-xl font-bold text-blue-600">MiApp</span>
+              <span className="text-xl font-bold text-blue-600">
+                Quimera Sneakers
+              </span>
             </div>
 
             {/* Enlaces de navegación en desktop */}
@@ -30,21 +32,21 @@ export default function Navbar({ user }: { user: Auth0User }) {
                 href="#"
                 className="border-blue-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
               >
-                Dashboard
+                Prueba
               </a>
 
               <a
                 href="#"
                 className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
               >
-                Proyectos
+                Prueba
               </a>
 
               <a
                 href="#"
                 className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
               >
-                Reportes
+                Prueba
               </a>
             </div>
           </div>
@@ -94,21 +96,21 @@ export default function Navbar({ user }: { user: Auth0User }) {
             href="#"
             className="bg-blue-50 border-blue-500 text-blue-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
           >
-            Dashboard
+            Prueba
           </a>
 
           <a
             href="#"
             className="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
           >
-            Proyectos
+            Prueba
           </a>
 
           <a
             href="#"
             className="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
           >
-            Reportes
+            Prueba
           </a>
         </div>
       </div>
