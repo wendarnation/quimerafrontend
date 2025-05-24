@@ -9,7 +9,10 @@ interface ZapatillaCardProps {
   onClick?: () => void;
 }
 
-export default function ZapatillaCard({ zapatilla, onClick }: ZapatillaCardProps) {
+export default function ZapatillaCard({
+  zapatilla,
+  onClick,
+}: ZapatillaCardProps) {
   const [isHearted, setIsHearted] = useState(false);
   const [imageError, setImageError] = useState(false);
 
@@ -24,7 +27,7 @@ export default function ZapatillaCard({ zapatilla, onClick }: ZapatillaCardProps
   };
 
   return (
-    <div 
+    <div
       className="bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer group overflow-hidden border border-gray-100"
       onClick={onClick}
     >
@@ -33,14 +36,14 @@ export default function ZapatillaCard({ zapatilla, onClick }: ZapatillaCardProps
         {/* Botón de corazón */}
         <button
           onClick={handleHeartClick}
-          className="absolute top-3 right-3 z-10 p-2 rounded-full bg-white/80 hover:bg-white transition-all duration-200 shadow-sm"
+          className="absolute top-3 right-3 z-10 p-2 cursor-pointer rounded-full bg-white/80 hover:bg-white transition-all duration-200 shadow-sm"
         >
-          <Heart 
+          <Heart
             className={`h-4 w-4 transition-colors ${
-              isHearted 
-                ? 'fill-red-500 text-red-500' 
-                : 'text-gray-400 hover:text-red-500'
-            }`} 
+              isHearted
+                ? "fill-red-500 text-red-500"
+                : "text-gray-400 hover:text-red-500"
+            }`}
           />
         </button>
 
@@ -49,7 +52,7 @@ export default function ZapatillaCard({ zapatilla, onClick }: ZapatillaCardProps
           <img
             src={zapatilla.imagen}
             alt={`${zapatilla.marca} ${zapatilla.modelo}`}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+            className="w-full h-full object-cover scale-90"
             onError={() => setImageError(true)}
           />
         ) : (
@@ -77,11 +80,12 @@ export default function ZapatillaCard({ zapatilla, onClick }: ZapatillaCardProps
               <p className="text-lg font-bold text-gray-900">
                 {formatPrice(zapatilla.precio_min)}
               </p>
-              {zapatilla.precio_max && zapatilla.precio_max !== zapatilla.precio_min && (
-                <p className="text-xs text-gray-500">
-                  Up to {formatPrice(zapatilla.precio_max)}
-                </p>
-              )}
+              {zapatilla.precio_max &&
+                zapatilla.precio_max !== zapatilla.precio_min && (
+                  <p className="text-xs text-gray-500">
+                    Up to {formatPrice(zapatilla.precio_max)}
+                  </p>
+                )}
             </div>
           ) : (
             <div>
@@ -93,19 +97,15 @@ export default function ZapatillaCard({ zapatilla, onClick }: ZapatillaCardProps
 
         {/* Estadísticas adicionales */}
         <div className="flex items-center justify-between text-xs text-gray-500">
-          <span>
-            {zapatilla.tiendas_disponibles || 0} tiendas
-          </span>
+          <span>{zapatilla.tiendas_disponibles || 0} tiendas</span>
           <span className="px-2 py-1 bg-gray-100 rounded-full">
-            {zapatilla.categoria || 'General'}
+            {zapatilla.categoria || "General"}
           </span>
         </div>
 
         {/* SKU (oculto por defecto, visible en hover) */}
         <div className="mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-          <p className="text-xs text-gray-400 truncate">
-            SKU: {zapatilla.sku}
-          </p>
+          <p className="text-xs text-gray-400 truncate">SKU: {zapatilla.sku}</p>
         </div>
       </div>
     </div>
