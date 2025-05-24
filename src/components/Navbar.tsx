@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Search, User, ChevronDown } from "lucide-react";
+import Image from "next/image";
 
 // Define la interfaz para el usuario de Auth0
 interface Auth0User {
@@ -35,6 +36,7 @@ const categories: Category[] = [
 export default function Navbar({ user, onSearch, onCategorySelect }: NavbarProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [showCategories, setShowCategories] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,7 +59,7 @@ export default function Navbar({ user, onSearch, onCategorySelect }: NavbarProps
           {/* Logo/Nombre (Izquierda) */}
           <div className="flex-shrink-0">
             <a href="/" className="text-xl font-bold text-white hover:text-gray-300 transition-colors">
-              Quimera
+              Quimera Sneakers
             </a>
           </div>
 
@@ -117,28 +119,48 @@ export default function Navbar({ user, onSearch, onCategorySelect }: NavbarProps
 
             {/* Usuario / Login */}
             {user ? (
-              <div className="flex items-center space-x-3">
-                {/* Avatar del usuario */}
-                <div className="h-8 w-8 rounded-full overflow-hidden border-2 border-gray-600">
-                  {user.picture ? (
-                    <img
-                      src={user.picture}
-                      alt={user.name || "Avatar"}
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <div className="h-full w-full bg-gray-600 flex items-center justify-center">
-                      <User className="h-5 w-5 text-gray-300" />
+              <div className="relative">
+                <button
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  className="flex items-center space-x-3 text-gray-300 hover:text-white transition-colors"
+                >
+                  {/* Avatar del usuario */}
+                  <div className="h-8 w-8 rounded-full overflow-hidden border-2 border-gray-600">
+                    {user.picture ? (
+                      <Image
+                        src={user.picture}
+                        alt={user.name || "Avatar de usuario"}
+                        width={32}
+                        height={32}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <div className="h-full w-full bg-gray-600 flex items-center justify-center">
+                        <User className="h-5 w-5 text-gray-300" />
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Nombre del usuario (visible en pantallas medianas y grandes) */}
+                  <span className="text-sm hidden md:inline">{user.name}</span>
+                  <ChevronDown className="h-4 w-4" />
+                </button>
+
+                {/* Dropdown del usuario */}
+                {showUserMenu && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                    <div className="px-4 py-2 text-sm text-gray-700 border-b border-gray-100">
+                      <div className="font-medium">{user.name}</div>
+                      <div className="text-gray-500 text-xs">{user.email}</div>
                     </div>
-                  )}
-                </div>
-                
-                {/* Menú de usuario (simple por ahora) */}
-                <div className="relative">
-                  <button className="text-gray-300 hover:text-white transition-colors">
-                    <span className="text-sm hidden md:inline">{user.name}</span>
-                  </button>
-                </div>
+                    <a
+                      href="/auth/logout"
+                      className="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                    >
+                      Cerrar sesión
+                    </a>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="flex items-center space-x-4">
@@ -160,11 +182,14 @@ export default function Navbar({ user, onSearch, onCategorySelect }: NavbarProps
         </div>
       </div>
 
-      {/* Overlay para cerrar dropdown en mobile */}
-      {showCategories && (
+      {/* Overlay para cerrar dropdowns */}
+      {(showCategories || showUserMenu) && (
         <div 
           className="fixed inset-0 z-40" 
-          onClick={() => setShowCategories(false)}
+          onClick={() => {
+            setShowCategories(false);
+            setShowUserMenu(false);
+          }}
         />
       )}
     </nav>
