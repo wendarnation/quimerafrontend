@@ -3,22 +3,24 @@
 import { useRouter } from 'next/navigation';
 import Navbar from "@/components/Navbar";
 import TrendingSneakers from "@/components/TrendingSneakers";
+import UserSync from "@/components/auth/UserSync";
 import { Zapatilla } from "@/types/zapatilla";
 
-// Definimos una interfaz personalizada para el usuario de Auth0
+// Definimos una interfaz para el usuario de Auth0
 interface Auth0User {
   name?: string;
   email?: string;
   picture?: string;
   sub?: string;
-  [key: string]: any; // Para cualquier propiedad adicional
+  nickname?: string;
+  [key: string]: any;
 }
 
 interface HomeProps {
   user?: Auth0User;
 }
 
-export default function HomePage({ user }: HomeProps = {}) {
+export default function HomePage({ user }: HomeProps) {
   const router = useRouter();
 
   const handleSearch = (query: string) => {
@@ -41,6 +43,9 @@ export default function HomePage({ user }: HomeProps = {}) {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Componente para sincronizar usuario tras el login */}
+      <UserSync user={user} />
+      
       <Navbar 
         user={user} 
         onSearch={handleSearch} 
