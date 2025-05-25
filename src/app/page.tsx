@@ -11,9 +11,20 @@ interface Auth0User {
   [key: string]: any;
 }
 
+// Interfaz para incluir permisos
+interface UserWithPermissions extends Auth0User {
+  permissions?: string[];
+}
+
 export default async function Page() {
   const session = await auth0.getSession();
   
-  // Pasamos el usuario si existe
-  return <HomePage user={session?.user as Auth0User | undefined} />;
+  let userWithPermissions: UserWithPermissions | undefined;
+  
+  if (session?.user) {
+    userWithPermissions = { ...session.user } as UserWithPermissions;
+    userWithPermissions.permissions = [];
+  }
+  
+  return <HomePage user={userWithPermissions} />;
 }

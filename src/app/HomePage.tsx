@@ -6,13 +6,13 @@ import TrendingSneakers from "@/components/TrendingSneakers";
 import UserSync from "@/components/auth/UserSync";
 import { Zapatilla } from "@/types/zapatilla";
 
-// Definimos una interfaz para el usuario de Auth0
 interface Auth0User {
   name?: string;
   email?: string;
   picture?: string;
   sub?: string;
   nickname?: string;
+  permissions?: string[];
   [key: string]: any;
 }
 
@@ -36,14 +36,12 @@ export default function HomePage({ user }: HomeProps) {
   };
 
   const handleSneakerClick = (sneaker: Zapatilla) => {
-    // Aquí podrías navegar a una página de detalles
-    console.log('Clicked sneaker:', sneaker);
+    // Navigate to sneaker details page
     // router.push(`/sneaker/${sneaker.id}`);
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Componente para sincronizar usuario tras el login */}
       <UserSync user={user} />
       
       <Navbar 
@@ -53,7 +51,6 @@ export default function HomePage({ user }: HomeProps) {
       />
 
       <main className="pb-12">
-        {/* Hero/Welcome Section */}
         <div className="bg-white border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div className="text-center">
@@ -64,7 +61,6 @@ export default function HomePage({ user }: HomeProps) {
                 Discover the best sneaker deals from multiple stores
               </p>
               
-              {/* Search Bar (Desktop version for hero) */}
               <div className="max-w-md mx-auto">
                 <div className="relative">
                   <input
@@ -99,17 +95,14 @@ export default function HomePage({ user }: HomeProps) {
           </div>
         </div>
 
-        {/* Trending Sneakers Section */}
         <TrendingSneakers 
           onViewAll={handleViewAll}
           onSneakerClick={handleSneakerClick}
         />
 
-        {/* Additional Sections */}
         <div className="bg-white py-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {/* Feature 1 */}
               <div className="text-center">
                 <div className="w-16 h-16 bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-4">
                   <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -120,7 +113,6 @@ export default function HomePage({ user }: HomeProps) {
                 <p className="text-gray-600">Compare prices across multiple stores to find the best deals</p>
               </div>
               
-              {/* Feature 2 */}
               <div className="text-center">
                 <div className="w-16 h-16 bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-4">
                   <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -131,7 +123,6 @@ export default function HomePage({ user }: HomeProps) {
                 <p className="text-gray-600">Get the latest prices and availability information</p>
               </div>
               
-              {/* Feature 3 */}
               <div className="text-center">
                 <div className="w-16 h-16 bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-4">
                   <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -145,7 +136,6 @@ export default function HomePage({ user }: HomeProps) {
           </div>
         </div>
 
-        {/* CTA Section */}
         <div className="bg-gray-900 text-white py-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-3xl font-bold mb-4">Ready to find your next pair?</h2>

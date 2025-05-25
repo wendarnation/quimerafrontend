@@ -12,6 +12,7 @@ export function useAuth0Token() {
     setError(null);
 
     try {
+      // En Auth0 v4, la ruta está disponible automáticamente
       const response = await fetch("/auth/access-token");
 
       if (!response.ok) {
