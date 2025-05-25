@@ -2,24 +2,19 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { getAccessToken } from "@auth0/nextjs-auth0";
 
 export function useAuth0Token() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  const getAccessToken = useCallback(async () => {
+  const getAccessTokenWrapper = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
     try {
-      // En Auth0 v4, la ruta está disponible automáticamente
-      const response = await fetch("/auth/access-token");
-
-      if (!response.ok) {
-        throw new Error(`Error obteniendo token: ${response.status}`);
-      }
-
-      const { accessToken } = await response.json();
+      // En Auth0 v4, usar el hook oficial
+      const accessToken = await getAccessToken();
       setIsLoading(false);
       return accessToken;
     } catch (error) {
@@ -31,5 +26,5 @@ export function useAuth0Token() {
     }
   }, []);
 
-  return { getAccessToken, isLoading, error };
+  return { getAccessToken: getAccessTokenWrapper, isLoading, error };
 }

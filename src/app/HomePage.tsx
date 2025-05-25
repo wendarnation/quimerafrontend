@@ -5,7 +5,6 @@ import Navbar from "@/components/Navbar";
 import TrendingSneakers from "@/components/TrendingSneakers";
 import UserSync from "@/components/auth/UserSync";
 import { Zapatilla } from "@/types/zapatilla";
-import { useEffect } from "react";
 
 interface Auth0User {
   name?: string;
@@ -23,22 +22,6 @@ interface HomeProps {
 
 export default function HomePage({ user }: HomeProps) {
   const router = useRouter();
-
-  // Solo hacer el fetch del token si hay usuario
-  useEffect(() => {
-    if (user) {
-      console.log("Usuario detectado, llamando a debug-token...");
-
-      fetch("/api/debug-token")
-        .then((res) => res.json())
-        .then((data) => {
-          console.log("✅ Response del debug-token:", data);
-        })
-        .catch((err) => {
-          console.error("❌ Error llamando debug-token:", err);
-        });
-    }
-  }, [user]);
 
   const handleSearch = (query: string) => {
     router.push(`/browse?search=${encodeURIComponent(query)}`);
