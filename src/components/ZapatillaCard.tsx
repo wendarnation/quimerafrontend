@@ -1,8 +1,8 @@
 "use client";
 
-import { Heart } from "lucide-react";
 import { Zapatilla } from "@/types/zapatilla";
 import { useState } from "react";
+import FavoriteButton from "./favorites/FavoriteButton";
 
 interface ZapatillaCardProps {
   zapatilla: Zapatilla;
@@ -13,7 +13,6 @@ export default function ZapatillaCard({
   zapatilla,
   onClick,
 }: ZapatillaCardProps) {
-  const [isHearted, setIsHearted] = useState(false);
   const [imageError, setImageError] = useState(false);
 
   const formatPrice = (price?: number) => {
@@ -21,10 +20,7 @@ export default function ZapatillaCard({
     return `€${price.toFixed(0)}`;
   };
 
-  const handleHeartClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsHearted(!isHearted);
-  };
+
 
   return (
     <div
@@ -34,34 +30,28 @@ export default function ZapatillaCard({
       {/* Imagen y corazón */}
       <div className="relative aspect-square bg-gray-50 overflow-hidden">
         {/* Botón de corazón */}
-        <button
-          onClick={handleHeartClick}
-          className="absolute top-3 right-3 z-10 p-2 cursor-pointer rounded-full bg-white/80 hover:bg-white transition-all duration-200 shadow-sm"
-        >
-          <Heart
-            className={`h-4 w-4 transition-colors ${
-              isHearted
-                ? "fill-red-500 text-red-500"
-                : "text-gray-400 hover:text-red-500"
-            }`}
+        <div className="absolute top-3 right-3 z-10">
+          <FavoriteButton 
+            zapatillaId={zapatilla.id} 
+            className="p-2 rounded-full bg-white/90 hover:bg-white transition-all duration-200 shadow-md hover:shadow-lg"
+            size="sm"
           />
-        </button>
+        </div>
 
         {/* Imagen */}
         {zapatilla.imagen && !imageError ? (
           <img
             src={zapatilla.imagen}
             alt={`${zapatilla.marca} ${zapatilla.modelo}`}
-            className="w-full h-full object-cover scale-90"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             onError={() => setImageError(true)}
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-400 bg-gray-100">
-            <div className="text-center">
-              <div className="text-4xl mb-2">👟</div>
-              <div className="text-xs">No Image</div>
-            </div>
-          </div>
+          <img
+            src="/placeholder-sneaker.svg"
+            alt={`${zapatilla.marca} ${zapatilla.modelo}`}
+            className="w-full h-full object-cover opacity-60"
+          />
         )}
       </div>
 

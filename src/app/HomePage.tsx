@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import Navbar from "@/components/Navbar";
 import TrendingSneakers from "@/components/TrendingSneakers";
 import UserSync from "@/components/auth/UserSync";
 import { Zapatilla } from "@/types/zapatilla";
@@ -44,13 +43,7 @@ export default function HomePage({ user }: HomeProps) {
     <div className="min-h-screen bg-gray-50">
       <UserSync user={user} />
 
-      <Navbar
-        user={user}
-        onSearch={handleSearch}
-        onCategorySelect={handleCategorySelect}
-      />
-
-      <main className="pb-12">
+      <main>
         <div className="bg-white border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div className="text-center">

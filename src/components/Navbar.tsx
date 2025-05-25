@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, User, ChevronDown, Users } from "lucide-react";
+import { Search, User, ChevronDown, Users, Heart } from "lucide-react";
 import Image from "next/image";
 import { usePermissions } from "../hooks/usePermissions";
 
@@ -118,6 +118,17 @@ export default function Navbar({ user, onSearch, onCategorySelect }: NavbarProps
             <a href="#" className="text-gray-300 hover:text-white text-sm font-medium transition-colors">
               Help
             </a>
+            
+            {/* Enlace de favoritos - solo visible para usuarios autenticados */}
+            {user && (
+              <a 
+                href="/favorites" 
+                className="flex items-center space-x-1 text-gray-300 hover:text-white text-sm font-medium transition-colors"
+              >
+                <Heart className="h-4 w-4" />
+                <span>Favorites</span>
+              </a>
+            )}
             
             {/* Enlace de administración - solo visible para administradores */}
             {user && !permissionsLoading && hasAdminPermission() && (

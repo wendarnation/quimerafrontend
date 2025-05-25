@@ -4,6 +4,7 @@ import "./globals.css";
 import { ProviderTanstack } from "./providers/ProviderTanstack";
 import { Auth0Provider } from "@auth0/nextjs-auth0";
 import { auth0 } from "@/lib/auth0";
+import LayoutWrapper from "@/components/layout/LayoutWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,7 +35,11 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Auth0Provider user={session?.user}>
-          <ProviderTanstack>{children}</ProviderTanstack>
+          <ProviderTanstack>
+            <LayoutWrapper>
+              {children}
+            </LayoutWrapper>
+          </ProviderTanstack>
         </Auth0Provider>
       </body>
     </html>
