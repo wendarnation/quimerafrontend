@@ -36,7 +36,7 @@ export default function HomePage({ user }: HomeProps) {
 
   const handleSneakerClick = (sneaker: Zapatilla) => {
     // Navigate to sneaker details page
-    // router.push(`/sneaker/${sneaker.id}`);
+    router.push(`/sneaker/${sneaker.id}`);
   };
 
   return (

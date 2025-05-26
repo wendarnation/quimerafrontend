@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight, Filter, SortAsc } from "lucide-react";
 import { useAllSneakers, useSearchSneakers } from "@/hooks/useSneakers";
-import { SearchFilters } from "@/types/zapatilla";
+import { SearchFilters, Zapatilla } from "@/types/zapatilla";
 import ZapatillaCard from "@/components/ZapatillaCard";
 import { useUser } from "@auth0/nextjs-auth0";
 
@@ -86,6 +86,10 @@ export default function BrowsePage() {
     setFilters({});
     setCurrentPage(1);
     router.push('/browse');
+  };
+
+  const handleSneakerClick = (sneaker: Zapatilla) => {
+    router.push(`/sneaker/${sneaker.id}`);
   };
 
   if (isLoading) {
@@ -290,7 +294,11 @@ export default function BrowsePage() {
         {sneakers.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
             {sneakers.map((sneaker) => (
-              <ZapatillaCard key={sneaker.id} zapatilla={sneaker} />
+              <ZapatillaCard 
+                key={sneaker.id} 
+                zapatilla={sneaker} 
+                onClick={() => handleSneakerClick(sneaker)}
+              />
             ))}
           </div>
         ) : (

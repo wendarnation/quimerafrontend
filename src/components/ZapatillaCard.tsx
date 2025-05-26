@@ -15,9 +15,15 @@ export default function ZapatillaCard({
 }: ZapatillaCardProps) {
   const [imageError, setImageError] = useState(false);
 
-  const formatPrice = (price?: number) => {
+  const formatPrice = (price?: number | string | any) => {
     if (!price) return "N/A";
-    return `€${price.toFixed(0)}`;
+    
+    // Convertir a número si es string o Decimal de Prisma
+    const numPrice = typeof price === 'number' ? price : parseFloat(price.toString());
+    
+    if (isNaN(numPrice)) return "N/A";
+    
+    return `€${numPrice.toFixed(2)}`; // Mostrar siempre 2 decimales
   };
 
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { Zapatilla, PaginatedResult, SearchFilters } from "@/types/zapatilla";
+import { Zapatilla, PaginatedResult, SearchFilters, ZapatillaDetallada, Talla } from "@/types/zapatilla";
 
 // Función para obtener la URL base de la API
 const getApiBaseUrl = () => {
@@ -100,6 +100,54 @@ export function useAllSneakers(page: number = 1, filters?: Partial<SearchFilters
       return await response.json();
     },
     staleTime: 5 * 60 * 1000, // 5 minutos
+  });
+}
+
+// Hook para obtener detalles de una zapatilla específica
+export function useSneakerDetails(id: number) {
+  return useQuery<ZapatillaDetallada>({
+    queryKey: ["sneaker", "details", id],
+    queryFn: async () => {
+      const apiUrl = `${getApiBaseUrl()}/zapatillas/${id}`;
+      
+      const response = await fetch(apiUrl, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error fetching sneaker details: ${response.status}`);
+      }
+
+      return await response.json();
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutos
+    enabled: !!id,
+  });
+}
+
+// Hook para obtener las tallas de una zapatilla
+export function useSneakerSizes(id: number) {
+  return useQuery<Talla[]>({
+    queryKey: ["sneaker", "sizes", id],
+    queryFn: async () => {
+      const apiUrl = `${getApiBaseUrl()}/zapatillas/${id}/tallas`;
+      
+      const response = await fetch(apiUrl, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error fetching sneaker sizes: ${response.status}`);
+      }
+
+      return await response.json();
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutos
+    enabled: !!id,
   });
 }
 
