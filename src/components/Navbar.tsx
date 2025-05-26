@@ -178,6 +178,12 @@ export default function Navbar({ user, onSearch, onCategorySelect }: NavbarProps
                       <div className="text-gray-500 text-xs">{user.email}</div>
                     </div>
                     <a
+                      href="/settings"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                    >
+                      Ajustes
+                    </a>
+                    <a
                       href="/auth/logout"
                       className="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
                     >
