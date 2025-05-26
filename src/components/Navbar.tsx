@@ -71,7 +71,7 @@ export default function Navbar({ user, onSearch, onCategorySelect }: NavbarProps
               <div className="relative">
                 <input
                   type="text"
-                  placeholder="Search for brand, color, etc."
+                  placeholder="Buscar marca, color, etc."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 bg-gray-800 text-white placeholder-gray-400 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
@@ -89,7 +89,7 @@ export default function Navbar({ user, onSearch, onCategorySelect }: NavbarProps
                 onClick={() => setShowCategories(!showCategories)}
                 className="flex items-center space-x-1 text-gray-300 hover:text-white transition-colors"
               >
-                <span className="text-sm font-medium">Categories</span>
+                <span className="text-sm font-medium">Categorías</span>
                 <ChevronDown className="h-4 w-4" />
               </button>
               
@@ -110,13 +110,13 @@ export default function Navbar({ user, onSearch, onCategorySelect }: NavbarProps
 
             {/* Enlaces adicionales */}
             <a href="#" className="text-gray-300 hover:text-white text-sm font-medium transition-colors">
-              News
+              Noticias
             </a>
             <a href="#" className="text-gray-300 hover:text-white text-sm font-medium transition-colors">
-              About
+              Acerca de
             </a>
             <a href="#" className="text-gray-300 hover:text-white text-sm font-medium transition-colors">
-              Help
+              Ayuda
             </a>
             
             {/* Enlace de favoritos - solo visible para usuarios autenticados */}
@@ -126,7 +126,7 @@ export default function Navbar({ user, onSearch, onCategorySelect }: NavbarProps
                 className="flex items-center space-x-1 text-gray-300 hover:text-white text-sm font-medium transition-colors"
               >
                 <Heart className="h-4 w-4" />
-                <span>Favorites</span>
+                <span>Favoritos</span>
               </a>
             )}
             
@@ -137,7 +137,7 @@ export default function Navbar({ user, onSearch, onCategorySelect }: NavbarProps
                 className="flex items-center space-x-1 text-gray-300 hover:text-white text-sm font-medium transition-colors"
               >
                 <Users className="h-4 w-4" />
-                <span>Users</span>
+                <span>Usuarios</span>
               </a>
             )}
 
@@ -198,13 +198,13 @@ export default function Navbar({ user, onSearch, onCategorySelect }: NavbarProps
                   href="/auth/login"
                   className="text-gray-300 hover:text-white text-sm font-medium transition-colors"
                 >
-                  Login
+                  Iniciar Sesión
                 </a>
                 <a
                   href="/auth/login"
                   className="bg-white text-gray-900 px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-100 transition-colors"
                 >
-                  Sign Up
+                  Registrarse
                 </a>
               </div>
             )}

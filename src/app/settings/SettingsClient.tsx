@@ -152,44 +152,44 @@ export default function SettingsClient({ user }: SettingsClientProps) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Cargando...</p>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-white mx-auto"></div>
+          <p className="mt-4 text-gray-400">Cargando...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-900 py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white shadow rounded-lg">
+        <div className="bg-gray-800 shadow rounded-lg border border-gray-700">
           {/* Header */}
-          <div className="px-6 py-4 border-b border-gray-200">
+          <div className="px-6 py-4 border-b border-gray-700">
             <div className="flex items-center space-x-3">
-              <Settings className="h-6 w-6 text-gray-600" />
-              <h1 className="text-2xl font-bold text-gray-900">Ajustes de Usuario</h1>
+              <Settings className="h-6 w-6 text-gray-400" />
+              <h1 className="text-2xl font-bold text-white">Ajustes de Usuario</h1>
             </div>
           </div>
 
           <div className="p-6">
             {/* Messages */}
             {error && (
-              <div className="mb-4 bg-red-50 border border-red-200 rounded-md p-4">
-                <p className="text-red-600 text-sm">{error}</p>
+              <div className="mb-4 bg-red-900 border border-red-700 rounded-md p-4">
+                <p className="text-red-200 text-sm">{error}</p>
               </div>
             )}
             
             {success && (
-              <div className="mb-4 bg-green-50 border border-green-200 rounded-md p-4">
-                <p className="text-green-600 text-sm">{success}</p>
+              <div className="mb-4 bg-green-900 border border-green-700 rounded-md p-4">
+                <p className="text-green-200 text-sm">{success}</p>
               </div>
             )}
 
             {/* Profile Information */}
             <div className="mb-8">
-              <h2 className="text-lg font-medium text-gray-900 mb-4">
+              <h2 className="text-lg font-medium text-white mb-4">
                 Información del Perfil
               </h2>
               
@@ -197,14 +197,14 @@ export default function SettingsClient({ user }: SettingsClientProps) {
                 {/* Auth0 Info (Read-only) */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-300">
                       Email (Auth0)
                     </label>
                     <input
                       type="email"
                       value={user.email || ""}
                       disabled
-                      className="mt-1 block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md shadow-sm text-gray-500 cursor-not-allowed"
+                      className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md shadow-sm text-gray-400 cursor-not-allowed"
                     />
                     <p className="mt-1 text-xs text-gray-500">
                       El email se gestiona a través de Auth0
@@ -212,14 +212,14 @@ export default function SettingsClient({ user }: SettingsClientProps) {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-300">
                       Rol
                     </label>
                     <input
                       type="text"
                       value={profile?.rol || "usuario"}
                       disabled
-                      className="mt-1 block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md shadow-sm text-gray-500 cursor-not-allowed"
+                      className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md shadow-sm text-gray-400 cursor-not-allowed"
                     />
                   </div>
                 </div>
@@ -227,7 +227,7 @@ export default function SettingsClient({ user }: SettingsClientProps) {
                 {/* Editable Fields */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label htmlFor="nickname" className="block text-sm font-medium text-gray-700">
+                    <label htmlFor="nickname" className="block text-sm font-medium text-gray-300">
                       Nickname
                     </label>
                     <input
@@ -236,13 +236,13 @@ export default function SettingsClient({ user }: SettingsClientProps) {
                       name="nickname"
                       value={formData.nickname}
                       onChange={handleInputChange}
-                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                      className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-gray-700 text-white placeholder-gray-400"
                       placeholder="Tu nickname"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="nombre_completo" className="block text-sm font-medium text-gray-700">
+                    <label htmlFor="nombre_completo" className="block text-sm font-medium text-gray-300">
                       Nombre Completo
                     </label>
                     <input
@@ -251,7 +251,7 @@ export default function SettingsClient({ user }: SettingsClientProps) {
                       name="nombre_completo"
                       value={formData.nombre_completo}
                       onChange={handleInputChange}
-                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                      className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-gray-700 text-white placeholder-gray-400"
                       placeholder="Tu nombre completo"
                     />
                   </div>
@@ -262,7 +262,7 @@ export default function SettingsClient({ user }: SettingsClientProps) {
                   <button
                     type="submit"
                     disabled={saving}
-                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Save className="h-4 w-4 mr-2" />
                     {saving ? "Guardando..." : "Guardar Cambios"}
@@ -272,37 +272,37 @@ export default function SettingsClient({ user }: SettingsClientProps) {
             </div>
 
             {/* Danger Zone */}
-            <div className="border-t border-gray-200 pt-8">
-              <div className="bg-red-50 border border-red-200 rounded-md p-6">
+            <div className="border-t border-gray-700 pt-8">
+              <div className="bg-red-900 border border-red-700 rounded-md p-6">
                 <div className="flex items-center mb-4">
-                  <Trash2 className="h-5 w-5 text-red-600 mr-2" />
-                  <h3 className="text-lg font-medium text-red-900">
+                  <Trash2 className="h-5 w-5 text-red-400 mr-2" />
+                  <h3 className="text-lg font-medium text-red-200">
                     Zona de Peligro
                   </h3>
                 </div>
                 
-                <p className="text-red-700 text-sm mb-4">
+                <p className="text-red-300 text-sm mb-4">
                   Una vez que elimines tu cuenta, no hay vuelta atrás. Por favor, asegúrate de que realmente quieres hacer esto.
                 </p>
 
                 {!showDeleteConfirm ? (
                   <button
                     onClick={() => setShowDeleteConfirm(true)}
-                    className="inline-flex items-center px-4 py-2 border border-red-300 text-sm font-medium rounded-md text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                    className="inline-flex items-center px-4 py-2 border border-red-600 text-sm font-medium rounded-md text-red-200 bg-red-800 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                   >
                     <Trash2 className="h-4 w-4 mr-2" />
                     Eliminar mi cuenta
                   </button>
                 ) : (
                   <div className="space-y-4">
-                    <p className="text-red-700 text-sm font-medium">
+                    <p className="text-red-200 text-sm font-medium">
                       Para confirmar, escribe "ELIMINAR" en el siguiente campo:
                     </p>
                     <input
                       type="text"
                       value={deleteConfirmText}
                       onChange={(e) => setDeleteConfirmText(e.target.value)}
-                      className="block w-full max-w-xs px-3 py-2 border border-red-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+                      className="block w-full max-w-xs px-3 py-2 border border-red-600 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 bg-red-800 text-white placeholder-red-300"
                       placeholder="ELIMINAR"
                     />
                     <div className="flex space-x-3">
@@ -318,7 +318,7 @@ export default function SettingsClient({ user }: SettingsClientProps) {
                           setShowDeleteConfirm(false);
                           setDeleteConfirmText("");
                         }}
-                        className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        className="inline-flex items-center px-4 py-2 border border-gray-600 text-sm font-medium rounded-md text-gray-300 bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                       >
                         Cancelar
                       </button>

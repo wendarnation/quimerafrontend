@@ -18,17 +18,17 @@ export default function SneakerDetailsPage() {
 
   if (sneakerLoading || sizesLoading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="animate-pulse">
-            <div className="h-8 bg-gray-300 rounded w-32 mb-8"></div>
+            <div className="h-8 bg-gray-700 rounded w-32 mb-8"></div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-              <div className="aspect-square bg-gray-300 rounded-lg"></div>
+              <div className="aspect-square bg-gray-700 rounded-lg"></div>
               <div className="space-y-6">
-                <div className="h-8 bg-gray-300 rounded w-3/4"></div>
-                <div className="h-6 bg-gray-300 rounded w-1/2"></div>
-                <div className="h-4 bg-gray-300 rounded w-full"></div>
-                <div className="h-4 bg-gray-300 rounded w-2/3"></div>
+                <div className="h-8 bg-gray-700 rounded w-3/4"></div>
+                <div className="h-6 bg-gray-700 rounded w-1/2"></div>
+                <div className="h-4 bg-gray-700 rounded w-full"></div>
+                <div className="h-4 bg-gray-700 rounded w-2/3"></div>
               </div>
             </div>
           </div>
@@ -39,27 +39,27 @@ export default function SneakerDetailsPage() {
 
   if (sneakerError || (!sneakerLoading && !sneaker)) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <button
             onClick={() => router.back()}
-            className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors mb-8"
+            className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors mb-8"
           >
             <ArrowLeft className="h-5 w-5" />
-            <span>Back</span>
+            <span>Volver</span>
           </button>
           <div className="text-center py-12">
-            <p className="text-red-600 mb-4">
+            <p className="text-red-400 mb-4">
               {sneakerError 
-                ? `Error loading sneaker details: ${sneakerError.message}` 
-                : 'Sneaker not found'
+                ? `Error al cargar detalles de la zapatilla: ${sneakerError.message}` 
+                : 'Zapatilla no encontrada'
               }
             </p>
             <button
               onClick={() => router.back()}
-              className="px-4 py-2 bg-gray-900 text-white rounded-md hover:bg-gray-800 transition-colors"
+              className="px-4 py-2 bg-white text-gray-900 rounded-md hover:bg-gray-100 transition-colors"
             >
-              Go Back
+              Volver
             </button>
           </div>
         </div>
@@ -148,15 +148,15 @@ export default function SneakerDetailsPage() {
   }, {} as Record<string, { url_producto: string, logo_url?: string }>) || {};
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Back Button */}
         <button
           onClick={() => router.back()}
-          className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors mb-8"
+          className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors mb-8"
         >
           <ArrowLeft className="h-5 w-5" />
-          <span>Back</span>
+          <span>Volver</span>
         </button>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -185,40 +185,40 @@ export default function SneakerDetailsPage() {
             {/* Header */}
             <div className="flex items-start justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">
+                <h1 className="text-3xl font-bold text-white">
                   {sneaker.marca} {sneaker.modelo}
                 </h1>
-                <p className="text-gray-600 mt-1">SKU: {sneaker.sku}</p>
+                <p className="text-gray-400 mt-1">SKU: {sneaker.sku}</p>
               </div>
               <FavoriteButtonZustand 
                 zapatillaId={sneaker.id} 
-                className="p-3 rounded-full bg-white shadow-md hover:shadow-lg transition-all duration-200"
+                className="p-3 rounded-full bg-gray-800 shadow-md hover:shadow-lg transition-all duration-200"
                 size="lg"
               />
             </div>
 
             {/* Precio */}
-            <div className="bg-white p-6 rounded-lg shadow-sm">
+            <div className="bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-700">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Lowest Price</p>
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p className="text-sm text-gray-400 mb-1">Precio Más Bajo</p>
+                  <p className="text-2xl font-bold text-white">
                     {formatPrice(precio_min)}
                   </p>
                 </div>
                 {precio_max && precio_max !== precio_min && (
                   <div>
-                    <p className="text-sm text-gray-600 mb-1">Highest Price</p>
-                    <p className="text-2xl font-bold text-gray-900">
+                    <p className="text-sm text-gray-400 mb-1">Precio Más Alto</p>
+                    <p className="text-2xl font-bold text-white">
                       {formatPrice(precio_max)}
                     </p>
                   </div>
                 )}
               </div>
               {precio_promedio && (
-                <div className="mt-4 pt-4 border-t border-gray-200">
-                  <p className="text-sm text-gray-600 mb-1">Average Price</p>
-                  <p className="text-lg font-semibold text-gray-900">
+                <div className="mt-4 pt-4 border-t border-gray-700">
+                  <p className="text-sm text-gray-400 mb-1">Precio Promedio</p>
+                  <p className="text-lg font-semibold text-white">
                     {formatPrice(precio_promedio)}
                   </p>
                 </div>
@@ -226,42 +226,42 @@ export default function SneakerDetailsPage() {
             </div>
 
             {/* Información adicional */}
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Details</h3>
+            <div className="bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-700">
+              <h3 className="text-lg font-semibold text-white mb-4">Detalles</h3>
               <dl className="grid grid-cols-2 gap-4">
                 <div>
-                  <dt className="text-sm text-gray-600">Category</dt>
-                  <dd className="text-sm font-medium text-gray-900">{sneaker.categoria || "General"}</dd>
+                  <dt className="text-sm text-gray-400">Categoría</dt>
+                  <dd className="text-sm font-medium text-white">{sneaker.categoria || "General"}</dd>
                 </div>
                 <div>
-                  <dt className="text-sm text-gray-600">Available Stores</dt>
-                  <dd className="text-sm font-medium text-gray-900">
+                  <dt className="text-sm text-gray-400">Tiendas Disponibles</dt>
+                  <dd className="text-sm font-medium text-white">
                     {sneaker.zapatillasTienda?.filter(zt => zt.disponible).length || 0}
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-sm text-gray-600">Release Date</dt>
-                  <dd className="text-sm font-medium text-gray-900">
+                  <dt className="text-sm text-gray-400">Fecha de Lanzamiento</dt>
+                  <dd className="text-sm font-medium text-white">
                     {new Date(sneaker.fecha_creacion).toLocaleDateString()}
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-sm text-gray-600">Status</dt>
-                  <dd className="text-sm font-medium text-gray-900">
+                  <dt className="text-sm text-gray-400">Estado</dt>
+                  <dd className="text-sm font-medium text-white">
                     <span className={`inline-flex px-2 py-1 text-xs rounded-full ${
                       sneaker.activa 
                         ? "bg-green-100 text-green-800" 
                         : "bg-red-100 text-red-800"
                     }`}>
-                      {sneaker.activa ? "Active" : "Inactive"}
+                      {sneaker.activa ? "Activo" : "Inactivo"}
                     </span>
                   </dd>
                 </div>
               </dl>
               {sneaker.descripcion && (
-                <div className="mt-4 pt-4 border-t border-gray-200">
-                  <dt className="text-sm text-gray-600 mb-2">Description</dt>
-                  <dd className="text-sm text-gray-900">{sneaker.descripcion}</dd>
+                <div className="mt-4 pt-4 border-t border-gray-700">
+                  <dt className="text-sm text-gray-400 mb-2">Descripción</dt>
+                  <dd className="text-sm text-gray-300">{sneaker.descripcion}</dd>
                 </div>
               )}
             </div>
@@ -270,14 +270,14 @@ export default function SneakerDetailsPage() {
 
         {/* Tallas y Tiendas */}
         <div className="mt-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Available Sizes & Stores</h2>
+          <h2 className="text-2xl font-bold text-white mb-6">Tallas Disponibles y Tiendas</h2>
           
           {Object.keys(sizesByStore).length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
               {Object.entries(sizesByStore).map(([storeName, storeData]) => {
                 const storeInfo = storeUrls[storeName] || {};
                 return (
-                  <div key={storeName} className="bg-white rounded-lg shadow-sm p-6">
+                  <div key={storeName} className="bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-700">
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center space-x-3">
                         {storeInfo.logo_url && (
@@ -288,8 +288,8 @@ export default function SneakerDetailsPage() {
                           />
                         )}
                         <div>
-                          <h3 className="font-semibold text-gray-900">{storeName}</h3>
-                          <p className="text-sm text-gray-600">{formatPrice(storeData.precio)}</p>
+                          <h3 className="font-semibold text-white">{storeName}</h3>
+                          <p className="text-sm text-gray-400">{formatPrice(storeData.precio)}</p>
                         </div>
                       </div>
                     </div>
@@ -297,12 +297,12 @@ export default function SneakerDetailsPage() {
                     {storeData.tallas.length > 0 ? (
                       <>
                         <div className="mb-4">
-                          <p className="text-sm text-gray-600 mb-2">Available Sizes:</p>
+                          <p className="text-sm text-gray-400 mb-2">Tallas Disponibles:</p>
                           <div className="flex flex-wrap gap-2">
                             {storeData.tallas.map((size) => (
                               <span
                                 key={size.id}
-                                className="px-3 py-1 bg-gray-100 text-gray-900 rounded-md text-sm font-medium"
+                                className="px-3 py-1 bg-gray-700 text-white rounded-md text-sm font-medium"
                               >
                                 {size.talla}
                               </span>
@@ -315,17 +315,17 @@ export default function SneakerDetailsPage() {
                             href={storeInfo.url_producto}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="w-full flex items-center justify-center space-x-2 bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800 transition-colors"
+                            className="w-full flex items-center justify-center space-x-2 bg-white text-gray-900 px-4 py-2 rounded-md hover:bg-gray-100 transition-colors"
                           >
                             <ShoppingBag className="h-4 w-4" />
-                            <span>Buy at {storeName}</span>
+                            <span>Comprar en {storeName}</span>
                             <ExternalLink className="h-4 w-4" />
                           </a>
                         )}
                       </>
                     ) : (
                       <div className="text-center py-4">
-                        <p className="text-gray-500 text-sm">No sizes available</p>
+                        <p className="text-gray-500 text-sm">No hay tallas disponibles</p>
                       </div>
                     )}
                   </div>
@@ -333,13 +333,13 @@ export default function SneakerDetailsPage() {
               })}
             </div>
           ) : (
-            <div className="bg-white rounded-lg shadow-sm p-8 text-center">
-              <div className="text-gray-400 mb-4">
+            <div className="bg-gray-800 rounded-lg shadow-sm p-8 text-center border border-gray-700">
+              <div className="text-gray-500 mb-4">
                 <ShoppingBag className="h-12 w-12 mx-auto" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">No Sizes Available</h3>
-              <p className="text-gray-600">
-                This sneaker is currently not available in any stores or sizes.
+              <h3 className="text-lg font-semibold text-white mb-2">No Hay Tallas Disponibles</h3>
+              <p className="text-gray-400">
+                Esta zapatilla no está disponible actualmente en ninguna tienda o talla.
               </p>
             </div>
           )}

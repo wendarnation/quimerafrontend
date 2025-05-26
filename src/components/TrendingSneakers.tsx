@@ -19,11 +19,11 @@ export default function TrendingSneakers({ onViewAll, onSneakerClick }: Trending
 
   if (isLoading) {
     return (
-      <div className="bg-gray-900 text-white py-12">
+      <div className="bg-gray-800 text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center space-x-2">
-              <h2 className="text-2xl font-bold">Trending Sneakers</h2>
+              <h2 className="text-2xl font-bold">Zapatillas Destacadas</h2>
               <div className="w-5 h-5 bg-white/20 rounded-full animate-pulse" />
             </div>
           </div>
@@ -40,15 +40,15 @@ export default function TrendingSneakers({ onViewAll, onSneakerClick }: Trending
 
   if (error) {
     return (
-      <div className="bg-gray-900 text-white py-12">
+      <div className="bg-gray-800 text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <p className="text-red-400 mb-4">Error loading trending sneakers</p>
+            <p className="text-red-400 mb-4">Error al cargar zapatillas destacadas</p>
             <button
               onClick={() => window.location.reload()}
               className="px-4 py-2 bg-white text-gray-900 rounded-md hover:bg-gray-100 transition-colors"
             >
-              Retry
+              Reintentar
             </button>
           </div>
         </div>
@@ -78,11 +78,11 @@ export default function TrendingSneakers({ onViewAll, onSneakerClick }: Trending
 
   if (sneakers.length === 0) {
     return (
-      <div className="bg-gray-900 text-white py-12">
+      <div className="bg-gray-800 text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4">Trending Sneakers</h2>
-            <p className="text-gray-400">No sneakers available at the moment</p>
+            <h2 className="text-2xl font-bold mb-4">Zapatillas Destacadas</h2>
+            <p className="text-gray-400">No hay zapatillas disponibles en este momento</p>
           </div>
         </div>
       </div>
@@ -90,14 +90,14 @@ export default function TrendingSneakers({ onViewAll, onSneakerClick }: Trending
   }
 
   return (
-    <div className="bg-gray-900 text-white py-12">
+    <div className="bg-gray-800 text-white py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-2">
-            <h2 className="text-2xl font-bold">Trending Sneakers</h2>
+            <h2 className="text-2xl font-bold">Zapatillas Destacadas</h2>
             <div className="w-5 h-5 bg-white rounded-full flex items-center justify-center">
-              <span className="text-gray-900 text-xs font-bold">?</span>
+              <span className="text-gray-900 text-xs font-bold">✨</span>
             </div>
           </div>
           
@@ -105,7 +105,7 @@ export default function TrendingSneakers({ onViewAll, onSneakerClick }: Trending
             onClick={onViewAll}
             className="flex items-center space-x-1 text-white hover:text-gray-300 transition-colors group"
           >
-            <span className="text-sm font-medium">See All</span>
+            <span className="text-sm font-medium">Ver Todas</span>
             <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
           </button>
         </div>

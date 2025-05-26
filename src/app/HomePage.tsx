@@ -40,26 +40,26 @@ export default function HomePage({ user }: HomeProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-900">
       <UserSync user={user} />
 
       <main>
-        <div className="bg-white border-b border-gray-200">
+        <div className="bg-gray-800 border-b border-gray-700">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div className="text-center">
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">
-                Welcome to Quimera
+              <h1 className="text-4xl font-bold text-white mb-2">
+                Bienvenido a Quimera
               </h1>
-              <p className="text-xl text-gray-600 mb-8">
-                Discover the best sneaker deals from multiple stores
+              <p className="text-xl text-gray-300 mb-8">
+                Descubre las mejores ofertas de zapatillas de múltiples tiendas
               </p>
 
               <div className="max-w-md mx-auto">
                 <div className="relative">
                   <input
                     type="text"
-                    placeholder="Search for brand, model, etc."
-                    className="w-full pl-4 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                    placeholder="Buscar marca, modelo, etc."
+                    className="w-full pl-4 pr-12 py-3 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent bg-gray-700 text-white placeholder-gray-400"
                     onKeyPress={(e) => {
                       if (e.key === "Enter") {
                         const target = e.target as HTMLInputElement;
@@ -78,7 +78,7 @@ export default function HomePage({ user }: HomeProps) {
                         handleSearch(input.value.trim());
                       }
                     }}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
                   >
                     <svg
                       className="h-5 w-5"
@@ -105,13 +105,13 @@ export default function HomePage({ user }: HomeProps) {
           onSneakerClick={handleSneakerClick}
         />
 
-        <div className="bg-white py-12">
+        <div className="bg-gray-800 py-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="text-center">
-                <div className="w-16 h-16 bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
                   <svg
-                    className="w-8 h-8 text-white"
+                    className="w-8 h-8 text-gray-900"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -124,18 +124,18 @@ export default function HomePage({ user }: HomeProps) {
                     />
                   </svg>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  Best Prices
+                <h3 className="text-lg font-semibold text-white mb-2">
+                  Mejores Precios
                 </h3>
-                <p className="text-gray-600">
-                  Compare prices across multiple stores to find the best deals
+                <p className="text-gray-300">
+                  Compara precios en múltiples tiendas para encontrar las mejores ofertas
                 </p>
               </div>
 
               <div className="text-center">
-                <div className="w-16 h-16 bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
                   <svg
-                    className="w-8 h-8 text-white"
+                    className="w-8 h-8 text-gray-900"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -148,18 +148,18 @@ export default function HomePage({ user }: HomeProps) {
                     />
                   </svg>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  Real-time Updates
+                <h3 className="text-lg font-semibold text-white mb-2">
+                  Actualizaciones en Tiempo Real
                 </h3>
-                <p className="text-gray-600">
-                  Get the latest prices and availability information
+                <p className="text-gray-300">
+                  Obtén información actualizada de precios y disponibilidad
                 </p>
               </div>
 
               <div className="text-center">
-                <div className="w-16 h-16 bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
                   <svg
-                    className="w-8 h-8 text-white"
+                    className="w-8 h-8 text-gray-900"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -172,32 +172,32 @@ export default function HomePage({ user }: HomeProps) {
                     />
                   </svg>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  Save Favorites
+                <h3 className="text-lg font-semibold text-white mb-2">
+                  Guardar Favoritos
                 </h3>
-                <p className="text-gray-600">
+                <p className="text-gray-300">
                   {user
-                    ? "Create wishlists and track your favorite sneakers"
-                    : "Sign up to save your favorite sneakers"}
+                    ? "Crea listas de deseos y sigue tus zapatillas favoritas"
+                    : "Regístrate para guardar tus zapatillas favoritas"}
                 </p>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="bg-gray-900 text-white py-12">
+        <div className="bg-gray-700 text-white py-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-3xl font-bold mb-4">
-              Ready to find your next pair?
+              ¿Listo para encontrar tu próximo par?
             </h2>
             <p className="text-xl text-gray-300 mb-8">
-              Browse thousands of sneakers from top brands
+              Explora miles de zapatillas de las mejores marcas
             </p>
             <button
               onClick={handleViewAll}
               className="bg-white text-gray-900 px-8 py-3 rounded-md font-semibold hover:bg-gray-100 transition-colors"
             >
-              Browse All Sneakers
+              Ver Todas las Zapatillas
             </button>
           </div>
         </div>

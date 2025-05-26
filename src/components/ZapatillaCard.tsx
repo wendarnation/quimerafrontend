@@ -72,20 +72,20 @@ export default function ZapatillaCard({
         <div className="mb-2">
           {zapatilla.precio_min ? (
             <div>
-              <p className="text-sm text-gray-600 mb-1">Lowest Ask</p>
+              <p className="text-sm text-gray-600 mb-1">Precio Más Bajo</p>
               <p className="text-lg font-bold text-gray-900">
                 {formatPrice(zapatilla.precio_min)}
               </p>
               {zapatilla.precio_max &&
                 zapatilla.precio_max !== zapatilla.precio_min && (
                   <p className="text-xs text-gray-500">
-                    Up to {formatPrice(zapatilla.precio_max)}
+                    Hasta {formatPrice(zapatilla.precio_max)}
                   </p>
                 )}
             </div>
           ) : (
             <div>
-              <p className="text-sm text-gray-600 mb-1">Price</p>
+              <p className="text-sm text-gray-600 mb-1">Precio</p>
               <p className="text-lg font-bold text-gray-900">--</p>
             </div>
           )}

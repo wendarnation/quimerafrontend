@@ -94,11 +94,11 @@ export default function BrowsePage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
             {Array.from({ length: 40 }).map((_, index) => (
-              <div key={index} className="bg-white rounded-lg h-80 animate-pulse" />
+              <div key={index} className="bg-gray-800 rounded-lg h-80 animate-pulse" />
             ))}
           </div>
         </div>
@@ -108,15 +108,15 @@ export default function BrowsePage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center py-12">
-            <p className="text-red-600 mb-4">Error loading sneakers</p>
+            <p className="text-red-400 mb-4">Error al cargar zapatillas</p>
             <button
               onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-gray-900 text-white rounded-md hover:bg-gray-800 transition-colors"
+              className="px-4 py-2 bg-white text-gray-900 rounded-md hover:bg-gray-100 transition-colors"
             >
-              Retry
+              Reintentar
             </button>
           </div>
         </div>
@@ -128,17 +128,17 @@ export default function BrowsePage() {
   const pagination = data?.pagination;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header con filtros */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">
-              {filters.search ? `Results for "${filters.search}"` : 'Browse Sneakers'}
+            <h1 className="text-3xl font-bold text-white">
+              {filters.search ? `Resultados para "${filters.search}"` : 'Explorar Zapatillas'}
             </h1>
             {pagination && (
-              <p className="text-gray-600 mt-1">
-                Showing {((pagination.page - 1) * pagination.limit) + 1}-{Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} results
+              <p className="text-gray-300 mt-1">
+                Mostrando {((pagination.page - 1) * pagination.limit) + 1}-{Math.min(pagination.page * pagination.limit, pagination.total)} de {pagination.total} resultados
               </p>
             )}
           </div>
@@ -147,10 +147,10 @@ export default function BrowsePage() {
             {/* Botón de filtros */}
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+              className="flex items-center space-x-2 px-4 py-2 border border-gray-600 rounded-md hover:bg-gray-800 transition-colors text-white"
             >
               <Filter className="h-4 w-4" />
-              <span>Filters</span>
+              <span>Filtros</span>
             </button>
             
             {/* Ordenamiento rápido */}
@@ -160,69 +160,69 @@ export default function BrowsePage() {
                 const [sortBy, sortOrder] = e.target.value.split('-');
                 handleFilterChange({ sortBy, sortOrder: sortOrder as 'asc' | 'desc' });
               }}
-              className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900"
+              className="px-4 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-white bg-gray-800 text-white"
             >
-              <option value="fecha_creacion-desc">Newest</option>
-              <option value="fecha_creacion-asc">Oldest</option>
-              <option value="precio_min-asc">Price: Low to High</option>
-              <option value="precio_min-desc">Price: High to Low</option>
-              <option value="marca-asc">Brand A-Z</option>
-              <option value="marca-desc">Brand Z-A</option>
+              <option value="fecha_creacion-desc">Más Nuevos</option>
+              <option value="fecha_creacion-asc">Más Antiguos</option>
+              <option value="precio_min-asc">Precio: Menor a Mayor</option>
+              <option value="precio_min-desc">Precio: Mayor a Menor</option>
+              <option value="marca-asc">Marca A-Z</option>
+              <option value="marca-desc">Marca Z-A</option>
             </select>
           </div>
         </div>
 
         {/* Panel de filtros */}
         {showFilters && (
-          <div className="bg-white p-6 rounded-lg shadow-sm mb-6 border">
+          <div className="bg-gray-800 p-6 rounded-lg shadow-sm mb-6 border border-gray-700">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Brand</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Marca</label>
                 <input
                   type="text"
-                  placeholder="e.g., Nike, Adidas"
+                  placeholder="ej: Nike, Adidas"
                   value={filters.marca || ''}
                   onChange={(e) => handleFilterChange({ marca: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900"
+                  className="w-full px-3 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-white bg-gray-700 text-white placeholder-gray-400"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Categoría</label>
                 <select
                   value={filters.categoria || ''}
                   onChange={(e) => handleFilterChange({ categoria: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900"
+                  className="w-full px-3 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-white bg-gray-700 text-white"
                 >
-                  <option value="">All Categories</option>
+                  <option value="">Todas las Categorías</option>
                   <option value="basketball">Basketball</option>
                   <option value="running">Running</option>
                   <option value="lifestyle">Lifestyle</option>
                   <option value="skateboarding">Skateboarding</option>
-                  <option value="football">Football</option>
+                  <option value="football">Fútbol</option>
                   <option value="unisex">Unisex</option>
                 </select>
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Min Price (€)</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Precio Mínimo (€)</label>
                 <input
                   type="number"
                   placeholder="0"
                   value={filters.precio_min || ''}
                   onChange={(e) => handleFilterChange({ precio_min: e.target.value ? parseFloat(e.target.value) : undefined })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900"
+                  className="w-full px-3 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-white bg-gray-700 text-white placeholder-gray-400"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Max Price (€)</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Precio Máximo (€)</label>
                 <input
                   type="number"
                   placeholder="1000"
                   value={filters.precio_max || ''}
                   onChange={(e) => handleFilterChange({ precio_max: e.target.value ? parseFloat(e.target.value) : undefined })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900"
+                  className="w-full px-3 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-white bg-gray-700 text-white placeholder-gray-400"
                 />
               </div>
             </div>
@@ -230,9 +230,9 @@ export default function BrowsePage() {
             <div className="flex justify-end mt-4 space-x-2">
               <button
                 onClick={clearFilters}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                className="px-4 py-2 text-gray-300 hover:text-white transition-colors"
               >
-                Clear All
+                Limpiar Todo
               </button>
             </div>
           </div>
@@ -242,46 +242,46 @@ export default function BrowsePage() {
         {(filters.search || filters.marca || filters.categoria || filters.precio_min || filters.precio_max) && (
           <div className="flex flex-wrap gap-2 mb-6">
             {filters.search && (
-              <span className="px-3 py-1 bg-gray-900 text-white rounded-full text-sm flex items-center space-x-1">
-                <span>Search: {filters.search}</span>
+              <span className="px-3 py-1 bg-white text-gray-900 rounded-full text-sm flex items-center space-x-1">
+                <span>Búsqueda: {filters.search}</span>
                 <button
                   onClick={() => handleFilterChange({ search: undefined })}
-                  className="text-gray-300 hover:text-white"
+                  className="text-gray-600 hover:text-gray-900"
                 >
                   ×
                 </button>
               </span>
             )}
             {filters.marca && (
-              <span className="px-3 py-1 bg-gray-900 text-white rounded-full text-sm flex items-center space-x-1">
-                <span>Brand: {filters.marca}</span>
+              <span className="px-3 py-1 bg-white text-gray-900 rounded-full text-sm flex items-center space-x-1">
+                <span>Marca: {filters.marca}</span>
                 <button
                   onClick={() => handleFilterChange({ marca: undefined })}
-                  className="text-gray-300 hover:text-white"
+                  className="text-gray-600 hover:text-gray-900"
                 >
                   ×
                 </button>
               </span>
             )}
             {filters.categoria && (
-              <span className="px-3 py-1 bg-gray-900 text-white rounded-full text-sm flex items-center space-x-1">
-                <span>Category: {filters.categoria}</span>
+              <span className="px-3 py-1 bg-white text-gray-900 rounded-full text-sm flex items-center space-x-1">
+                <span>Categoría: {filters.categoria}</span>
                 <button
                   onClick={() => handleFilterChange({ categoria: undefined })}
-                  className="text-gray-300 hover:text-white"
+                  className="text-gray-600 hover:text-gray-900"
                 >
                   ×
                 </button>
               </span>
             )}
             {(filters.precio_min || filters.precio_max) && (
-              <span className="px-3 py-1 bg-gray-900 text-white rounded-full text-sm flex items-center space-x-1">
+              <span className="px-3 py-1 bg-white text-gray-900 rounded-full text-sm flex items-center space-x-1">
                 <span>
-                  Price: €{filters.precio_min || 0} - €{filters.precio_max || '∞'}
+                  Precio: €{filters.precio_min || 0} - €{filters.precio_max || '∞'}
                 </span>
                 <button
                   onClick={() => handleFilterChange({ precio_min: undefined, precio_max: undefined })}
-                  className="text-gray-300 hover:text-white"
+                  className="text-gray-600 hover:text-gray-900"
                 >
                   ×
                 </button>
@@ -303,12 +303,12 @@ export default function BrowsePage() {
           </div>
         ) : (
           <div className="text-center py-12">
-            <p className="text-gray-600 mb-4">No sneakers found matching your criteria</p>
+            <p className="text-gray-300 mb-4">No se encontraron zapatillas que coincidan con tus criterios</p>
             <button
               onClick={clearFilters}
-              className="px-4 py-2 bg-gray-900 text-white rounded-md hover:bg-gray-800 transition-colors"
+              className="px-4 py-2 bg-white text-gray-900 rounded-md hover:bg-gray-100 transition-colors"
             >
-              Clear Filters
+              Limpiar Filtros
             </button>
           </div>
         )}
@@ -321,12 +321,12 @@ export default function BrowsePage() {
               disabled={!pagination.hasPrev}
               className={`flex items-center space-x-1 px-4 py-2 rounded-md transition-colors ${
                 pagination.hasPrev
-                  ? 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
-                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  ? 'bg-gray-800 border border-gray-600 text-white hover:bg-gray-700'
+                  : 'bg-gray-700 text-gray-500 cursor-not-allowed'
               }`}
             >
               <ChevronLeft className="h-4 w-4" />
-              <span>Previous</span>
+              <span>Anterior</span>
             </button>
             
             <div className="flex space-x-1">
@@ -348,8 +348,8 @@ export default function BrowsePage() {
                     onClick={() => handlePageChange(pageNum)}
                     className={`px-3 py-2 rounded-md transition-colors ${
                       pageNum === pagination.page
-                        ? 'bg-gray-900 text-white'
-                        : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                        ? 'bg-white text-gray-900'
+                        : 'bg-gray-800 border border-gray-600 text-white hover:bg-gray-700'
                     }`}
                   >
                     {pageNum}
@@ -363,11 +363,11 @@ export default function BrowsePage() {
               disabled={!pagination.hasNext}
               className={`flex items-center space-x-1 px-4 py-2 rounded-md transition-colors ${
                 pagination.hasNext
-                  ? 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
-                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  ? 'bg-gray-800 border border-gray-600 text-white hover:bg-gray-700'
+                  : 'bg-gray-700 text-gray-500 cursor-not-allowed'
               }`}
             >
-              <span>Next</span>
+              <span>Siguiente</span>
               <ChevronRight className="h-4 w-4" />
             </button>
           </div>
