@@ -2,7 +2,7 @@
 
 import { Zapatilla } from "@/types/zapatilla";
 import { useState } from "react";
-import FavoriteButton from "./favorites/FavoriteButton";
+import FavoriteButtonZustand from "./favorites/FavoriteButtonZustand";
 
 interface ZapatillaCardProps {
   zapatilla: Zapatilla;
@@ -31,7 +31,7 @@ export default function ZapatillaCard({
       <div className="relative aspect-square bg-gray-50 overflow-hidden">
         {/* Botón de corazón */}
         <div className="absolute top-3 right-3 z-10">
-          <FavoriteButton 
+          <FavoriteButtonZustand 
             zapatillaId={zapatilla.id} 
             className="p-2 rounded-full bg-white/90 hover:bg-white transition-all duration-200 shadow-md hover:shadow-lg"
             size="sm"

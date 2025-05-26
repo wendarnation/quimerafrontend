@@ -1,8 +1,9 @@
 // hooks/useFavorites.ts
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { useAuth0Token } from "./useAuth0Token";
+import { useQueryClient } from "@tanstack/react-query";
 
 export interface FavoriteList {
   id: number;
@@ -23,17 +24,23 @@ export interface FavoriteListItem {
     marca: string;
     modelo: string;
     sku: string;
-    color: string;
-    precio_original?: number;
-    imagen: string;
+    imagen: string | null;
+    descripcion: string | null;
     categoria: string;
     activa: boolean;
+    fecha_creacion: string;
     zapatillasTienda?: {
+      id: number;
       precio: number;
       disponible: boolean;
+      url_producto: string;
+      modelo_tienda?: string;
       tienda: {
+        id: number;
         nombre: string;
-        logo_url: string;
+        url: string;
+        activa: boolean;
+        logo_url?: string;
       };
     }[];
   };
@@ -44,7 +51,9 @@ export function useFavorites() {
   const [currentList, setCurrentList] = useState<FavoriteList | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
   const { getAccessToken } = useAuth0Token();
+  const queryClient = useQueryClient();
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
@@ -297,6 +306,7 @@ export function useFavorites() {
         defaultList = await createFavoriteList("Mis Favoritos", true);
       }
       
+      setIsInitialized(true);
       return defaultList;
     } catch (error) {
       throw error;
@@ -306,17 +316,14 @@ export function useFavorites() {
   // Verificar si una zapatilla está en la lista predeterminada
   const checkIfInFavorites = useCallback(async (zapatillaId: number): Promise<boolean> => {
     try {
-      const lists = await fetchFavoriteLists();
-      const defaultList = lists.find((list: FavoriteList) => list.predeterminada);
-      
-      if (!defaultList) return false;
-      
+      const defaultList = await getOrCreateDefaultList();
       const listDetails = await fetchFavoriteList(defaultList.id);
       return listDetails.zapatillas?.some((item: FavoriteListItem) => item.zapatilla_id === zapatillaId) || false;
     } catch (error) {
+      console.error('Error checking if in favorites:', error);
       return false;
     }
-  }, [fetchFavoriteLists, fetchFavoriteList]);
+  }, [getOrCreateDefaultList, fetchFavoriteList]);
   const toggleFavorite = useCallback(async (zapatillaId: number) => {
     try {
       const defaultList = await getOrCreateDefaultList();
@@ -326,25 +333,33 @@ export function useFavorites() {
       
       const existingItem = listDetails.zapatillas?.find((item: FavoriteListItem) => item.zapatilla_id === zapatillaId);
       
+      let result;
       if (existingItem) {
         // Quitar de favoritos
         await removeFromFavoriteList(defaultList.id, zapatillaId);
-        return { action: 'removed', list: defaultList };
+        result = { action: 'removed', list: defaultList };
       } else {
         // Agregar a favoritos
         await addToFavoriteList(defaultList.id, zapatillaId);
-        return { action: 'added', list: defaultList };
+        result = { action: 'added', list: defaultList };
       }
+      
+      // Invalidar consultas relacionadas para forzar refetch
+      queryClient.invalidateQueries({ queryKey: ['favorites'] });
+      queryClient.invalidateQueries({ queryKey: ['sneakers'] });
+      
+      return result;
     } catch (error) {
       throw error;
     }
-  }, [getOrCreateDefaultList, fetchFavoriteList, addToFavoriteList, removeFromFavoriteList]);
+  }, [getOrCreateDefaultList, fetchFavoriteList, addToFavoriteList, removeFromFavoriteList, queryClient]);
 
   return {
     favoriteLists,
     currentList,
     isLoading,
     error,
+    isInitialized,
     fetchFavoriteList,
     addToFavoriteList,
     removeFromFavoriteList,

@@ -30,6 +30,7 @@ export interface Tienda {
   nombre: string;
   url: string;
   activa: boolean;
+  logo_url?: string;
 }
 
 export interface PaginatedResult<T> {
