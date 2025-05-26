@@ -24,17 +24,17 @@ export default function SneakerDetailsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="animate-pulse">
             <div className="h-8 bg-gray-700 rounded w-32 mb-8"></div>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              <div className="aspect-square bg-gray-700 rounded-lg"></div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="space-y-6">
+                <div className="aspect-square bg-gray-700 rounded-lg"></div>
+                <div className="h-32 bg-gray-700 rounded"></div>
+                <div className="h-48 bg-gray-700 rounded"></div>
+              </div>
               <div className="space-y-6">
                 <div className="h-8 bg-gray-700 rounded w-3/4"></div>
                 <div className="h-6 bg-gray-700 rounded w-1/2"></div>
-                <div className="h-4 bg-gray-700 rounded w-full"></div>
-                <div className="h-4 bg-gray-700 rounded w-2/3"></div>
-              </div>
-              <div className="space-y-6">
                 <div className="h-32 bg-gray-700 rounded"></div>
-                <div className="h-20 bg-gray-700 rounded"></div>
+                <div className="h-48 bg-gray-700 rounded"></div>
               </div>
             </div>
           </div>
@@ -163,10 +163,11 @@ export default function SneakerDetailsPage() {
           <span>Volver</span>
         </button>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Columna izquierda - Imagen */}
-          <div className="lg:col-span-1">
-            <div className="aspect-square bg-white rounded-lg shadow-sm overflow-hidden sticky top-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Columna izquierda - Imagen, Valoraciones y Comentarios */}
+          <div className="space-y-6">
+            {/* Imagen */}
+            <div className="aspect-square bg-white rounded-lg shadow-sm overflow-hidden">
               {sneaker.imagen && !imageError ? (
                 <img
                   src={sneaker.imagen}
@@ -184,10 +185,16 @@ export default function SneakerDetailsPage() {
                 </div>
               )}
             </div>
+
+            {/* Sistema de valoraciones */}
+            <StarRating zapatillaId={sneaker.id} />
+
+            {/* Sección de comentarios */}
+            <CommentSection zapatillaId={sneaker.id} />
           </div>
 
-          {/* Columna centro - Detalles principales */}
-          <div className="lg:col-span-1 space-y-6">
+          {/* Columna derecha - Detalles y Tallas */}
+          <div className="space-y-6">
             {/* Header */}
             <div className="flex items-start justify-between">
               <div>
@@ -271,12 +278,6 @@ export default function SneakerDetailsPage() {
                 </div>
               )}
             </div>
-          </div>
-
-          {/* Columna derecha - Tallas y Valoraciones */}
-          <div className="lg:col-span-1 space-y-6">
-            {/* Sistema de valoraciones */}
-            <StarRating zapatillaId={sneaker.id} />
 
             {/* Tallas Disponibles */}
             <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
@@ -289,29 +290,30 @@ export default function SneakerDetailsPage() {
                     return (
                       <div key={storeName} className="border border-gray-600 rounded-lg p-4">
                         <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center space-x-2">
+                          <div className="flex items-center space-x-3">
                             {storeInfo.logo_url && (
                               <img
                                 src={storeInfo.logo_url}
                                 alt={storeName}
-                                className="w-6 h-6 object-contain"
+                                className="w-8 h-8 object-contain"
                               />
                             )}
                             <div>
-                              <h4 className="font-medium text-white text-sm">{storeName}</h4>
-                              <p className="text-xs text-gray-400">{formatPrice(storeData.precio)}</p>
+                              <h4 className="font-semibold text-white">{storeName}</h4>
+                              <p className="text-sm text-gray-400">{formatPrice(storeData.precio)}</p>
                             </div>
                           </div>
                         </div>
                         
                         {storeData.tallas.length > 0 ? (
                           <>
-                            <div className="mb-3">
-                              <div className="flex flex-wrap gap-1">
+                            <div className="mb-4">
+                              <p className="text-sm text-gray-400 mb-2">Tallas:</p>
+                              <div className="flex flex-wrap gap-2">
                                 {storeData.tallas.map((size) => (
                                   <span
                                     key={size.id}
-                                    className="px-2 py-1 bg-gray-700 text-white rounded text-xs font-medium"
+                                    className="px-3 py-1 bg-gray-700 text-white rounded-md text-sm font-medium"
                                   >
                                     {size.talla}
                                   </span>
@@ -324,17 +326,17 @@ export default function SneakerDetailsPage() {
                                 href={storeInfo.url_producto}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="w-full flex items-center justify-center space-x-1 bg-white text-gray-900 px-3 py-2 rounded text-sm hover:bg-gray-100 transition-colors"
+                                className="w-full flex items-center justify-center space-x-2 bg-white text-gray-900 px-4 py-2 rounded-md hover:bg-gray-100 transition-colors"
                               >
-                                <ShoppingBag className="h-3 w-3" />
-                                <span>Comprar</span>
-                                <ExternalLink className="h-3 w-3" />
+                                <ShoppingBag className="h-4 w-4" />
+                                <span>Comprar en {storeName}</span>
+                                <ExternalLink className="h-4 w-4" />
                               </a>
                             )}
                           </>
                         ) : (
-                          <div className="text-center py-2">
-                            <p className="text-gray-500 text-xs">Sin tallas disponibles</p>
+                          <div className="text-center py-4">
+                            <p className="text-gray-500 text-sm">Sin tallas disponibles</p>
                           </div>
                         )}
                       </div>
@@ -342,18 +344,16 @@ export default function SneakerDetailsPage() {
                   })}
                 </div>
               ) : (
-                <div className="text-center py-6">
-                  <ShoppingBag className="h-8 w-8 text-gray-600 mx-auto mb-2" />
-                  <p className="text-gray-400 text-sm">No hay tallas disponibles</p>
+                <div className="text-center py-8">
+                  <ShoppingBag className="h-12 w-12 text-gray-600 mx-auto mb-4" />
+                  <h4 className="text-lg font-semibold text-white mb-2">No Hay Tallas Disponibles</h4>
+                  <p className="text-gray-400">
+                    Esta zapatilla no está disponible actualmente en ninguna tienda.
+                  </p>
                 </div>
               )}
             </div>
           </div>
-        </div>
-
-        {/* Sección de comentarios - Full width */}
-        <div className="mt-12">
-          <CommentSection zapatillaId={sneaker.id} />
         </div>
       </div>
     </div>

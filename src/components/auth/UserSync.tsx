@@ -50,6 +50,23 @@ export default function UserSync({ user }: UserSyncProps) {
           } catch (decodeError) {
             // Decode error - continue without permissions
           }
+
+          // Verificar si el usuario ya tiene un nickname en la BD
+          let finalNickname = null;
+          try {
+            const profileResponse = await fetch('/api/users/profile');
+            if (profileResponse.ok) {
+              const profile = await profileResponse.json();
+              // Solo usar el nickname de Auth0 si no hay uno en la BD
+              finalNickname = profile.nickname || user.nickname || null;
+            } else {
+              // Si no podemos obtener el perfil, usar el de Auth0
+              finalNickname = user.nickname || null;
+            }
+          } catch (profileError) {
+            // Si hay error obteniendo el perfil, usar el de Auth0
+            finalNickname = user.nickname || null;
+          }
           
           const syncResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/sync-user-test`, {
             method: 'POST',
@@ -60,7 +77,7 @@ export default function UserSync({ user }: UserSyncProps) {
               auth0Id: user.sub,
               email: user.email,
               nombre_completo: user.name || null,
-              nickname: user.nickname || null,
+              nickname: finalNickname,
               permissions: permissions,
               first_login: true
             })
@@ -73,6 +90,23 @@ export default function UserSync({ user }: UserSyncProps) {
         }
 
         // Fallback sync without token
+        // Verificar si el usuario ya tiene un nickname en la BD
+        let fallbackNickname = null;
+        try {
+          const profileResponse = await fetch('/api/users/profile');
+          if (profileResponse.ok) {
+            const profile = await profileResponse.json();
+            // Solo usar el nickname de Auth0 si no hay uno en la BD
+            fallbackNickname = profile.nickname || user.nickname || null;
+          } else {
+            // Si no podemos obtener el perfil, usar el de Auth0
+            fallbackNickname = user.nickname || null;
+          }
+        } catch (profileError) {
+          // Si hay error obteniendo el perfil, usar el de Auth0
+          fallbackNickname = user.nickname || null;
+        }
+
         const syncTestResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/sync-user-test`, {
           method: 'POST',
           headers: {
@@ -82,7 +116,7 @@ export default function UserSync({ user }: UserSyncProps) {
             auth0Id: user.sub,
             email: user.email,
             nombre_completo: user.name || null,
-            nickname: user.nickname || null,
+            nickname: fallbackNickname,
             permissions: user.permissions || [],
             first_login: true
           })
