@@ -19,10 +19,6 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
     router.push(`/browse?search=${encodeURIComponent(query)}`);
   };
 
-  const handleCategorySelect = (category: string) => {
-    router.push(`/browse?categoria=${encodeURIComponent(category)}`);
-  };
-
   // Páginas que no deben mostrar el navbar (si las hay)
   const hideNavbarRoutes: string[] = [
     // Añadir aquí rutas donde no quieras el navbar, como páginas de auth
@@ -56,7 +52,6 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
         <Navbar
           user={authUser}
           onSearch={handleSearch}
-          onCategorySelect={handleCategorySelect}
         />
       )}
       {children}
