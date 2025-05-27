@@ -4,17 +4,10 @@ import { useState } from "react";
 import { Search, User, ChevronDown, Users, Heart } from "lucide-react";
 import Image from "next/image";
 import { usePermissions } from "../hooks/usePermissions";
-
-// Define la interfaz para el usuario de Auth0
-interface Auth0User {
-  name?: string;
-  email?: string;
-  picture?: string;
-  sub?: string;
-}
+import { AuthUser } from "../types/auth";
 
 interface NavbarProps {
-  user?: Auth0User;
+  user?: AuthUser;
   onSearch?: (query: string) => void;
   onCategorySelect?: (category: string) => void;
 }
