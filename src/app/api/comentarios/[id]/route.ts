@@ -5,7 +5,7 @@ const API_BASE_URL = process.env.API_URL || 'http://localhost:3001';
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth0.getSession();
@@ -17,7 +17,7 @@ export async function PATCH(
     const tokenResponse = await auth0.getAccessToken();
     const accessToken = tokenResponse.token || tokenResponse;
     const body = await request.json();
-    const { id } = params;
+    const { id } = await params;
     
     const response = await fetch(`${API_BASE_URL}/comentarios/${id}`, {
       method: 'PATCH',
@@ -50,7 +50,7 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth0.getSession();
@@ -61,7 +61,7 @@ export async function DELETE(
 
     const tokenResponse = await auth0.getAccessToken();
     const accessToken = tokenResponse.token || tokenResponse;
-    const { id } = params;
+    const { id } = await params;
     
     const response = await fetch(`${API_BASE_URL}/comentarios/${id}`, {
       method: 'DELETE',
