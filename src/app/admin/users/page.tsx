@@ -15,9 +15,7 @@ import { useUserManagement, User } from "../../../hooks/useUserManagement";
 
 const ROLES = [
   { value: 'usuario', label: 'Usuario', color: 'bg-blue-100 text-blue-800' },
-  { value: 'admin', label: 'Administrador', color: 'bg-red-100 text-red-800' },
-  { value: 'editor', label: 'Editor', color: 'bg-green-100 text-green-800' },
-  { value: 'moderador', label: 'Moderador', color: 'bg-yellow-100 text-yellow-800' },
+  { value: 'admin', label: 'Administrador', color: 'bg-red-100 text-red-800' }
 ];
 
 export default function AdminUsersPage() {

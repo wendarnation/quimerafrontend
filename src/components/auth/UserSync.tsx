@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from 'react';
-import { Buffer } from 'buffer';
+import { useEffect, useRef } from "react";
+import { Buffer } from "buffer";
 
 interface User {
   name?: string;
@@ -25,13 +25,16 @@ export default function UserSync({ user }: UserSyncProps) {
 
       try {
         let accessToken: string | null = null;
-        
+
         try {
-          const tokenResponse = await fetch('/auth/access-token');
-          
+          const tokenResponse = await fetch("/auth/access-token");
+
           if (tokenResponse.ok) {
             const tokenData = await tokenResponse.json();
-            accessToken = tokenData.access_token || tokenData.accessToken || tokenData.token;
+            accessToken =
+              tokenData.access_token ||
+              tokenData.accessToken ||
+              tokenData.token;
           }
         } catch (tokenError) {
           // Token error - continue with fallback
@@ -40,10 +43,10 @@ export default function UserSync({ user }: UserSyncProps) {
         if (accessToken) {
           let permissions = [];
           try {
-            const tokenParts = accessToken.split('.');
+            const tokenParts = accessToken.split(".");
             if (tokenParts.length === 3) {
               const tokenPayload = JSON.parse(
-                Buffer.from(tokenParts[1], 'base64').toString()
+                Buffer.from(tokenParts[1], "base64").toString()
               );
               permissions = tokenPayload.permissions || [];
             }
@@ -54,7 +57,7 @@ export default function UserSync({ user }: UserSyncProps) {
           // Verificar si el usuario ya tiene un nickname en la BD
           let finalNickname = null;
           try {
-            const profileResponse = await fetch('/api/users/profile');
+            const profileResponse = await fetch("/api/users/profile");
             if (profileResponse.ok) {
               const profile = await profileResponse.json();
               // Solo usar el nickname de Auth0 si no hay uno en la BD
@@ -67,21 +70,24 @@ export default function UserSync({ user }: UserSyncProps) {
             // Si hay error obteniendo el perfil, usar el de Auth0
             finalNickname = user.nickname || null;
           }
-          
-          const syncResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/sync-user-test`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              auth0Id: user.sub,
-              email: user.email,
-              nombre_completo: user.name || null,
-              nickname: finalNickname,
-              permissions: permissions,
-              first_login: true
-            })
-          });
+
+          const syncResponse = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/auth/sync-user`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                auth0Id: user.sub,
+                email: user.email,
+                nombre_completo: user.name || null,
+                nickname: finalNickname,
+                permissions: permissions,
+                first_login: true,
+              }),
+            }
+          );
 
           if (syncResponse.ok) {
             syncedRef.current = true;
@@ -93,7 +99,7 @@ export default function UserSync({ user }: UserSyncProps) {
         // Verificar si el usuario ya tiene un nickname en la BD
         let fallbackNickname = null;
         try {
-          const profileResponse = await fetch('/api/users/profile');
+          const profileResponse = await fetch("/api/users/profile");
           if (profileResponse.ok) {
             const profile = await profileResponse.json();
             // Solo usar el nickname de Auth0 si no hay uno en la BD
@@ -107,32 +113,34 @@ export default function UserSync({ user }: UserSyncProps) {
           fallbackNickname = user.nickname || null;
         }
 
-        const syncTestResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/sync-user-test`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            auth0Id: user.sub,
-            email: user.email,
-            nombre_completo: user.name || null,
-            nickname: fallbackNickname,
-            permissions: user.permissions || [],
-            first_login: true
-          })
-        });
+        const syncTestResponse = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/auth/sync-user`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              auth0Id: user.sub,
+              email: user.email,
+              nombre_completo: user.name || null,
+              nickname: fallbackNickname,
+              permissions: user.permissions || [],
+              first_login: true,
+            }),
+          }
+        );
 
         if (syncTestResponse.ok) {
           syncedRef.current = true;
         }
-        
       } catch (error) {
         // Sync error - fail silently
       }
     }
 
     const timeoutId = setTimeout(syncUser, 1500);
-    
+
     return () => clearTimeout(timeoutId);
   }, [user]);
 
