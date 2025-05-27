@@ -1,9 +1,8 @@
-// components/BrowsePageContent.tsx
 "use client";
 
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { ChevronLeft, ChevronRight, Filter, SortAsc } from "lucide-react";
+import { ChevronLeft, ChevronRight, Filter, SortAsc, Search } from "lucide-react";
 import { useAllSneakers, useSearchSneakers } from "@/hooks/useSneakers";
 import { SearchFilters, Zapatilla } from "@/types/zapatilla";
 import ZapatillaCard from "@/components/ZapatillaCard";
@@ -15,6 +14,7 @@ export default function BrowsePageContent() {
   const { user } = useUser();
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState<SearchFilters>({});
+  const [tempFilters, setTempFilters] = useState<SearchFilters>({}); // Filtros temporales antes de aplicar
   const [showFilters, setShowFilters] = useState(false);
 
   // Inicializar filtros desde URL
@@ -23,7 +23,6 @@ export default function BrowsePageContent() {
     const page = searchParams.get('page');
     const search = searchParams.get('search');
     const marca = searchParams.get('marca');
-    const categoria = searchParams.get('categoria');
     const precio_min = searchParams.get('precio_min');
     const precio_max = searchParams.get('precio_max');
     const sortBy = searchParams.get('sortBy');
@@ -32,18 +31,18 @@ export default function BrowsePageContent() {
     if (page) initialFilters.page = parseInt(page);
     if (search) initialFilters.search = search;
     if (marca) initialFilters.marca = marca;
-    if (categoria) initialFilters.categoria = categoria;
     if (precio_min) initialFilters.precio_min = parseFloat(precio_min);
     if (precio_max) initialFilters.precio_max = parseFloat(precio_max);
     if (sortBy) initialFilters.sortBy = sortBy;
     if (sortOrder) initialFilters.sortOrder = sortOrder as 'asc' | 'desc';
 
     setFilters(initialFilters);
+    setTempFilters(initialFilters); // Sincronizar filtros temporales
     setCurrentPage(initialFilters.page || 1);
   }, [searchParams]);
 
   // Determinar qué hook usar
-  const hasSearchFilters = filters.search || filters.marca || filters.categoria || filters.precio_min || filters.precio_max;
+  const hasSearchFilters = filters.search || filters.marca || filters.precio_min || filters.precio_max;
   
   const { data: allData, isLoading: allLoading, error: allError } = useAllSneakers(
     currentPage, 
@@ -79,12 +78,39 @@ export default function BrowsePageContent() {
   };
 
   const handleFilterChange = (newFilters: Partial<SearchFilters>) => {
-    const updatedFilters = { ...filters, ...newFilters, page: 1 };
+    // Solo actualizar los filtros temporales, no aplicar inmediatamente
+    setTempFilters(prev => ({ ...prev, ...newFilters }));
+  };
+
+  const removeActiveFilter = (filterKey: keyof SearchFilters) => {
+    // Crear nuevos filtros sin el filtro especificado
+    const newFilters = { ...filters };
+    delete newFilters[filterKey];
+    
+    // Si se está eliminando precio_min o precio_max, eliminar ambos si el otro también está vacío
+    if (filterKey === 'precio_min' || filterKey === 'precio_max') {
+      if (filterKey === 'precio_min' && !newFilters.precio_max) {
+        delete newFilters.precio_max;
+      } else if (filterKey === 'precio_max' && !newFilters.precio_min) {
+        delete newFilters.precio_min;
+      }
+    }
+    
+    // Aplicar los cambios inmediatamente
+    const updatedFilters = { ...newFilters, page: 1 };
+    updateUrlAndFilters(updatedFilters);
+    setTempFilters(updatedFilters); // Sincronizar filtros temporales
+  };
+
+  const applyFilters = () => {
+    // Aplicar los filtros temporales
+    const updatedFilters = { ...tempFilters, page: 1 };
     updateUrlAndFilters(updatedFilters);
   };
 
   const clearFilters = () => {
     setFilters({});
+    setTempFilters({});
     setCurrentPage(1);
     router.push('/browse');
   };
@@ -159,7 +185,9 @@ export default function BrowsePageContent() {
               value={`${filters.sortBy || 'fecha_creacion'}-${filters.sortOrder || 'desc'}`}
               onChange={(e) => {
                 const [sortBy, sortOrder] = e.target.value.split('-');
-                handleFilterChange({ sortBy, sortOrder: sortOrder as 'asc' | 'desc' });
+                const updatedFilters = { ...filters, sortBy, sortOrder: sortOrder as 'asc' | 'desc' };
+                updateUrlAndFilters(updatedFilters);
+                setTempFilters(updatedFilters);
               }}
               className="px-4 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-white bg-gray-800 text-white"
             >
@@ -176,33 +204,27 @@ export default function BrowsePageContent() {
         {/* Panel de filtros */}
         {showFilters && (
           <div className="bg-gray-800 p-6 rounded-lg shadow-sm mb-6 border border-gray-700">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Marca</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Búsqueda general</label>
                 <input
                   type="text"
-                  placeholder="ej: Nike, Adidas"
-                  value={filters.marca || ''}
-                  onChange={(e) => handleFilterChange({ marca: e.target.value })}
+                  placeholder="ej: jordan aj1, nike dunk"
+                  value={tempFilters.search || ''}
+                  onChange={(e) => handleFilterChange({ search: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-white bg-gray-700 text-white placeholder-gray-400"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Categoría</label>
-                <select
-                  value={filters.categoria || ''}
-                  onChange={(e) => handleFilterChange({ categoria: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-white bg-gray-700 text-white"
-                >
-                  <option value="">Todas las Categorías</option>
-                  <option value="basketball">Basketball</option>
-                  <option value="running">Running</option>
-                  <option value="lifestyle">Lifestyle</option>
-                  <option value="skateboarding">Skateboarding</option>
-                  <option value="football">Fútbol</option>
-                  <option value="unisex">Unisex</option>
-                </select>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Marca</label>
+                <input
+                  type="text"
+                  placeholder="ej: Nike, Adidas"
+                  value={tempFilters.marca || ''}
+                  onChange={(e) => handleFilterChange({ marca: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-white bg-gray-700 text-white placeholder-gray-400"
+                />
               </div>
               
               <div>
@@ -210,43 +232,62 @@ export default function BrowsePageContent() {
                 <input
                   type="number"
                   placeholder="0"
-                  value={filters.precio_min || ''}
+                  value={tempFilters.precio_min || ''}
                   onChange={(e) => handleFilterChange({ precio_min: e.target.value ? parseFloat(e.target.value) : undefined })}
-                  className="w-full px-3 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-white bg-gray-700 text-white placeholder-gray-400"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Precio Máximo (€)</label>
-                <input
-                  type="number"
-                  placeholder="1000"
-                  value={filters.precio_max || ''}
-                  onChange={(e) => handleFilterChange({ precio_max: e.target.value ? parseFloat(e.target.value) : undefined })}
                   className="w-full px-3 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-white bg-gray-700 text-white placeholder-gray-400"
                 />
               </div>
             </div>
             
-            <div className="flex justify-end mt-4 space-x-2">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Precio Máximo (€)</label>
+                <input
+                  type="number"
+                  placeholder="1000"
+                  value={tempFilters.precio_max || ''}
+                  onChange={(e) => handleFilterChange({ precio_max: e.target.value ? parseFloat(e.target.value) : undefined })}
+                  className="w-full px-3 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-white bg-gray-700 text-white placeholder-gray-400"
+                />
+              </div>
+              <div className="md:col-span-2"></div>
+            </div>
+            
+            <div className="flex justify-between items-center mt-6">
               <button
                 onClick={clearFilters}
                 className="px-4 py-2 text-gray-300 hover:text-white transition-colors"
               >
                 Limpiar Todo
               </button>
+              
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => setShowFilters(false)}
+                  className="px-4 py-2 border border-gray-600 text-gray-300 rounded-md hover:bg-gray-700 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={applyFilters}
+                  className="px-6 py-2 bg-white text-gray-900 rounded-md hover:bg-gray-100 transition-colors flex items-center space-x-2"
+                >
+                  <Search className="h-4 w-4" />
+                  <span>Aplicar Filtros</span>
+                </button>
+              </div>
             </div>
           </div>
         )}
 
         {/* Filtros activos */}
-        {(filters.search || filters.marca || filters.categoria || filters.precio_min || filters.precio_max) && (
+        {(filters.search || filters.marca || filters.precio_min || filters.precio_max) && (
           <div className="flex flex-wrap gap-2 mb-6">
             {filters.search && (
               <span className="px-3 py-1 bg-white text-gray-900 rounded-full text-sm flex items-center space-x-1">
                 <span>Búsqueda: {filters.search}</span>
                 <button
-                  onClick={() => handleFilterChange({ search: undefined })}
+                  onClick={() => removeActiveFilter('search')}
                   className="text-gray-600 hover:text-gray-900"
                 >
                   ×
@@ -257,18 +298,7 @@ export default function BrowsePageContent() {
               <span className="px-3 py-1 bg-white text-gray-900 rounded-full text-sm flex items-center space-x-1">
                 <span>Marca: {filters.marca}</span>
                 <button
-                  onClick={() => handleFilterChange({ marca: undefined })}
-                  className="text-gray-600 hover:text-gray-900"
-                >
-                  ×
-                </button>
-              </span>
-            )}
-            {filters.categoria && (
-              <span className="px-3 py-1 bg-white text-gray-900 rounded-full text-sm flex items-center space-x-1">
-                <span>Categoría: {filters.categoria}</span>
-                <button
-                  onClick={() => handleFilterChange({ categoria: undefined })}
+                  onClick={() => removeActiveFilter('marca')}
                   className="text-gray-600 hover:text-gray-900"
                 >
                   ×
@@ -281,7 +311,15 @@ export default function BrowsePageContent() {
                   Precio: €{filters.precio_min || 0} - €{filters.precio_max || '∞'}
                 </span>
                 <button
-                  onClick={() => handleFilterChange({ precio_min: undefined, precio_max: undefined })}
+                  onClick={() => {
+                    // Crear filtros sin precio_min y precio_max
+                    const newFilters = { ...filters };
+                    delete newFilters.precio_min;
+                    delete newFilters.precio_max;
+                    const updatedFilters = { ...newFilters, page: 1 };
+                    updateUrlAndFilters(updatedFilters);
+                    setTempFilters(updatedFilters);
+                  }}
                   className="text-gray-600 hover:text-gray-900"
                 >
                   ×

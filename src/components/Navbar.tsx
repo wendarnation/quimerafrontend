@@ -9,27 +9,11 @@ import { AuthUser } from "../types/auth";
 interface NavbarProps {
   user?: AuthUser;
   onSearch?: (query: string) => void;
-  onCategorySelect?: (category: string) => void;
 }
-
-interface Category {
-  name: string;
-  label: string;
-}
-
-const categories: Category[] = [
-  { name: "basketball", label: "Basketball" },
-  { name: "running", label: "Running" },
-  { name: "lifestyle", label: "Lifestyle" },
-  { name: "skateboarding", label: "Skateboarding" },
-  { name: "football", label: "Football" },
-  { name: "unisex", label: "Unisex" },
-];
 
 // Componente Navbar
-export default function Navbar({ user, onSearch, onCategorySelect }: NavbarProps) {
+export default function Navbar({ user, onSearch }: NavbarProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [showCategories, setShowCategories] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const { hasAdminPermission, isLoading: permissionsLoading } = usePermissions();
 
@@ -38,13 +22,6 @@ export default function Navbar({ user, onSearch, onCategorySelect }: NavbarProps
     if (searchQuery.trim() && onSearch) {
       onSearch(searchQuery.trim());
     }
-  };
-
-  const handleCategoryClick = (category: string) => {
-    if (onCategorySelect) {
-      onCategorySelect(category);
-    }
-    setShowCategories(false);
   };
 
   return (
@@ -61,55 +38,32 @@ export default function Navbar({ user, onSearch, onCategorySelect }: NavbarProps
           {/* Barra de búsqueda (Centro) */}
           <div className="flex-1 max-w-2xl mx-8">
             <form onSubmit={handleSearchSubmit} className="relative">
-              <div className="relative">
+              <div className="relative flex">
                 <input
                   type="text"
-                  placeholder="Buscar marca, color, etc."
+                  placeholder="Buscar: jordan aj1, nike dunk..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 bg-gray-800 text-white placeholder-gray-400 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
+                  className="w-full pl-10 pr-20 py-2 bg-gray-800 text-white placeholder-gray-400 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
                 />
                 <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+                <button
+                  type="submit"
+                  className="absolute right-1 top-1 bottom-1 px-3 bg-white text-gray-900 rounded-md hover:bg-gray-100 transition-colors text-sm font-medium"
+                >
+                  Buscar
+                </button>
               </div>
             </form>
           </div>
 
-          {/* Categorías y Usuario (Derecha) */}
+          {/* Enlaces adicionales y Usuario (Derecha) */}
           <div className="flex items-center space-x-6">
-            {/* Dropdown de Categorías */}
-            <div className="relative">
-              <button
-                onClick={() => setShowCategories(!showCategories)}
-                className="flex items-center space-x-1 text-gray-300 hover:text-white transition-colors"
-              >
-                <span className="text-sm font-medium">Categorías</span>
-                <ChevronDown className="h-4 w-4" />
-              </button>
-              
-              {showCategories && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-                  {categories.map((category) => (
-                    <button
-                      key={category.name}
-                      onClick={() => handleCategoryClick(category.name)}
-                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                    >
-                      {category.label}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Enlaces adicionales */}
             <a href="#" className="text-gray-300 hover:text-white text-sm font-medium transition-colors">
               Noticias
             </a>
             <a href="#" className="text-gray-300 hover:text-white text-sm font-medium transition-colors">
               Acerca de
-            </a>
-            <a href="#" className="text-gray-300 hover:text-white text-sm font-medium transition-colors">
-              Ayuda
             </a>
             
             {/* Enlace de favoritos - solo visible para usuarios autenticados */}
@@ -206,11 +160,10 @@ export default function Navbar({ user, onSearch, onCategorySelect }: NavbarProps
       </div>
 
       {/* Overlay para cerrar dropdowns */}
-      {(showCategories || showUserMenu) && (
+      {showUserMenu && (
         <div 
           className="fixed inset-0 z-40" 
           onClick={() => {
-            setShowCategories(false);
             setShowUserMenu(false);
           }}
         />

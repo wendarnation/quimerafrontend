@@ -26,10 +26,6 @@ export default function HomePage({ user }: HomeProps) {
     router.push(`/browse?search=${encodeURIComponent(query)}`);
   };
 
-  const handleCategorySelect = (category: string) => {
-    router.push(`/browse?categoria=${encodeURIComponent(category)}`);
-  };
-
   const handleViewAll = () => {
     router.push("/browse");
   };
@@ -55,33 +51,26 @@ export default function HomePage({ user }: HomeProps) {
               </p>
 
               <div className="max-w-md mx-auto">
-                <div className="relative">
+                <form onSubmit={(e) => {
+                  e.preventDefault();
+                  const formData = new FormData(e.target as HTMLFormElement);
+                  const query = formData.get('search') as string;
+                  if (query?.trim()) {
+                    handleSearch(query.trim());
+                  }
+                }} className="relative flex">
                   <input
+                    name="search"
                     type="text"
-                    placeholder="Buscar marca, modelo, etc."
-                    className="w-full pl-4 pr-12 py-3 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent bg-gray-700 text-white placeholder-gray-400"
-                    onKeyPress={(e) => {
-                      if (e.key === "Enter") {
-                        const target = e.target as HTMLInputElement;
-                        if (target.value.trim()) {
-                          handleSearch(target.value.trim());
-                        }
-                      }
-                    }}
+                    placeholder="Buscar: jordan aj1, nike dunk..."
+                    className="w-full pl-4 pr-20 py-3 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent bg-gray-700 text-white placeholder-gray-400"
                   />
                   <button
-                    onClick={(e) => {
-                      const input = (e.target as HTMLElement)
-                        .closest(".relative")
-                        ?.querySelector("input") as HTMLInputElement;
-                      if (input?.value.trim()) {
-                        handleSearch(input.value.trim());
-                      }
-                    }}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                    type="submit"
+                    className="absolute right-1 top-1 bottom-1 px-4 bg-white text-gray-900 rounded-md hover:bg-gray-100 transition-colors font-medium flex items-center space-x-1"
                   >
                     <svg
-                      className="h-5 w-5"
+                      className="h-4 w-4"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -93,8 +82,9 @@ export default function HomePage({ user }: HomeProps) {
                         d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                       />
                     </svg>
+                    <span>Buscar</span>
                   </button>
-                </div>
+                </form>
               </div>
             </div>
           </div>
