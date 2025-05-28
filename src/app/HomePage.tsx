@@ -51,14 +51,17 @@ export default function HomePage({ user }: HomeProps) {
               </p>
 
               <div className="max-w-md mx-auto">
-                <form onSubmit={(e) => {
-                  e.preventDefault();
-                  const formData = new FormData(e.target as HTMLFormElement);
-                  const query = formData.get('search') as string;
-                  if (query?.trim()) {
-                    handleSearch(query.trim());
-                  }
-                }} className="relative flex">
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.target as HTMLFormElement);
+                    const query = formData.get("search") as string;
+                    if (query?.trim()) {
+                      handleSearch(query.trim());
+                    }
+                  }}
+                  className="relative flex"
+                >
                   <input
                     name="search"
                     type="text"
@@ -118,7 +121,8 @@ export default function HomePage({ user }: HomeProps) {
                   Mejores Precios
                 </h3>
                 <p className="text-gray-300">
-                  Compara precios en múltiples tiendas para encontrar las mejores ofertas
+                  Compara precios en múltiples tiendas para encontrar las
+                  mejores ofertas
                 </p>
               </div>
 
@@ -180,7 +184,7 @@ export default function HomePage({ user }: HomeProps) {
             <h2 className="text-3xl font-bold mb-4">
               ¿Listo para encontrar tu próximo par?
             </h2>
-            <p className="text-xl text-gray-300 mb-8">
+            <p className="text-xl text-darkwhite mb-8">
               Explora miles de zapatillas de las mejores marcas
             </p>
             <button
