@@ -31,32 +31,27 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
         <div className="flex justify-between items-center h-full">
           {/* Logo/Nombre (Izquierda) */}
           <div className="flex-shrink-0">
-            <a
-              href="/"
-              className="text-xl font-bold text-white hover:text-gray-300 transition-colors"
-            >
-              Quimera Sneakers
+            <a href="/" className="block hover:opacity-80 transition-opacity">
+              <img
+                src="/quimera_imagotipo_black.svg"
+                alt="Quimera Sneakers"
+                className="h-10 w-auto"
+              />
             </a>
           </div>
 
           {/* Barra de búsqueda (Centro) */}
           <div className="flex-1 max-w-4xl mx-8">
             <form onSubmit={handleSearchSubmit} className="relative">
-              <div className="relative flex">
+              <div className="relative flex items-center">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-darkaccentwhite z-10" />
                 <input
                   type="text"
                   placeholder="Buscar por marca, modelo, sku..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-20 py-2 bg-darkwhite text-gray placeholder-darkaccentwhite border border-lightaccentwhite hover:border-darkaccentwhite rounded-lg focus:outline-none focus:ring-2 focus:ring-darkaccentwhite focus:border-transparent"
+                  className="w-full pl-10 pr-20 py-2 bg-darkwhite text-darkaccentwhite placeholder-darkaccentwhite border border-lightaccentwhite hover:border-darkaccentwhite rounded-lg focus:outline-none focus:ring-2 focus:ring-darkaccentwhite focus:border-transparent"
                 />
-                <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
-                <button
-                  type="submit"
-                  className="absolute right-1 top-1 bottom-1 px-3 bg-lightaccentwhite text-lightblack cursor-pointer rounded-md hover:bg-darkwhite transition-colors text-md font-medium"
-                >
-                  Buscar
-                </button>
               </div>
             </form>
           </div>
@@ -65,13 +60,13 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
           <div className="flex items-center space-x-6">
             <a
               href="#"
-              className="text-lightblack hover:text-white text-md font-medium transition-colors"
+              className="text-verylightblack text-md font-medium transition-colors"
             >
               Noticias
             </a>
             <a
               href="#"
-              className="text-lightblack hover:text-accentwhite text-md font-medium transition-colors"
+              className="text-verylightblack text-md font-medium transition-colors"
             >
               Acerca de
             </a>
@@ -80,7 +75,7 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
             {user && (
               <a
                 href="/favorites"
-                className="flex items-center space-x-1 text-lightblack hover:text-white text-md font-medium transition-colors"
+                className="flex items-center space-x-1 text-verylightblack text-md font-medium transition-colors"
               >
                 <span>Favoritos</span>
               </a>
@@ -90,7 +85,7 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
             {user && !permissionsLoading && hasAdminPermission() && (
               <a
                 href="/admin/users"
-                className="flex items-center space-x-1 text-lightblack hover:text-white text-md font-medium transition-colors"
+                className="flex items-center space-x-1 text-verylightblack text-md font-medium transition-colors"
               >
                 <span>Usuarios</span>
               </a>
@@ -104,7 +99,7 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
                   className="ml-20 flex items-center space-x-1 text-gray-300 hover:text-white transition-colors"
                 >
                   {/* Avatar del usuario */}
-                  <div className="h-10 w-10 rounded-full overflow-hidden border-2 border-accentwhite">
+                  <div className="h-10 w-10 rounded-full overflow-hidden border-2 border-lightaccentwhite">
                     {user.picture ? (
                       <Image
                         src={user.picture}
@@ -121,7 +116,7 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
                   </div>
 
                   {/* <span className="text-sm hidden md:inline">{user.name}</span> */}
-                  <ChevronDown className="h-4 w-4 text-lightblack font-semibold" />
+                  <ChevronDown className="h-4 w-4 text-verylightblack font-semibold" />
                 </button>
 
                 {/* Dropdown del usuario */}
