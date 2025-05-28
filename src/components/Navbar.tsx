@@ -15,7 +15,8 @@ interface NavbarProps {
 export default function Navbar({ user, onSearch }: NavbarProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const { hasAdminPermission, isLoading: permissionsLoading } = usePermissions();
+  const { hasAdminPermission, isLoading: permissionsLoading } =
+    usePermissions();
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,31 +26,34 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
   };
 
   return (
-    <nav className="bg-gray-900 text-white shadow-md sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-14">
+    <nav className="bg-lightwhite text-white shadow-md sticky top-0 z-50">
+      <div className="max-w-none w-[95%] h-20 mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-full">
           {/* Logo/Nombre (Izquierda) */}
           <div className="flex-shrink-0">
-            <a href="/" className="text-xl font-bold text-white hover:text-gray-300 transition-colors">
+            <a
+              href="/"
+              className="text-xl font-bold text-white hover:text-gray-300 transition-colors"
+            >
               Quimera Sneakers
             </a>
           </div>
 
           {/* Barra de búsqueda (Centro) */}
-          <div className="flex-1 max-w-2xl mx-8">
+          <div className="flex-1 max-w-4xl mx-8">
             <form onSubmit={handleSearchSubmit} className="relative">
               <div className="relative flex">
                 <input
                   type="text"
-                  placeholder="Buscar: jordan aj1, nike dunk..."
+                  placeholder="Buscar por marca, modelo, sku..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-20 py-2 bg-gray-800 text-white placeholder-gray-400 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
+                  className="w-full pl-10 pr-20 py-2 bg-darkwhite text-gray placeholder-darkaccentwhite border border-lightaccentwhite hover:border-darkaccentwhite rounded-lg focus:outline-none focus:ring-2 focus:ring-darkaccentwhite focus:border-transparent"
                 />
                 <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
                 <button
                   type="submit"
-                  className="absolute right-1 top-1 bottom-1 px-3 bg-white text-gray-900 rounded-md hover:bg-gray-100 transition-colors text-sm font-medium"
+                  className="absolute right-1 top-1 bottom-1 px-3 bg-lightaccentwhite text-lightblack cursor-pointer rounded-md hover:bg-darkwhite transition-colors text-md font-medium"
                 >
                   Buscar
                 </button>
@@ -59,31 +63,35 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
 
           {/* Enlaces adicionales y Usuario (Derecha) */}
           <div className="flex items-center space-x-6">
-            <a href="#" className="text-gray-300 hover:text-white text-sm font-medium transition-colors">
+            <a
+              href="#"
+              className="text-lightblack hover:text-white text-md font-medium transition-colors"
+            >
               Noticias
             </a>
-            <a href="#" className="text-gray-300 hover:text-white text-sm font-medium transition-colors">
+            <a
+              href="#"
+              className="text-lightblack hover:text-accentwhite text-md font-medium transition-colors"
+            >
               Acerca de
             </a>
-            
+
             {/* Enlace de favoritos - solo visible para usuarios autenticados */}
             {user && (
-              <a 
-                href="/favorites" 
-                className="flex items-center space-x-1 text-gray-300 hover:text-white text-sm font-medium transition-colors"
+              <a
+                href="/favorites"
+                className="flex items-center space-x-1 text-lightblack hover:text-white text-md font-medium transition-colors"
               >
-                <Heart className="h-4 w-4" />
                 <span>Favoritos</span>
               </a>
             )}
-            
+
             {/* Enlace de administración - solo visible para administradores */}
             {user && !permissionsLoading && hasAdminPermission() && (
-              <a 
-                href="/admin/users" 
-                className="flex items-center space-x-1 text-gray-300 hover:text-white text-sm font-medium transition-colors"
+              <a
+                href="/admin/users"
+                className="flex items-center space-x-1 text-lightblack hover:text-white text-md font-medium transition-colors"
               >
-                <Users className="h-4 w-4" />
                 <span>Usuarios</span>
               </a>
             )}
@@ -93,10 +101,10 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
               <div className="relative">
                 <button
                   onClick={() => setShowUserMenu(!showUserMenu)}
-                  className="flex items-center space-x-3 text-gray-300 hover:text-white transition-colors"
+                  className="ml-20 flex items-center space-x-1 text-gray-300 hover:text-white transition-colors"
                 >
                   {/* Avatar del usuario */}
-                  <div className="h-8 w-8 rounded-full overflow-hidden border-2 border-gray-600">
+                  <div className="h-10 w-10 rounded-full overflow-hidden border-2 border-accentwhite">
                     {user.picture ? (
                       <Image
                         src={user.picture}
@@ -111,10 +119,9 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
                       </div>
                     )}
                   </div>
-                  
-                  {/* Nombre del usuario (visible en pantallas medianas y grandes) */}
-                  <span className="text-sm hidden md:inline">{user.name}</span>
-                  <ChevronDown className="h-4 w-4" />
+
+                  {/* <span className="text-sm hidden md:inline">{user.name}</span> */}
+                  <ChevronDown className="h-4 w-4 text-lightblack font-semibold" />
                 </button>
 
                 {/* Dropdown del usuario */}
@@ -161,8 +168,8 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
 
       {/* Overlay para cerrar dropdowns */}
       {showUserMenu && (
-        <div 
-          className="fixed inset-0 z-40" 
+        <div
+          className="fixed inset-0 z-40"
           onClick={() => {
             setShowUserMenu(false);
           }}
