@@ -22,10 +22,6 @@ interface HomeProps {
 export default function HomePage({ user }: HomeProps) {
   const router = useRouter();
 
-  const handleSearch = (query: string) => {
-    router.push(`/browse?search=${encodeURIComponent(query)}`);
-  };
-
   const handleViewAll = () => {
     router.push("/browse");
   };
@@ -40,57 +36,18 @@ export default function HomePage({ user }: HomeProps) {
       <UserSync user={user} />
 
       <main>
-        <div className="bg-gray-800 border-b border-gray-700">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div className="text-center">
-              <h1 className="text-4xl font-bold text-white mb-2">
-                Bienvenido a Quimera
-              </h1>
-              <p className="text-xl text-gray-300 mb-8">
-                Descubre las mejores ofertas de zapatillas de múltiples tiendas
-              </p>
-
-              <div className="max-w-md mx-auto">
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    const formData = new FormData(e.target as HTMLFormElement);
-                    const query = formData.get("search") as string;
-                    if (query?.trim()) {
-                      handleSearch(query.trim());
-                    }
-                  }}
-                  className="relative flex"
-                >
-                  <input
-                    name="search"
-                    type="text"
-                    placeholder="Buscar: jordan aj1, nike dunk..."
-                    className="w-full pl-4 pr-20 py-3 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent bg-gray-700 text-white placeholder-gray-400"
-                  />
-                  <button
-                    type="submit"
-                    className="absolute right-1 top-1 bottom-1 px-4 bg-white text-gray-900 rounded-md hover:bg-gray-100 transition-colors font-medium flex items-center space-x-1"
-                  >
-                    <svg
-                      className="h-4 w-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                      />
-                    </svg>
-                    <span>Buscar</span>
-                  </button>
-                </form>
-              </div>
-            </div>
-          </div>
+        {/* Video Section */}
+        <div className="w-full">
+        <video 
+        className="w-full h-96 md:h-96 lg:h-screen object-cover"
+        autoPlay 
+        muted 
+        loop 
+        playsInline
+        >
+        <source src="/videoinicio.mp4" type="video/mp4" />
+        Tu navegador no soporta el elemento de video.
+        </video>
         </div>
 
         <TrendingSneakers
