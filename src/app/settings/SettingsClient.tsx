@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { User, Settings, Trash2, Save, Eye, EyeOff } from "lucide-react";
+import { User, Settings, Trash2, Save, Eye, EyeOff, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface Auth0User {
@@ -174,6 +174,17 @@ export default function SettingsClient({ user }: SettingsClientProps) {
           </div>
 
           <div className="p-6">
+            {/* Logout Button */}
+            <div className="mb-6 flex justify-end">
+              <a
+                href="/auth/logout"
+                className="inline-flex items-center px-4 py-2 border border-red-600 text-sm font-medium rounded-md text-red-200 bg-red-800 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Cerrar sesión
+              </a>
+            </div>
+
             {/* Messages */}
             {error && (
               <div className="mb-4 bg-red-900 border border-red-700 rounded-md p-4">
