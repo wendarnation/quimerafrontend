@@ -51,7 +51,7 @@ export default function SneakersBanner() {
   const bannerItems = [...displayContent, ...displayContent];
 
   return (
-    <div className="bg-lightblack py-2 md:py-3 overflow-hidden relative border-b border-gray-800">
+    <div className="bg-lightblack py-1 md:py-2 overflow-hidden relative border-b border-gray-800">
       {/* Contenedor que siempre está visible */}
       <div className="sneakers-banner">
         {bannerItems.map((item, index) => (
@@ -59,19 +59,19 @@ export default function SneakersBanner() {
             key={`${item.id}-${index}`}
             onClick={(e) => handleSneakerClick(item.id, e)}
             disabled={!isRealData}
-            className={`inline-flex items-center mx-8 md:mx-12 text-sm md:text-base ${
+            className={`inline-flex items-center mx-8 md:mx-12 text-xs md:text-base ${
               isRealData ? "cursor-pointer" : "cursor-default"
             }`}
           >
-            <span className="font-bold text-darkwhite text-sm uppercase tracking-wider">
+            <span className="font-bold text-darkwhite text-xs md:text-sm uppercase tracking-wider">
               {item.marca}
             </span>
-            <span className="mx-3 text-lightaccentwhite text-sm">•</span>
-            <span className="font-medium text-lightaccentwhite">
+            <span className="mx-3 text-lightaccentwhite text-xs md:text-sm">•</span>
+            <span className="font-medium text-lightaccentwhite text-xs md:text-base">
               {item.modelo}
             </span>
-            <span className="mx-3 text-lightaccentwhite">—</span>
-            <span className="text-greenneon text-base font-semibold">
+            <span className="mx-3 text-lightaccentwhite text-xs md:text-base">—</span>
+            <span className="text-greenneon text-xs md:text-base font-semibold">
               {formatPrice(item.precio_min)}
             </span>
           </button>
