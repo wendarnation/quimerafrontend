@@ -36,18 +36,42 @@ export default function HomePage({ user }: HomeProps) {
       <UserSync user={user} />
 
       <main>
-        {/* Video Section */}
-        <div className="w-full">
-        <video 
-        className="w-full h-96 md:h-96 lg:h-screen object-cover"
-        autoPlay 
-        muted 
-        loop 
-        playsInline
-        >
-        <source src="/videoinicio.mp4" type="video/mp4" />
-        Tu navegador no soporta el elemento de video.
-        </video>
+        {/* Video Section with overlay content */}
+        <div className="relative w-full">
+          <video
+            className="w-full h-96 md:h-96 lg:h-screen object-cover"
+            autoPlay
+            muted
+            loop
+            playsInline
+          >
+            <source src="/videoinicio.mp4" type="video/mp4" />
+            Tu navegador no soporta el elemento de video.
+          </video>
+
+          {/* Overlay content - only show if user is not logged in */}
+          {!user && (
+            <div className="absolute inset-0 flex items-end">
+              <div className="w-full px-4 sm:px-6 lg:px-8 pb-4 md:pb-32 lg:pb-52">
+                <div className="max-w-none w-[95%] mx-auto">
+                  <div className="text-darkwhite max-w-[70%] md:max-w-[30%]">
+                    <h1 className="text-xl text-darkwhite md:text-4xl lg:text-4xl font-extrabold mb-2 md:mb-4">
+                      REGÍSTRATE PARA VER TODAS LAS VENTAJAS
+                    </h1>
+                    <p className="text-sm text-darkwhite md:text-xl font-light lg:text-xl mb-6 text-gray-200">
+                      Guardar en favoritos, novedades... Y mucho más
+                    </p>
+                    <a
+                      href="/auth/login"
+                      className="inline-block bg-darkwhite text-lightblack px-5 py-2 md:px-8 md:py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors text-sm md:text-lg"
+                    >
+                      EMPIEZA
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         <TrendingSneakers
