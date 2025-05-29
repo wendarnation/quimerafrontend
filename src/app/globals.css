@@ -68,3 +68,43 @@ body {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
 }
+
+/* Banner animations */
+@keyframes infinite-scroll {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.sneakers-banner {
+  animation: infinite-scroll 120s linear infinite;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.sneakers-banner:hover {
+  animation-play-state: paused;
+}
+
+/* Estilos para los botones del banner */
+.sneakers-banner button {
+  background: transparent;
+  border: none;
+  outline: none;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .sneakers-banner {
+    animation-duration: 100s;
+  }
+}
+
+@media (max-width: 480px) {
+  .sneakers-banner {
+    animation-duration: 80s;
+  }
+}

@@ -4,6 +4,7 @@
 import { useUser } from "@auth0/nextjs-auth0";
 import { useRouter, usePathname } from "next/navigation";
 import Navbar from "../Navbar";
+import SneakersBanner from "../SneakersBanner";
 import { AuthUser } from "../../types/auth";
 
 interface LayoutWrapperProps {
@@ -54,6 +55,7 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
           onSearch={handleSearch}
         />
       )}
+      {pathname === '/' && <SneakersBanner />}
       {children}
     </>
   );
