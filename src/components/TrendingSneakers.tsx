@@ -168,7 +168,7 @@ export default function TrendingSneakers({
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-2">
             <h2 className="text-lg md:text-2xl text-lightblack font-bold">
-              Sneakers tendencia
+              Novedades
             </h2>
           </div>
 
@@ -188,7 +188,7 @@ export default function TrendingSneakers({
           {canGoPrevious && (
             <button
               onClick={handlePrevious}
-              className="absolute cursro-pointer -left-15 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 rounded-full flex items-center justify-center transition-all bg-lightblack text-darkwhite hover:bg-verylightblack overflow-visible"
+              className="absolute cursor-pointer -left-15 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 rounded-full flex items-center justify-center transition-all bg-lightblack text-darkwhite hover:bg-verylightblack overflow-visible"
             >
               <ChevronLeft className="h-8 w-8 -ml-1" />
             </button>
@@ -203,15 +203,38 @@ export default function TrendingSneakers({
             </button>
           )}
 
-          {/* Grid - 5 columnas */}
-          <div className="grid grid-cols-5 gap-4">
-            {currentSneakers.map((sneaker) => (
-              <ZapatillaCard
-                key={sneaker.id}
-                zapatilla={sneaker}
-                onClick={() => onSneakerClick?.(sneaker)}
-              />
-            ))}
+          {/* Grid - 5 columnas con transición de carousel */}
+          <div className="relative overflow-hidden">
+            <div 
+              className="flex transition-transform duration-500 ease-in-out"
+              style={{
+                transform: `translateX(-${currentPage * 100}%)`
+              }}
+            >
+              {Array.from({ length: totalPages }).map((_, pageIndex) => {
+                const pageStartIndex = pageIndex * ITEMS_PER_PAGE_DESKTOP;
+                const pageSneakers = sneakers.slice(
+                  pageStartIndex,
+                  pageStartIndex + ITEMS_PER_PAGE_DESKTOP
+                );
+                
+                return (
+                  <div key={pageIndex} className="grid grid-cols-5 gap-4 w-full flex-shrink-0">
+                    {pageSneakers.map((sneaker) => (
+                      <ZapatillaCard
+                        key={sneaker.id}
+                        zapatilla={sneaker}
+                        onClick={() => onSneakerClick?.(sneaker)}
+                      />
+                    ))}
+                    {/* Rellenar con espacios vacíos si es necesario */}
+                    {Array.from({ length: ITEMS_PER_PAGE_DESKTOP - pageSneakers.length }).map((_, emptyIndex) => (
+                      <div key={`empty-${emptyIndex}`} className="invisible" />
+                    ))}
+                  </div>
+                );
+              })}
+            </div>
           </div>
 
           {/* Pagination Dots removidos */}

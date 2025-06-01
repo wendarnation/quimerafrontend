@@ -63,7 +63,7 @@ export default function HomePage({ user }: HomeProps) {
                     </p>
                     <a
                       href="/auth/login"
-                      className="inline-block bg-yellowneon cursor-pointer hover:bg-lightblack text-lightblack hover:text-darkwhite px-5 py-2 md:px-8 md:py-3 rounded-lg font-semibold transition-all duration-500 ease-in-out text-sm md:text-lg"
+                      className="inline-block bg-darkwhite cursor-pointer hover:bg-lightblack text-lightblack hover:text-darkwhite px-5 py-2 md:px-8 md:py-3 rounded-lg font-semibold transition-all duration-500 ease-in-out text-sm md:text-lg"
                     >
                       EMPIEZA
                     </a>
@@ -84,7 +84,7 @@ export default function HomePage({ user }: HomeProps) {
                     </p>
                     <button
                       onClick={handleViewAll}
-                      className="inline-block bg-yellowneon cursor-pointer hover:bg-lightblack text-lightblack hover:text-darkwhite px-5 py-2 md:px-8 md:py-3 rounded-lg font-semibold transition-all duration-500 ease-in-out text-sm md:text-lg"
+                      className="inline-block bg-darkwhite cursor-pointer hover:bg-lightblack text-lightblack hover:text-darkwhite px-5 py-2 md:px-8 md:py-3 rounded-lg font-semibold transition-all duration-500 ease-in-out text-sm md:text-lg"
                     >
                       VER TODAS
                     </button>
