@@ -148,7 +148,7 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
                   <div className="flex items-center space-x-3 ml-5">
                     <a
                       href="/auth/login"
-                      className="text-lightblack hover:text-white hover:bg-lightblack border border-lightblack rounded-3xl py-2 px-5 text-md font-medium transition-colors durantion-300"
+                      className="text-lightblack hover:text-white hover:bg-lightblack border border-lightblack rounded-3xl py-2 px-5 text-md font-medium transition-colors duration-500"
                     >
                       Login
                     </a>
@@ -259,8 +259,8 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
         }`}
         style={{
-          willChange: 'transform',
-          backfaceVisibility: 'hidden',
+          willChange: "transform",
+          backfaceVisibility: "hidden",
         }}
       >
         <div className="flex flex-col h-full">
@@ -339,7 +339,9 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
                     {user.picture ? (
                       <Image
                         src={user.picture}
-                        alt={profile?.nickname || user.name || "Avatar de usuario"}
+                        alt={
+                          profile?.nickname || user.name || "Avatar de usuario"
+                        }
                         width={40}
                         height={40}
                         className="h-full w-full object-cover"

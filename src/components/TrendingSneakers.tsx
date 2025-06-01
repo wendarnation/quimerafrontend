@@ -62,15 +62,20 @@ export default function TrendingSneakers({
   if (isLoading) {
     return (
       <div className="bg-lightwhite text-lightblack py-12">
+        {/* Header con contenedor normal */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center space-x-2">
-              <h2 className="text-2xl font-bold">Sneakers en tendencia</h2>
+              <h2 className="text-lg md:text-2xl font-bold">
+                Sneakers en tendencia
+              </h2>
               <div className="w-5 h-5 bg-lightblack/20 rounded-full animate-pulse" />
             </div>
           </div>
+        </div>
 
-          {/* Loading skeleton - Desktop */}
+        {/* Loading skeleton - Desktop con contenedor */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="hidden md:grid grid-cols-5 gap-4">
             {Array.from({ length: 5 }).map((_, index) => (
               <div
@@ -79,13 +84,15 @@ export default function TrendingSneakers({
               />
             ))}
           </div>
+        </div>
 
-          {/* Loading skeleton - Mobile */}
-          <div className="md:hidden flex space-x-4 overflow-x-auto">
+        {/* Loading skeleton - Mobile sin contenedor */}
+        <div className="md:hidden">
+          <div className="flex space-x-4 overflow-x-auto pl-4">
             {Array.from({ length: 3 }).map((_, index) => (
               <div
                 key={index}
-                className="bg-lightblack/10 rounded-lg h-80 w-44 flex-shrink-0 animate-pulse"
+                className="bg-lightblack/10 rounded-lg h-64 w-36 flex-shrink-0 animate-pulse"
               />
             ))}
           </div>
@@ -142,7 +149,9 @@ export default function TrendingSneakers({
       <div className="bg-lightwhite text-lightblack py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4">Zapatillas Destacadas</h2>
+            <h2 className="text-lg md:text-2xl font-bold mb-4">
+              Zapatillas Destacadas
+            </h2>
             <p className="text-darkaccentwhite">
               No hay zapatillas disponibles en este momento
             </p>
@@ -154,42 +163,43 @@ export default function TrendingSneakers({
 
   return (
     <div className="bg-lightwhite text-lightblack py-12">
+      {/* Header con contenedor normal */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-2">
-            <h2 className="text-2xl text-lightblack font-bold">
+            <h2 className="text-lg md:text-2xl text-lightblack font-bold">
               Sneakers tendencia
             </h2>
           </div>
 
           <button
             onClick={onViewAll}
-            className="flex items-center space-x-1 text-lightblack hover:text-darkaccentwhite transition-colors group"
+            className="flex items-center space-x-1 bg-pinkneon hover:bg-lightblack cursor-pointer px-3 py-1.5 md:px-4 md:py-2 rounded-xl text-lightwhite transition-colors duration-500 group"
           >
-            <span className="text-sm font-medium">Ver Todas</span>
-            <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            <span className="text-xs md:text-sm font-medium">Ver Todas</span>
           </button>
         </div>
+      </div>
 
-        {/* Desktop Grid */}
+      {/* Desktop Grid con contenedor normal */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="hidden md:block relative">
           {/* Navigation Arrows - Solo mostrar si hay páginas disponibles */}
           {canGoPrevious && (
             <button
               onClick={handlePrevious}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 rounded-full flex items-center justify-center transition-all bg-lightblack text-darkwhite hover:bg-verylightblack shadow-lg"
+              className="absolute cursro-pointer -left-15 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 rounded-full flex items-center justify-center transition-all bg-lightblack text-darkwhite hover:bg-verylightblack overflow-visible"
             >
-              <ChevronLeft className="h-5 w-5" />
+              <ChevronLeft className="h-8 w-8 -ml-1" />
             </button>
           )}
 
           {canGoNext && (
             <button
               onClick={handleNext}
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-10 h-10 rounded-full flex items-center justify-center transition-all bg-lightblack text-darkwhite hover:bg-verylightblack shadow-lg"
+              className="absolute cursor-pointer -right-15 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-10 h-10 rounded-full flex items-center justify-center transition-all bg-lightblack text-darkwhite hover:bg-verylightblack overflow-visible"
             >
-              <ChevronRight className="h-5 w-5" />
+              <ChevronRight className="h-8 w-8 -mr-1" />
             </button>
           )}
 
@@ -206,45 +216,45 @@ export default function TrendingSneakers({
 
           {/* Pagination Dots removidos */}
         </div>
+      </div>
 
-        {/* Mobile Horizontal Scroll */}
-        <div className="md:hidden relative">
-          <div
-            ref={scrollContainerRef}
-            className="flex space-x-4 overflow-x-auto pb-4 scrollbar-hide"
-            onScroll={handleScroll}
-            style={{
-              scrollbarWidth: "none",
-              msOverflowStyle: "none",
-            }}
-          >
-            {sneakers.map((sneaker) => (
-              <div key={sneaker.id} className="w-44 flex-shrink-0">
-                <ZapatillaCard
-                  zapatilla={sneaker}
-                  onClick={() => onSneakerClick?.(sneaker)}
-                />
-              </div>
-            ))}
-          </div>
+      {/* Mobile Horizontal Scroll - sin contenedor, pegado a los lados */}
+      <div className="md:hidden relative">
+        <div
+          ref={scrollContainerRef}
+          className="flex space-x-4 overflow-x-auto pb-4 scrollbar-hide pl-4"
+          onScroll={handleScroll}
+          style={{
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+          }}
+        >
+          {sneakers.map((sneaker) => (
+            <div key={sneaker.id} className="w-36 flex-shrink-0">
+              <ZapatillaCard
+                zapatilla={sneaker}
+                onClick={() => onSneakerClick?.(sneaker)}
+              />
+            </div>
+          ))}
+        </div>
 
-          {/* Scroll indicator - Solo el thumb, sin barra de fondo */}
-          <div className="mt-2 mx-4 h-3">
-            {isScrolling && (
-              <div className="relative h-1">
-                <div
-                  className="absolute h-1 bg-lightblack rounded-full transition-opacity duration-300"
-                  style={{
-                    width: `${Math.max(20, (2.3 / sneakers.length) * 100)}%`,
-                    left: `${
-                      scrollPosition *
-                      (100 - Math.max(20, (2.3 / sneakers.length) * 100))
-                    }%`,
-                  }}
-                />
-              </div>
-            )}
-          </div>
+        {/* Scroll indicator - Solo el thumb, sin barra de fondo */}
+        <div className="mt-2 mx-4 h-3">
+          {isScrolling && (
+            <div className="relative h-1">
+              <div
+                className="absolute h-1 bg-darkaccentwhite rounded-full transition-opacity duration-300"
+                style={{
+                  width: `${Math.max(20, (2.3 / sneakers.length) * 100)}%`,
+                  left: `${
+                    scrollPosition *
+                    (100 - Math.max(20, (2.3 / sneakers.length) * 100))
+                  }%`,
+                }}
+              />
+            </div>
+          )}
         </div>
       </div>
 

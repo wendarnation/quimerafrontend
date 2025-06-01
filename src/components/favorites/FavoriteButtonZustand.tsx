@@ -9,7 +9,7 @@ import { useFavoritesWithZustand } from "../../hooks/useFavoritesWithZustand";
 interface FavoriteButtonProps {
   zapatillaId: number;
   className?: string;
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "xl" | "2xl";
   showText?: boolean;
 }
 
@@ -44,7 +44,9 @@ export default function FavoriteButtonZustand({
   const sizeClasses = {
     sm: "h-4 w-4",
     md: "h-5 w-5",
-    lg: "h-6 w-6",
+    lg: "h-6 w-6 md:h-7 md:w-7", // Mobile: h-6, Desktop: h-7
+    xl: "h-7 w-7",
+    "2xl": "h-8 w-8",
   };
 
   const handleToggleFavorite = async (e: React.MouseEvent) => {
