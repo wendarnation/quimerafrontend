@@ -56,7 +56,7 @@ export default function HomePage({ user }: HomeProps) {
               <div className="w-full px-4 sm:px-6 lg:px-8 pb-4 md:pb-32 lg:pb-52">
                 <div className="max-w-none w-[95%] mx-auto">
                   <div className="text-darkwhite max-w-[70%] md:max-w-[30%]">
-                    <GlitchText 
+                    <GlitchText
                       text="REGÍSTRATE PARA VER TODAS LAS VENTAJAS"
                       className="text-xl text-darkwhite md:text-4xl lg:text-4xl font-extrabold mb-2 md:mb-4"
                     />
@@ -78,7 +78,7 @@ export default function HomePage({ user }: HomeProps) {
               <div className="w-full px-4 sm:px-6 lg:px-8 pb-4 md:pb-32 lg:pb-52">
                 <div className="max-w-none w-[95%] mx-auto">
                   <div className="text-darkwhite max-w-[70%] md:max-w-[30%]">
-                    <GlitchText 
+                    <GlitchText
                       text="LA DEMOCRATIZACIÓN DE LAS SNEAKERS ESTÁ AQUÍ"
                       className="text-xl text-darkwhite md:text-4xl lg:text-4xl font-extrabold mb-2 md:mb-4"
                     />
@@ -102,6 +102,60 @@ export default function HomePage({ user }: HomeProps) {
           onViewAll={handleViewAll}
           onSneakerClick={handleSneakerClick}
         />
+
+        {/* Featured Images Section */}
+        <div className="bg-lightwhite py-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-4 sm:px-6 lg:px-8">
+            {/* Jordan Image with Overlay */}
+            <div className="relative overflow-hidden rounded-lg">
+              <img
+                src="/jordanbw.webp"
+                alt="Jordan 1"
+                className="w-full h-96 md:h-[32rem] object-cover"
+              />
+              {/* Overlay content */}
+              <div className="absolute inset-0 flex items-end">
+                <div className="w-full p-4 md:p-6 pb-6 md:pb-8">
+                  <div className="text-darkwhite max-w-[30%]">
+                    <p className="text-sm md:text-lg font-light mb-4 text-darkwhite">
+                      ...Pero sigue siendo el rey
+                    </p>
+                    <button
+                      onClick={() => router.push("/browse?search=jordan")}
+                      className="inline-block bg-darkwhite cursor-pointer hover:bg-yellowneon text-lightblack hover:text-lightblack px-4 py-2 md:px-6 md:py-2 rounded-lg font-semibold transition-all duration-500 ease-in-out text-sm md:text-base"
+                    >
+                      Ver más
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {/* New Balance Image */}
+            <div className="relative overflow-hidden rounded-lg">
+              <img
+                src="/newbalancebw.webp"
+                alt="New Balance"
+                className="w-full h-96 md:h-[32rem] object-cover"
+              />
+              {/* Overlay content */}
+              <div className="absolute inset-0 flex items-end">
+                <div className="w-full p-4 md:p-6 pb-6 md:pb-8">
+                  <div className="text-darkwhite max-w-[30%]">
+                    <p className="text-sm md:text-lg font-light mb-4 text-darkwhite">
+                      Si buscas tu primera sneaker dad, estás de suerte.
+                    </p>
+                    <button
+                      onClick={() => router.push("/browse?search=new balance")}
+                      className="inline-block bg-darkwhite cursor-pointer hover:bg-yellowneon text-lightblack hover:text-lightblack px-4 py-2 md:px-6 md:py-2 rounded-lg font-semibold transition-all duration-500 ease-in-out text-sm md:text-base"
+                    >
+                      Ver más
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <div className="bg-gray-800 py-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
