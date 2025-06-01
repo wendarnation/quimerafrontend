@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { useLatestSneakers } from "@/hooks/useSneakers";
 import ZapatillaCard from "./ZapatillaCard";
@@ -11,11 +11,50 @@ interface TrendingSneakersProps {
   onSneakerClick?: (sneaker: Zapatilla) => void;
 }
 
-const ITEMS_PER_PAGE = 6; // Mostrar 6 zapatillas a la vez
+const ITEMS_PER_PAGE_DESKTOP = 5; // Mostrar 5 zapatillas en desktop
 
 export default function TrendingSneakers({ onViewAll, onSneakerClick }: TrendingSneakersProps) {
   const { data, isLoading, error } = useLatestSneakers();
   const [currentPage, setCurrentPage] = useState(0);
+  const [isScrolling, setIsScrolling] = useState(false);
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout>();
+
+  // Manejar el scroll en móvil - actualizar en tiempo real
+  const handleScroll = () => {
+    setIsScrolling(true);
+    
+    // Actualizar posición del scroll en tiempo real
+    if (scrollContainerRef.current) {
+      const scrollLeft = scrollContainerRef.current.scrollLeft;
+      const scrollWidth = scrollContainerRef.current.scrollWidth;
+      const clientWidth = scrollContainerRef.current.clientWidth;
+      const maxScroll = scrollWidth - clientWidth;
+      
+      if (maxScroll > 0) {
+        setScrollPosition(scrollLeft / maxScroll);
+      }
+    }
+    
+    // Limpiar timeout anterior
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current);
+    }
+    
+    // Ocultar scrollbar después de 1 segundo
+    scrollTimeoutRef.current = setTimeout(() => {
+      setIsScrolling(false);
+    }, 1000);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+    };
+  }, []);
 
   if (isLoading) {
     return (
@@ -28,9 +67,17 @@ export default function TrendingSneakers({ onViewAll, onSneakerClick }: Trending
             </div>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {Array.from({ length: 6 }).map((_, index) => (
+          {/* Loading skeleton - Desktop */}
+          <div className="hidden md:grid grid-cols-5 gap-4">
+            {Array.from({ length: 5 }).map((_, index) => (
               <div key={index} className="bg-lightblack/10 rounded-lg h-80 animate-pulse" />
+            ))}
+          </div>
+          
+          {/* Loading skeleton - Mobile */}
+          <div className="md:hidden flex space-x-4 overflow-x-auto">
+            {Array.from({ length: 3 }).map((_, index) => (
+              <div key={index} className="bg-lightblack/10 rounded-lg h-80 w-44 flex-shrink-0 animate-pulse" />
             ))}
           </div>
         </div>
@@ -57,9 +104,9 @@ export default function TrendingSneakers({ onViewAll, onSneakerClick }: Trending
   }
 
   const sneakers = data?.data || [];
-  const totalPages = Math.ceil(sneakers.length / ITEMS_PER_PAGE);
-  const startIndex = currentPage * ITEMS_PER_PAGE;
-  const currentSneakers = sneakers.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(sneakers.length / ITEMS_PER_PAGE_DESKTOP);
+  const startIndex = currentPage * ITEMS_PER_PAGE_DESKTOP;
+  const currentSneakers = sneakers.slice(startIndex, startIndex + ITEMS_PER_PAGE_DESKTOP);
 
   const canGoPrevious = currentPage > 0;
   const canGoNext = currentPage < totalPages - 1;
@@ -110,39 +157,29 @@ export default function TrendingSneakers({ onViewAll, onSneakerClick }: Trending
           </button>
         </div>
 
-        {/* Sneakers Grid */}
-        <div className="relative">
-          {/* Navigation Arrows */}
-          {totalPages > 1 && (
-            <>
-              <button
-                onClick={handlePrevious}
-                disabled={!canGoPrevious}
-                className={`absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 rounded-full flex items-center justify-center transition-all ${
-                  canGoPrevious
-                    ? 'bg-lightblack text-darkwhite hover:bg-verylightblack shadow-lg'
-                    : 'bg-lightaccentwhite text-darkaccentwhite cursor-not-allowed'
-                }`}
-              >
-                <ChevronLeft className="h-5 w-5" />
-              </button>
-              
-              <button
-                onClick={handleNext}
-                disabled={!canGoNext}
-                className={`absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-10 h-10 rounded-full flex items-center justify-center transition-all ${
-                  canGoNext
-                    ? 'bg-lightblack text-darkwhite hover:bg-verylightblack shadow-lg'
-                    : 'bg-lightaccentwhite text-darkaccentwhite cursor-not-allowed'
-                }`}
-              >
-                <ChevronRight className="h-5 w-5" />
-              </button>
-            </>
+        {/* Desktop Grid */}
+        <div className="hidden md:block relative">
+          {/* Navigation Arrows - Solo mostrar si hay páginas disponibles */}
+          {canGoPrevious && (
+            <button
+              onClick={handlePrevious}
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 rounded-full flex items-center justify-center transition-all bg-lightblack text-darkwhite hover:bg-verylightblack shadow-lg"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+          )}
+          
+          {canGoNext && (
+            <button
+              onClick={handleNext}
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-10 h-10 rounded-full flex items-center justify-center transition-all bg-lightblack text-darkwhite hover:bg-verylightblack shadow-lg"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
           )}
 
-          {/* Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          {/* Grid - 5 columnas */}
+          <div className="grid grid-cols-5 gap-4">
             {currentSneakers.map((sneaker) => (
               <ZapatillaCard 
                 key={sneaker.id} 
@@ -151,25 +188,57 @@ export default function TrendingSneakers({ onViewAll, onSneakerClick }: Trending
               />
             ))}
           </div>
+
+          {/* Pagination Dots removidos */}
         </div>
 
-        {/* Pagination Dots */}
-        {totalPages > 1 && (
-          <div className="flex justify-center mt-8 space-x-2">
-            {Array.from({ length: totalPages }).map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentPage(index)}
-                className={`w-2 h-2 rounded-full transition-all ${
-                  index === currentPage
-                    ? 'bg-lightblack'
-                    : 'bg-lightaccentwhite hover:bg-darkaccentwhite'
-                }`}
-              />
+        {/* Mobile Horizontal Scroll */}
+        <div className="md:hidden relative">
+          <div 
+            ref={scrollContainerRef}
+            className="flex space-x-4 overflow-x-auto pb-4 scrollbar-hide"
+            onScroll={handleScroll}
+            style={{
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none'
+            }}
+          >
+            {sneakers.map((sneaker) => (
+              <div key={sneaker.id} className="w-44 flex-shrink-0">
+                <ZapatillaCard 
+                  zapatilla={sneaker} 
+                  onClick={() => onSneakerClick?.(sneaker)}
+                />
+              </div>
             ))}
           </div>
-        )}
+          
+          {/* Scroll indicator - Solo el thumb, sin barra de fondo */}
+          <div className="mt-2 mx-4 h-3">
+            {isScrolling && (
+              <div className="relative h-1">
+                <div 
+                  className="absolute h-1 bg-lightblack rounded-full transition-opacity duration-300"
+                  style={{
+                    width: `${Math.max(20, (2.3 / sneakers.length) * 100)}%`,
+                    left: `${scrollPosition * (100 - Math.max(20, (2.3 / sneakers.length) * 100))}%`,
+                  }}
+                />
+              </div>
+            )}
+          </div>
+        </div>
       </div>
+      
+      <style jsx>{`
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
     </div>
   );
 }
