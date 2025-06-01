@@ -176,7 +176,7 @@ export default function TrendingSneakers({
             onClick={onViewAll}
             className="flex items-center space-x-1 bg-pinkneon hover:bg-lightblack cursor-pointer px-3 py-1.5 md:px-4 md:py-2 rounded-xl text-lightwhite transition-colors duration-500 group"
           >
-            <span className="text-xs md:text-sm font-medium">Ver Todas</span>
+            <span className="text-xs md:text-sm font-medium">Ver todas</span>
           </button>
         </div>
       </div>
@@ -205,10 +205,10 @@ export default function TrendingSneakers({
 
           {/* Grid - 5 columnas con transición de carousel */}
           <div className="relative overflow-hidden">
-            <div 
+            <div
               className="flex transition-transform duration-500 ease-in-out"
               style={{
-                transform: `translateX(-${currentPage * 100}%)`
+                transform: `translateX(-${currentPage * 100}%)`,
               }}
             >
               {Array.from({ length: totalPages }).map((_, pageIndex) => {
@@ -217,9 +217,12 @@ export default function TrendingSneakers({
                   pageStartIndex,
                   pageStartIndex + ITEMS_PER_PAGE_DESKTOP
                 );
-                
+
                 return (
-                  <div key={pageIndex} className="grid grid-cols-5 gap-4 w-full flex-shrink-0">
+                  <div
+                    key={pageIndex}
+                    className="grid grid-cols-5 gap-4 w-full flex-shrink-0"
+                  >
                     {pageSneakers.map((sneaker) => (
                       <ZapatillaCard
                         key={sneaker.id}
@@ -228,7 +231,9 @@ export default function TrendingSneakers({
                       />
                     ))}
                     {/* Rellenar con espacios vacíos si es necesario */}
-                    {Array.from({ length: ITEMS_PER_PAGE_DESKTOP - pageSneakers.length }).map((_, emptyIndex) => (
+                    {Array.from({
+                      length: ITEMS_PER_PAGE_DESKTOP - pageSneakers.length,
+                    }).map((_, emptyIndex) => (
                       <div key={`empty-${emptyIndex}`} className="invisible" />
                     ))}
                   </div>

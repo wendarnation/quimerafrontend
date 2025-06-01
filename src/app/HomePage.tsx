@@ -83,7 +83,7 @@ export default function HomePage({ user }: HomeProps) {
                       className="text-xl text-darkwhite md:text-4xl lg:text-4xl font-extrabold mb-2 md:mb-4"
                     />
                     <p className="text-sm text-darkwhite md:text-xl font-light lg:text-xl mb-6 text-gray-200">
-                      Busca precios. Filtra. Encuentras tus favoritas.
+                      Busca precios. Filtra. Encuentra tus favoritas.
                     </p>
                     <button
                       onClick={handleViewAll}
@@ -104,7 +104,7 @@ export default function HomePage({ user }: HomeProps) {
         />
 
         {/* Featured Images Section */}
-        <div className="bg-lightwhite py-8">
+        <div className="bg-lightwhite py-2">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-4 sm:px-6 lg:px-8">
             {/* Jordan Image with Overlay */}
             <div className="relative overflow-hidden rounded-lg">
@@ -118,7 +118,7 @@ export default function HomePage({ user }: HomeProps) {
                 <div className="w-full p-4 md:p-6 pb-6 md:pb-8">
                   <div className="text-darkwhite max-w-[30%]">
                     <p className="text-sm md:text-lg font-light mb-4 text-darkwhite">
-                      ...Pero sigue siendo el rey
+                      ...Pero sigue siendo el rey.
                     </p>
                     <button
                       onClick={() => router.push("/browse?search=jordan")}
