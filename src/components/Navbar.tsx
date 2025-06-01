@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Search, User, Heart, Menu, X } from "lucide-react";
 import Image from "next/image";
 import { usePermissions } from "../hooks/usePermissions";
+import { useUserProfile } from "../hooks/useUserProfile";
 import { AuthUser } from "../types/auth";
 
 interface NavbarProps {
@@ -18,6 +19,7 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const { hasAdminPermission, isLoading: permissionsLoading } =
     usePermissions();
+  const { profile, loading: profileLoading } = useUserProfile();
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -337,7 +339,7 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
                     {user.picture ? (
                       <Image
                         src={user.picture}
-                        alt={user.name || "Avatar de usuario"}
+                        alt={profile?.nickname || user.name || "Avatar de usuario"}
                         width={40}
                         height={40}
                         className="h-full w-full object-cover"
@@ -350,9 +352,11 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
                   </div>
                   <div className="flex-1">
                     <p className="text-lightblack font-medium text-sm">
-                      {user.name || "Usuario"}
+                      {profile?.nickname || user.name || "Usuario"}
                     </p>
-                    <p className="text-darkaccentwhite text-xs">{user.email}</p>
+                    <p className="text-darkaccentwhite text-xs">
+                      {profile?.nombre_completo || user.email}
+                    </p>
                   </div>
                 </div>
                 {/* Botón de ajustes */}
