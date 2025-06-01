@@ -24,7 +24,7 @@ export default function ZapatillaCard({
 
     if (isNaN(numPrice)) return "N/A";
 
-    return `€${numPrice.toFixed(2)}`; // Mostrar siempre 2 decimales
+    return `${numPrice.toFixed(2)}€`; // Mostrar siempre 2 decimales
   };
 
   return (
@@ -63,7 +63,7 @@ export default function ZapatillaCard({
       {/* Información del producto */}
       <div className="px-4 -mt-6 pt-1 pb-4 relative z-10">
         {/* Título - Marca y Modelo en filas separadas */}
-        <div className="mb-2">
+        <div className="mb-3">
           <h3 className="font-bold text-lightblack text-sm md:text-base leading-tight line-clamp-1 group-hover:text-verylightblack transition-colors">
             {zapatilla.marca}
           </h3>
@@ -79,7 +79,7 @@ export default function ZapatillaCard({
               <p className="text-xs md:text-sm text-darkaccentwhite">
                 Precio Más Bajo
               </p>
-              <p className="text-base md:text-lg font-bold text-lightblack">
+              <p className="text-base md:text-lg font-bold text-greenneon">
                 {formatPrice(zapatilla.precio_min)}
               </p>
               {zapatilla.precio_max &&

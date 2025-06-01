@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import TrendingSneakers from "@/components/TrendingSneakers";
 import UserSync from "@/components/auth/UserSync";
+import GlitchText from "@/components/GlitchText";
 import { Zapatilla } from "@/types/zapatilla";
 
 interface Auth0User {
@@ -55,9 +56,10 @@ export default function HomePage({ user }: HomeProps) {
               <div className="w-full px-4 sm:px-6 lg:px-8 pb-4 md:pb-32 lg:pb-52">
                 <div className="max-w-none w-[95%] mx-auto">
                   <div className="text-darkwhite max-w-[70%] md:max-w-[30%]">
-                    <h1 className="text-xl text-darkwhite md:text-4xl lg:text-4xl font-extrabold mb-2 md:mb-4">
-                      REGÍSTRATE PARA VER TODAS LAS VENTAJAS
-                    </h1>
+                    <GlitchText 
+                      text="REGÍSTRATE PARA VER TODAS LAS VENTAJAS"
+                      className="text-xl text-darkwhite md:text-4xl lg:text-4xl font-extrabold mb-2 md:mb-4"
+                    />
                     <p className="text-sm text-darkwhite md:text-xl font-light lg:text-xl mb-6 text-gray-200">
                       Guardar en favoritos, novedades... Y mucho más
                     </p>
@@ -76,9 +78,10 @@ export default function HomePage({ user }: HomeProps) {
               <div className="w-full px-4 sm:px-6 lg:px-8 pb-4 md:pb-32 lg:pb-52">
                 <div className="max-w-none w-[95%] mx-auto">
                   <div className="text-darkwhite max-w-[70%] md:max-w-[30%]">
-                    <h1 className="text-xl text-darkwhite md:text-4xl lg:text-4xl font-extrabold mb-2 md:mb-4">
-                      LA DEMOCRATIZACIÓN DE LAS SNEAKERS ESTÁ AQUÍ
-                    </h1>
+                    <GlitchText 
+                      text="LA DEMOCRATIZACIÓN DE LAS SNEAKERS ESTÁ AQUÍ"
+                      className="text-xl text-darkwhite md:text-4xl lg:text-4xl font-extrabold mb-2 md:mb-4"
+                    />
                     <p className="text-sm text-darkwhite md:text-xl font-light lg:text-xl mb-6 text-gray-200">
                       Busca precios. Filtra. Encuentras tus favoritas.
                     </p>
