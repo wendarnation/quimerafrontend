@@ -45,7 +45,7 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
 
   return (
     <>
-      <nav className="bg-lightwhite text-white shadow-md sticky top-0 z-50">
+      <nav className="bg-lightwhite text-white border-b border-lightaccentwhite sticky top-0 z-50">
         <div className="max-w-none w-[95%] h-12 md:h-20 mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-full">
             {/* Versión Desktop */}
@@ -203,7 +203,7 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
 
         {/* Barra de búsqueda móvil - reemplaza el navbar completo */}
         {isMobileSearchOpen && (
-          <div className="md:hidden absolute top-0 left-0 w-full h-12 bg-lightwhite shadow-md z-60">
+          <div className="md:hidden absolute top-0 left-0 w-full h-12 bg-lightwhite border-b border-lightaccentwhite z-60">
             <div className="max-w-none w-[95%] h-12 mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex items-center justify-between h-full">
                 {/* Icono del menú a la izquierda - misma posición exacta */}
