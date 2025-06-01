@@ -244,20 +244,20 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
       </nav>
 
       {/* Overlay para cerrar el menú móvil */}
-      <div
-        className={`fixed inset-0 bg-black z-40 md:hidden transition-all duration-500 ease-out ${
-          isMobileMenuOpen ? "opacity-50 visible" : "opacity-0 invisible"
-        }`}
-        onClick={closeMobileMenu}
-      />
+      {isMobileMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black opacity-50 z-40 md:hidden"
+          onClick={closeMobileMenu}
+        />
+      )}
 
       {/* Menú móvil deslizante - pantalla completa */}
       <div
-        className={`fixed top-0 left-0 h-full w-full bg-lightwhite shadow-xl z-50 transform transition-all duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] md:hidden ${
-          isMobileMenuOpen ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0"
+        className={`fixed top-0 left-0 h-full w-full bg-lightwhite shadow-xl z-50 transform transition-transform duration-300 ease-out md:hidden ${
+          isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
         }`}
         style={{
-          willChange: 'transform, opacity',
+          willChange: 'transform',
           backfaceVisibility: 'hidden',
         }}
       >
@@ -291,20 +291,14 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
             <div className="space-y-1">
               <a
                 href="#"
-                className={`block px-6 py-3 text-lightblack hover:bg-darkwhite hover:text-verylightblack transition-all duration-200 font-medium transform ${
-                  isMobileMenuOpen ? "translate-x-0 opacity-100" : "translate-x-4 opacity-0"
-                }`}
-                style={{ transitionDelay: isMobileMenuOpen ? '200ms' : '0ms' }}
+                className="block px-6 py-3 text-lightblack hover:bg-darkwhite hover:text-verylightblack transition-colors duration-200 font-medium"
                 onClick={closeMobileMenu}
               >
                 Noticias
               </a>
               <a
                 href="#"
-                className={`block px-6 py-3 text-lightblack hover:bg-darkwhite hover:text-verylightblack transition-all duration-200 font-medium transform ${
-                  isMobileMenuOpen ? "translate-x-0 opacity-100" : "translate-x-4 opacity-0"
-                }`}
-                style={{ transitionDelay: isMobileMenuOpen ? '300ms' : '0ms' }}
+                className="block px-6 py-3 text-lightblack hover:bg-darkwhite hover:text-verylightblack transition-colors duration-200 font-medium"
                 onClick={closeMobileMenu}
               >
                 Acerca de
@@ -314,10 +308,7 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
               {user && !permissionsLoading && hasAdminPermission() && (
                 <a
                   href="/admin/users"
-                  className={`block px-6 py-3 text-lightblack hover:bg-darkwhite hover:text-verylightblack transition-all duration-200 font-medium transform ${
-                    isMobileMenuOpen ? "translate-x-0 opacity-100" : "translate-x-4 opacity-0"
-                  }`}
-                  style={{ transitionDelay: isMobileMenuOpen ? '400ms' : '0ms' }}
+                  className="block px-6 py-3 text-lightblack hover:bg-darkwhite hover:text-verylightblack transition-colors duration-200 font-medium"
                   onClick={closeMobileMenu}
                 >
                   Usuarios
@@ -327,10 +318,7 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
               {user && (
                 <a
                   href="/favorites"
-                  className={`block px-6 py-3 text-lightblack hover:bg-darkwhite hover:text-verylightblack transition-all duration-200 font-medium transform ${
-                    isMobileMenuOpen ? "translate-x-0 opacity-100" : "translate-x-4 opacity-0"
-                  }`}
-                  style={{ transitionDelay: isMobileMenuOpen ? '500ms' : '0ms' }}
+                  className="block px-6 py-3 text-lightblack hover:bg-darkwhite hover:text-verylightblack transition-colors duration-200 font-medium"
                   onClick={closeMobileMenu}
                 >
                   Favoritos
