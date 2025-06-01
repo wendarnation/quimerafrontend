@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import TrendingSneakers from "@/components/TrendingSneakers";
+import RecommendedSneakers from "@/components/RecommendedSneakers";
 import UserSync from "@/components/auth/UserSync";
 import GlitchText from "@/components/GlitchText";
 import { Zapatilla } from "@/types/zapatilla";
@@ -99,6 +100,11 @@ export default function HomePage({ user }: HomeProps) {
         </div>
 
         <TrendingSneakers
+          onViewAll={handleViewAll}
+          onSneakerClick={handleSneakerClick}
+        />
+
+        <RecommendedSneakers
           onViewAll={handleViewAll}
           onSneakerClick={handleSneakerClick}
         />
