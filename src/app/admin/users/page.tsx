@@ -16,6 +16,7 @@ import {
   useUserManagement,
   User as UserType,
 } from "../../../hooks/useUserManagement";
+import UserManagementSkeleton from "../../../components/admin/UserManagementSkeleton";
 
 const ROLES = [
   {
@@ -88,10 +89,15 @@ export default function AdminUsersPage() {
     return ROLES.find((r) => r.value === role) || ROLES[0];
   };
 
+  // Show skeleton while loading
+  if (isLoading && users.length === 0) {
+    return <UserManagementSkeleton />;
+  }
+
   return (
     <div className="min-h-screen bg-lightwhite">
       {/* Header Section */}
-      <div className="bg-lightwhite">
+      <div className="bg-lightwhite ">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex items-center space-x-4">
             <div>
@@ -153,8 +159,8 @@ export default function AdminUsersPage() {
           </div>
         </div>
 
-        {/* Users Table Card */}
-        <div className="bg-lightwhite border border-lightaccentwhite rounded-xl shadow-sm overflow-hidden">
+        {/* Users List - Desktop Table */}
+        <div className="bg-lightwhite border border-lightaccentwhite rounded-xl shadow-sm overflow-hidden hidden md:block">
           {/* Table Header */}
           <div className="px-6 py-4 border-b border-lightaccentwhite bg-lightwhite">
             <div className="flex items-center justify-between">
@@ -174,8 +180,8 @@ export default function AdminUsersPage() {
 
           {/* Error State */}
           {error && (
-            <div className="px-6 py-4 border-b border-lightaccentwhite bg-redneon/5">
-              <div className="flex items-center space-x-3 text-redneon">
+            <div className="px-6 py-4 border-b border-lightaccentwhite bg-lightaccentwhite/30">
+              <div className="flex items-center space-x-3 text-lightblack">
                 <AlertTriangle className="h-5 w-5" />
                 <span className="text-sm font-medium">
                   Error al cargar usuarios: {error.message}
@@ -233,9 +239,11 @@ export default function AdminUsersPage() {
                               {user.email}
                             </div>
                             {user.first_login && (
-                              <div className="text-xs text-orangeneon font-medium mt-1 flex items-center space-x-1">
+                              <div className="text-xs font-medium mt-1 flex items-center space-x-1">
                                 <div className="w-2 h-2 bg-orangeneon rounded-full animate-pulse"></div>
-                                <span>Primer login pendiente</span>
+                                <span className="text-orangeneon">
+                                  Primer login pendiente
+                                </span>
                               </div>
                             )}
                           </div>
@@ -243,7 +251,7 @@ export default function AdminUsersPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
-                          className={`inline-flex px-4 py-2 text-sm font-semibold rounded-full ${roleInfo.color}`}
+                          className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${roleInfo.color}`}
                         >
                           {roleInfo.label}
                         </span>
@@ -323,6 +331,162 @@ export default function AdminUsersPage() {
                 No se encontraron usuarios en el sistema.
               </p>
             </div>
+          )}
+        </div>
+
+        {/* Users List - Mobile Cards */}
+        <div className="md:hidden space-y-4">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-3">
+              <h2 className="text-lg font-semibold text-lightblack">
+                Lista de Usuarios ({users.length})
+              </h2>
+            </div>
+            {isLoading && (
+              <Loader2 className="h-5 w-5 animate-spin text-verylightblack" />
+            )}
+          </div>
+
+          {error && (
+            <div className="bg-lightwhite border border-lightaccentwhite rounded-xl p-4 mb-4">
+              <div className="flex items-center space-x-3 text-lightblack">
+                <AlertTriangle className="h-5 w-5" />
+                <span className="text-sm font-medium">
+                  Error al cargar usuarios: {error.message}
+                </span>
+              </div>
+            </div>
+          )}
+
+          {users.length === 0 && !isLoading ? (
+            <div className="bg-lightwhite border border-lightaccentwhite rounded-xl p-8 text-center">
+              <div className="inline-flex p-4 bg-lightaccentwhite/50 rounded-full mb-4">
+                <Users className="h-8 w-8 text-verylightblack" />
+              </div>
+              <h3 className="text-lg font-semibold text-lightblack mb-2">
+                No hay usuarios
+              </h3>
+              <p className="text-sm text-verylightblack">
+                No se encontraron usuarios en el sistema.
+              </p>
+            </div>
+          ) : (
+            users.map((user) => {
+              const roleInfo = getRoleInfo(user.rol);
+              const selectedRole = selectedUsers[user.id] || user.rol;
+
+              return (
+                <div
+                  key={user.id}
+                  className="bg-lightwhite border border-lightaccentwhite rounded-xl p-4 space-y-4"
+                >
+                  {/* User Info */}
+                  <div className="flex items-center space-x-3">
+                    <div className="flex-shrink-0 h-12 w-12">
+                      <div className="h-12 w-12 rounded-full bg-lightaccentwhite flex items-center justify-center">
+                        <Users className="h-6 w-6 text-verylightblack" />
+                      </div>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-semibold text-lightblack truncate">
+                        {user.nombre_completo || user.nickname || "Sin nombre"}
+                      </div>
+                      <div className="text-sm text-verylightblack truncate">
+                        {user.email}
+                      </div>
+                      {user.first_login && (
+                        <div className="text-xs font-medium mt-1 flex items-center space-x-1">
+                          <div className="w-2 h-2 bg-orangeneon rounded-full animate-pulse"></div>
+                          <span className="text-verylightblack">
+                            Primer login pendiente
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex-shrink-0">
+                      <button
+                        onClick={() => setShowDeleteModal(user.id)}
+                        disabled={operationLoading === user.id}
+                        className="text-redneon hover:text-redneon/80 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 p-2 hover:bg-redneon/10 rounded-lg cursor-pointer"
+                      >
+                        <Trash2 className="h-5 w-5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Role and Actions */}
+                  <div className="grid grid-cols-1 gap-4">
+                    <div>
+                      <label className="block text-xs font-medium text-verylightblack uppercase tracking-wider mb-2">
+                        Rol Actual
+                      </label>
+                      <span
+                        className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${roleInfo.color}`}
+                      >
+                        {roleInfo.label}
+                      </span>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-verylightblack uppercase tracking-wider mb-2">
+                        Cambiar Rol
+                      </label>
+                      <div className="relative">
+                        <select
+                          value={selectedRole}
+                          onChange={(e) =>
+                            handleRoleChange(user.id, e.target.value)
+                          }
+                          onFocus={() =>
+                            setOpenSelects((prev) => ({
+                              ...prev,
+                              [user.id]: true,
+                            }))
+                          }
+                          onBlur={() =>
+                            setOpenSelects((prev) => ({
+                              ...prev,
+                              [user.id]: false,
+                            }))
+                          }
+                          disabled={operationLoading === user.id}
+                          className="appearance-none bg-lightwhite border border-lightaccentwhite rounded-lg px-4 py-2 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-darkaccentwhite focus:border-darkaccentwhite disabled:bg-lightaccentwhite disabled:cursor-not-allowed cursor-pointer text-lightblack transition-all duration-200 hover:border-darkaccentwhite w-full"
+                        >
+                          {ROLES.map((role) => (
+                            <option key={role.value} value={role.value}>
+                              {role.label}
+                            </option>
+                          ))}
+                        </select>
+                        <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                          <ChevronDown
+                            className={`h-4 w-4 text-verylightblack transition-transform duration-200 ${
+                              openSelects[user.id] ? "rotate-180" : ""
+                            }`}
+                          />
+                        </div>
+                        {operationLoading === user.id && (
+                          <div className="absolute right-12 top-1/2 transform -translate-y-1/2">
+                            <Loader2 className="h-4 w-4 animate-spin text-verylightblack" />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-verylightblack uppercase tracking-wider mb-1">
+                        Fecha de Registro
+                      </label>
+                      <span className="text-sm text-verylightblack">
+                        {new Date(user.fecha_registro).toLocaleDateString(
+                          "es-ES"
+                        )}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })
           )}
         </div>
       </div>
