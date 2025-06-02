@@ -168,9 +168,6 @@ export default function AdminUsersPage() {
                 <h2 className="text-lg font-semibold text-lightblack">
                   Lista de Usuarios
                 </h2>
-                <span className="text-sm text-verylightblack">
-                  ({users.length})
-                </span>
               </div>
               {isLoading && (
                 <Loader2 className="h-5 w-5 animate-spin text-verylightblack" />

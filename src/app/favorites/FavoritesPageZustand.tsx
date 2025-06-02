@@ -7,9 +7,11 @@ import {
   ExternalLink,
   CheckCircle,
   XCircle,
+  Trash2,
 } from "lucide-react";
 import { useFavoritesWithZustand } from "../../hooks/useFavoritesWithZustand";
 import AuthGuard from "../../components/AuthGuard";
+import FavoriteButtonZustand from "../../components/favorites/FavoriteButtonZustand";
 
 function FavoritesContent() {
   const {
@@ -18,7 +20,7 @@ function FavoritesContent() {
     error,
     removeFromFavorites,
     initializeDefaultList,
-    isInitialized
+    isInitialized,
   } = useFavoritesWithZustand();
 
   const [notification, setNotification] = useState<{
@@ -33,9 +35,9 @@ function FavoritesContent() {
     }
 
     const availablePrices = zapatillasTienda
-      .filter(tienda => tienda.disponible)
-      .map(tienda => Number(tienda.precio))
-      .filter(precio => !isNaN(precio));
+      .filter((tienda) => tienda.disponible)
+      .map((tienda) => Number(tienda.precio))
+      .filter((precio) => !isNaN(precio));
 
     if (availablePrices.length === 0) {
       return { min: null, max: null, available: 0 };
@@ -44,15 +46,30 @@ function FavoritesContent() {
     return {
       min: Math.min(...availablePrices),
       max: Math.max(...availablePrices),
-      available: availablePrices.length
+      available: availablePrices.length,
     };
+  };
+
+  // Helper function to format price
+  const formatPrice = (price?: number | string | any) => {
+    if (!price) return "N/A";
+    const numPrice =
+      typeof price === "number" ? price : parseFloat(price.toString());
+    if (isNaN(numPrice)) return "N/A";
+    return `${numPrice.toFixed(2)}€`;
+  };
+
+  // Helper function to get available stores
+  const getAvailableStores = (zapatillasTienda?: any[]) => {
+    if (!zapatillasTienda) return [];
+    return zapatillasTienda.filter((tienda) => tienda.disponible);
   };
 
   // Inicializar al montar
   useEffect(() => {
     if (!isInitialized) {
       initializeDefaultList().catch((error) => {
-        console.error('Error al cargar lista predeterminada:', error);
+        console.error("Error al cargar lista predeterminada:", error);
       });
     }
   }, [initializeDefaultList, isInitialized]);
@@ -72,211 +89,283 @@ function FavoritesContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900">
-      {/* Notification */}
-      {notification && (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
-          <div
-            className={`rounded-md p-4 ${
-              notification.type === "success"
-                ? "bg-green-900 border border-green-700"
-                : "bg-red-900 border border-red-700"
-            }`}
-          >
-            <div className="flex">
-              <div className="flex-shrink-0">
-                {notification.type === "success" ? (
-                  <CheckCircle className="h-5 w-5 text-green-400" />
-                ) : (
-                  <XCircle className="h-5 w-5 text-red-400" />
-                )}
-              </div>
-              <div className="ml-3">
-                <p
-                  className={`text-sm font-medium ${
-                    notification.type === "success"
-                      ? "text-green-200"
-                      : "text-red-200"
-                  }`}
-                >
-                  {notification.message}
-                </p>
-              </div>
+    <div className="min-h-screen bg-lightwhite">
+      {/* Header Section */}
+      <div className="bg-lightwhite">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex items-center space-x-4">
+            <div>
+              <h1 className="text-3xl font-bold text-lightblack">Favoritos</h1>
+              <p className="text-verylightblack mt-1">
+                Tus zapatillas favoritas guardadas para consultar cuando quieras
+              </p>
             </div>
           </div>
         </div>
-      )}
+      </div>
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center space-x-3">
-            <Heart className="h-8 w-8 text-red-500" />
-            <div>
-              <h1 className="text-2xl font-bold text-white">
-                Mis Favoritos
-              </h1>
-              <p className="text-gray-400">
-                Tus zapatillas favoritas
-              </p>
+        {/* Stats Card */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="bg-lightwhite border border-lightaccentwhite rounded-xl p-6 transition-all duration-300 hover:border-darkaccentwhite">
+            <div className="flex items-center space-x-4">
+              <div className="p-3 bg-pink-100 rounded-xl">
+                <Heart className="h-6 w-6 text-pinkneon" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-lightblack">
+                  {defaultList?.zapatillas?.length || 0}
+                </p>
+                <p className="text-sm text-verylightblack">Favoritos</p>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Contenido de favoritos */}
         {defaultList ? (
-          <div className="bg-gray-800 rounded-lg shadow-sm border border-gray-700">
-            <div className="px-6 py-4 border-b border-gray-700">
+          <div className="bg-lightwhite border border-lightaccentwhite rounded-xl shadow-sm overflow-hidden">
+            <div className="px-6 py-4 border-b border-lightaccentwhite bg-lightwhite">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-medium text-white">
+                <h2 className="text-lg font-semibold text-lightblack">
                   {defaultList.nombre}
                 </h2>
-                <p className="text-sm text-gray-400">
-                  {defaultList.zapatillas?.length || 0} zapatillas
-                </p>
               </div>
             </div>
 
             {defaultList.zapatillas && defaultList.zapatillas.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 p-6">
-                {defaultList.zapatillas.map((item) => (
-                  <div
-                    key={item.id}
-                    className="bg-gray-700 border border-gray-600 rounded-lg overflow-hidden hover:shadow-md transition-shadow group"
-                  >
-                    <div className="relative aspect-square">
-                      <img
-                        src={
-                          item.zapatilla.imagen ||
-                          "/placeholder-sneaker.svg"
-                        }
-                        alt={`${item.zapatilla.marca} ${item.zapatilla.modelo}`}
-                        className="w-full h-full object-cover"
-                      />
-                      <button
-                        onClick={() =>
-                          handleRemoveFromFavorites(item.zapatilla_id)
-                        }
-                        className="absolute top-2 right-2 p-2 bg-gray-800 rounded-full shadow-md hover:bg-red-900 transition-colors"
-                      >
-                        <Heart className="h-4 w-4 text-red-500 fill-current" />
-                      </button>
-                    </div>
+              <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 p-6">
+                {defaultList.zapatillas.map((item) => {
+                  const priceInfo = calculatePrice(
+                    item.zapatilla.zapatillasTienda
+                  );
+                  const availableStores = getAvailableStores(
+                    item.zapatilla.zapatillasTienda
+                  );
 
-                    <div className="p-4">
-                      <h3 className="font-medium text-white mb-1">
-                        {item.zapatilla.marca} {item.zapatilla.modelo}
-                      </h3>
-                      <p className="text-sm text-gray-400 mb-2">
-                        {item.zapatilla.categoria}
-                      </p>
-
-                      {/* Precio y detalles */}
-                      <div className="flex items-center justify-between">
-                        <div className="text-lg font-bold text-white">
-                          {(() => {
-                            const priceInfo = calculatePrice(item.zapatilla.zapatillasTienda);
-                            return priceInfo.min ? `€${priceInfo.min.toFixed(2)}` : 'N/A';
-                          })()
-                          }
-                        </div>
-                        <a
-                          href={`/sneaker/${item.zapatilla.id}`}
-                          className="text-blue-400 hover:text-blue-300 flex items-center space-x-1 text-sm"
+                  return (
+                    <div
+                      key={item.id}
+                      className="bg-lightwhite rounded-lg transition-all duration-200 cursor-pointer group overflow-hidden "
+                      onClick={() =>
+                        (window.location.href = `/sneaker/${item.zapatilla.id}`)
+                      }
+                    >
+                      {/* Imagen y corazón */}
+                      <div className="relative aspect-square bg-lightwhite overflow-hidden">
+                        {/* Botón de corazón */}
+                        <div
+                          className="absolute top-2 right-2 md:top-3 md:right-3 z-10"
+                          onClick={(e) => e.stopPropagation()}
                         >
-                          <span>Ver detalles</span>
-                          <ExternalLink className="h-3 w-3" />
-                        </a>
+                          <FavoriteButtonZustand
+                            zapatillaId={item.zapatilla.id}
+                            className="p-1.5 md:p-2 rounded-full cursor-pointer bg-lightwhite transition-all duration-200"
+                            size="md"
+                          />
+                        </div>
+
+                        {/* Imagen */}
+                        <img
+                          src={
+                            item.zapatilla.imagen || "/placeholder-sneaker.svg"
+                          }
+                          alt={`${item.zapatilla.marca} ${item.zapatilla.modelo}`}
+                          className="w-full h-full object-cover scale-90 md:scale-95 group-hover:scale-95 md:group-hover:scale-100 transition-transform duration-500"
+                        />
                       </div>
 
-                      {/* Estadísticas adicionales */}
-                      <div className="flex items-center justify-between text-xs text-gray-400 mt-2">
-                        <span>{(() => {
-                          const priceInfo = calculatePrice(item.zapatilla.zapatillasTienda);
-                          return `${priceInfo.available} tiendas`;
-                        })()}</span>
-                        <span className="px-2 py-1 bg-gray-600 rounded-full text-white">
-                          {item.zapatilla.categoria || "General"}
-                        </span>
-                      </div>
+                      {/* Información del producto */}
+                      <div className="px-4 -mt-6 pt-1 pb-4 relative z-10">
+                        {/* Título - Marca y Modelo en filas separadas */}
+                        <div className="mb-3">
+                          <h3 className="font-bold text-lightblack text-sm md:text-base leading-tight line-clamp-1 group-hover:text-verylightblack transition-colors">
+                            {item.zapatilla.marca}
+                          </h3>
+                          <p className="font-normal text-darkaccentwhite text-xs md:text-sm leading-tight line-clamp-1 mt-0.5">
+                            {item.zapatilla.modelo}
+                          </p>
+                        </div>
 
-                      {/* SKU (oculto por defecto, visible en hover) */}
-                      <div className="mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                        <p className="text-xs text-gray-500 truncate">SKU: {item.zapatilla.sku}</p>
-                      </div>
+                        {/* Precio */}
+                        <div className="mb-2">
+                          {priceInfo.min ? (
+                            <div>
+                              <p className="text-xs md:text-sm text-darkaccentwhite">
+                                Precio Más Bajo
+                              </p>
+                              <p className="text-base md:text-lg font-bold text-greenneon">
+                                {formatPrice(priceInfo.min)}
+                              </p>
+                              {priceInfo.max &&
+                                priceInfo.max !== priceInfo.min && (
+                                  <p className="text-xs text-darkaccentwhite">
+                                    Hasta {formatPrice(priceInfo.max)}
+                                  </p>
+                                )}
+                            </div>
+                          ) : (
+                            <div>
+                              <p className="text-xs md:text-sm text-darkaccentwhite mb-1">
+                                Precio
+                              </p>
+                              <p className="text-base md:text-lg font-bold text-lightblack">
+                                --
+                              </p>
+                            </div>
+                          )}
+                        </div>
 
-                      {item.zapatilla.zapatillasTienda &&
-                        item.zapatilla.zapatillasTienda.length > 0 && (
-                          <div className="mt-3 pt-3 border-t border-gray-600">
-                            <p className="text-xs text-gray-400 mb-2">
-                              Disponible en:
+                        {/* Disponible en tiendas */}
+                        {availableStores.length > 0 && (
+                          <div className="mb-2 mt-4">
+                            <p className="text-xs md:text-sm text-darkaccentwhite mb-1">
+                              Disponible en
                             </p>
-                            <div className="flex flex-wrap gap-2">
-                              {item.zapatilla.zapatillasTienda
+                            <div className="flex flex-wrap gap-1">
+                              {availableStores
                                 .slice(0, 2)
-                                .map((tienda, index) => (
-                                  <div
-                                    key={index}
-                                    className="flex items-center space-x-1 text-xs bg-gray-600 px-2 py-1 rounded text-white"
-                                  >
-                                    <span>{tienda.tienda.nombre}</span>
-                                    <span className="font-medium">
-                                      €{parseFloat(tienda.precio.toString()).toFixed(2)}
+                                .map((tienda, index) =>
+                                  tienda.url_producto ? (
+                                    <a
+                                      key={index}
+                                      href={tienda.url_producto}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-xs bg-lightaccentwhite text-verylightblack px-2 py-1 rounded-full hover:bg-darkaccentwhite hover:text-lightwhite transition-colors duration-500 cursor-pointer"
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
+                                      {tienda.tienda.nombre}
+                                    </a>
+                                  ) : (
+                                    <span
+                                      key={index}
+                                      className="text-xs bg-lightaccentwhite text-verylightblack px-2 py-1 rounded-full"
+                                    >
+                                      {tienda.tienda.nombre}
                                     </span>
-                                  </div>
-                                ))}
-                              {item.zapatilla.zapatillasTienda.length > 2 && (
-                                <span className="text-xs text-gray-400">
-                                  +{item.zapatilla.zapatillasTienda.length - 2} más
+                                  )
+                                )}
+                              {availableStores.length > 2 && (
+                                <span className="text-xs text-darkaccentwhite px-2 py-1">
+                                  +{availableStores.length - 2} más
                                 </span>
                               )}
                             </div>
                           </div>
                         )}
+
+                        {/* Estadísticas adicionales */}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             ) : (
               <div className="p-12 text-center">
-                <Heart className="h-12 w-12 text-gray-500 mx-auto mb-4" />
-                <h3 className="text-sm font-medium text-white mb-2">
+                <div className="inline-flex p-4 bg-lightaccentwhite/50 rounded-full mb-4">
+                  <Heart className="h-8 w-8 text-verylightblack" />
+                </div>
+                <h3 className="text-lg font-semibold text-lightblack mb-2">
                   No tienes favoritos
                 </h3>
-                <p className="text-sm text-gray-400">
-                  Agrega zapatillas a favoritos dándoles like desde cualquier página
+                <p className="text-sm text-verylightblack">
+                  Agrega zapatillas a favoritos dándoles like desde cualquier
+                  página
                 </p>
               </div>
             )}
           </div>
         ) : isLoading ? (
-          <div className="bg-gray-800 rounded-lg shadow-sm p-12 text-center border border-gray-700">
-            <Heart className="h-12 w-12 text-gray-500 mx-auto mb-4 animate-pulse" />
-            <h3 className="text-sm font-medium text-white mb-2">
-              Cargando favoritos...
-            </h3>
-            <p className="text-sm text-gray-400">
-              Un momento por favor
-            </p>
+          <div className="bg-lightwhite border border-lightaccentwhite rounded-xl shadow-sm overflow-hidden">
+            <div className="px-6 py-4 border-b border-lightaccentwhite bg-lightwhite">
+              <div className="flex items-center justify-between">
+                <div className="h-5 bg-lightaccentwhite rounded animate-pulse w-32"></div>
+              </div>
+            </div>
+
+            {/* Desktop Skeleton */}
+            <div className="hidden lg:grid grid-cols-4 gap-6 p-6">
+              {Array.from({ length: 8 }).map((_, index) => (
+                <div
+                  key={index}
+                  className="bg-lightwhite rounded-lg overflow-hidden border border-lightaccentwhite"
+                >
+                  {/* Imagen skeleton */}
+                  <div className="aspect-square bg-lightaccentwhite animate-pulse"></div>
+
+                  {/* Contenido skeleton */}
+                  <div className="px-4 mt-6 pt-1 pb-4 relative z-10">
+                    <div className="mb-2">
+                      <div className="h-3 bg-lightaccentwhite rounded animate-pulse w-16 mb-1"></div>
+                      <div className="h-5 bg-lightaccentwhite rounded animate-pulse w-12"></div>
+                    </div>
+
+                    <div className="mb-2">
+                      <div className="h-3 bg-lightaccentwhite rounded animate-pulse w-20 mb-1"></div>
+                      <div className="flex gap-1">
+                        <div className="h-6 bg-lightaccentwhite rounded-full animate-pulse w-16"></div>
+                        <div className="h-6 bg-lightaccentwhite rounded-full animate-pulse w-12"></div>
+                      </div>
+                    </div>
+
+                    <div className="h-3 bg-lightaccentwhiteaccentwhite rounded animate-pulse w-14"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Mobile/Tablet Skeleton */}
+            <div className="lg:hidden grid grid-cols-2 gap-6 p-6">
+              {Array.from({ length: 6 }).map((_, index) => (
+                <div
+                  key={index}
+                  className="bg-lightwhite rounded-lg overflow-hidden border border-lightaccentwhite"
+                >
+                  {/* Imagen skeleton */}
+                  <div className="aspect-square bg-lightaccentwhite animate-pulse"></div>
+
+                  {/* Contenido skeleton */}
+                  <div className="px-4 mt-6 pt-1 pb-4 relative z-10">
+                    <div className="mb-2">
+                      <div className="h-3 bg-lightaccentwhite rounded animate-pulse w-12 mb-1"></div>
+                      <div className="h-4 bg-lightaccentwhite rounded animate-pulse w-10"></div>
+                    </div>
+
+                    <div className="mb-2">
+                      <div className="h-3 bg-lightaccentwhite rounded animate-pulse w-16 mb-1"></div>
+                      <div className="flex gap-1">
+                        <div className="h-5 bg-lightaccentwhite rounded-full animate-pulse w-12"></div>
+                        <div className="h-5 bg-lightaccentwhite rounded-full animate-pulse w-8"></div>
+                      </div>
+                    </div>
+
+                    <div className="h-3 bg-lightaccentwhite rounded animate-pulse w-10"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         ) : error ? (
-          <div className="bg-gray-800 rounded-lg shadow-sm p-12 text-center border border-gray-700">
-            <XCircle className="h-12 w-12 text-red-400 mx-auto mb-4" />
-            <h3 className="text-sm font-medium text-white mb-2">
+          <div className="bg-lightwhite border border-lightaccentwhite rounded-xl shadow-sm p-12 text-center">
+            <div className="inline-flex p-4 bg-red-100 rounded-full mb-4">
+              <XCircle className="h-8 w-8 text-red-600" />
+            </div>
+            <h3 className="text-lg font-semibold text-lightblack mb-2">
               Error al cargar favoritos
             </h3>
-            <p className="text-sm text-gray-400">
-              {error}
-            </p>
+            <p className="text-sm text-verylightblack">{error}</p>
           </div>
         ) : (
-          <div className="bg-gray-800 rounded-lg shadow-sm p-12 text-center border border-gray-700">
-            <Heart className="h-12 w-12 text-gray-500 mx-auto mb-4" />
-            <h3 className="text-sm font-medium text-white mb-2">
+          <div className="bg-lightwhite border border-lightaccentwhite rounded-xl shadow-sm p-12 text-center">
+            <div className="inline-flex p-4 bg-lightaccentwhite/50 rounded-full mb-4">
+              <Heart className="h-8 w-8 text-verylightblack" />
+            </div>
+            <h3 className="text-lg font-semibold text-lightblack mb-2">
               No se pudo cargar la lista
             </h3>
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-verylightblack">
               Inténtalo de nuevo más tarde
             </p>
           </div>
