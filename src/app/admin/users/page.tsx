@@ -177,7 +177,7 @@ export default function AdminUsersPage() {
                       placeholder="Nombre, email o nombre de usuario..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2 bg-lightwhite border border-lightaccentwhite rounded-lg focus:outline-none focus:ring-2 focus:ring-darkaccentwhite focus:border-darkaccentwhite text-lightblack transition-all duration-200 hover:border-darkaccentwhite text-sm"
+                      className="w-full pl-10 pr-4 py-2 bg-lightwhite border border-lightaccentwhite rounded-lg focus:outline-none focus:ring-1 focus:ring-lightblack focus:border-transparent text-lightblack transition-all duration-200 hover:border-darkaccentwhite text-sm"
                     />
                     {searchTerm && (
                       <button
@@ -199,7 +199,7 @@ export default function AdminUsersPage() {
                     <select
                       value={roleFilter}
                       onChange={(e) => setRoleFilter(e.target.value)}
-                      className="w-full appearance-none bg-lightwhite border border-lightaccentwhite rounded-lg px-4 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-darkaccentwhite focus:border-darkaccentwhite text-lightblack transition-all duration-200 hover:border-darkaccentwhite cursor-pointer"
+                      className="w-full appearance-none bg-lightwhite border border-lightaccentwhite rounded-lg px-4 py-2 pr-10 text-sm focus:outline-none focus:ring-1 focus:ring-lightblack focus:border-transparent text-lightblack transition-all duration-200 hover:border-darkaccentwhite cursor-pointer"
                     >
                       <option value="todos">Todos los roles</option>
                       {ROLES.map((role) => (

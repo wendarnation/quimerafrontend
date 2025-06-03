@@ -48,6 +48,11 @@ export default function SettingsClient({ user }: SettingsClientProps) {
     nombre_completo: "",
   });
 
+  // Check if there are changes to enable/disable save button
+  const hasChanges = 
+    formData.nickname !== (profile?.nickname || "") ||
+    formData.nombre_completo !== (profile?.nombre_completo || "");
+
   // Fetch user profile
   useEffect(() => {
     const fetchProfile = async () => {
@@ -212,7 +217,7 @@ export default function SettingsClient({ user }: SettingsClientProps) {
             {/* Logout Button */}
             <a
               href="/auth/logout"
-              className="inline-flex items-center bg-lightblack cursor-pointer hover:bg-pinkneon text-darkwhite hover:text-white px-4 py-2 md:px-6 md:py-2 rounded-lg font-semibold transition-all duration-500 ease-in-out"
+              className="hidden md:inline-flex items-center bg-lightblack cursor-pointer hover:bg-pinkneon text-darkwhite hover:text-white px-4 py-2 md:px-6 md:py-2 rounded-lg font-semibold transition-all duration-500 ease-in-out"
             >
               <LogOut className="h-4 w-4 mr-2" />
               Cerrar sesión
@@ -302,7 +307,7 @@ export default function SettingsClient({ user }: SettingsClientProps) {
               <div className="flex justify-end pt-4">
                 <button
                   type="submit"
-                  disabled={saving}
+                  disabled={saving || !hasChanges}
                   className="inline-flex items-center bg-lightaccentwhite cursor-pointer hover:bg-lightblack text-lightblack hover:text-darkwhite px-4 py-2 md:px-6 md:py-2 rounded-lg font-semibold transition-all duration-500 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Save className="h-4 w-4 mr-2" />
@@ -311,6 +316,17 @@ export default function SettingsClient({ user }: SettingsClientProps) {
               </div>
             </form>
           </div>
+        </div>
+
+        {/* Mobile Logout Button */}
+        <div className="md:hidden mb-8">
+          <a
+            href="/auth/logout"
+            className="inline-flex items-center w-full justify-center bg-lightblack cursor-pointer hover:bg-pinkneon text-darkwhite hover:text-white px-4 py-2 md:px-6 md:py-2 rounded-lg font-semibold transition-all duration-500 ease-in-out"
+          >
+            <LogOut className="h-4 w-4 mr-2" />
+            Cerrar sesión
+          </a>
         </div>
 
         {/* Danger Zone */}
