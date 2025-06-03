@@ -11,6 +11,9 @@ import {
   Loader2,
   Crown,
   User,
+  Search,
+  Filter,
+  X,
 } from "lucide-react";
 import {
   useUserManagement,
@@ -47,6 +50,11 @@ export default function AdminUsersPage() {
   const [openSelects, setOpenSelects] = useState<{ [key: number]: boolean }>(
     {}
   );
+
+  // Estados para filtros
+  const [searchTerm, setSearchTerm] = useState("");
+  const [roleFilter, setRoleFilter] = useState("todos");
+  const [showFilters, setShowFilters] = useState(false);
 
   // Cargar usuarios al montar el componente
   useEffect(() => {
@@ -89,6 +97,29 @@ export default function AdminUsersPage() {
     return ROLES.find((r) => r.value === role) || ROLES[0];
   };
 
+  // Función para filtrar usuarios
+  const filteredUsers = users.filter((user) => {
+    const matchesSearch =
+      !searchTerm ||
+      (user.nombre_completo &&
+        user.nombre_completo
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase())) ||
+      (user.nickname &&
+        user.nickname.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesRole = roleFilter === "todos" || user.rol === roleFilter;
+
+    return matchesSearch && matchesRole;
+  });
+
+  // Función para limpiar filtros
+  const clearFilters = () => {
+    setSearchTerm("");
+    setRoleFilter("todos");
+  };
+
   // Show skeleton while loading
   if (isLoading && users.length === 0) {
     return <UserManagementSkeleton />;
@@ -97,14 +128,14 @@ export default function AdminUsersPage() {
   return (
     <div className="min-h-screen bg-lightwhite">
       {/* Header Section */}
-      <div className="bg-lightwhite ">
+      <div className="bg-lightwhite">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex items-center space-x-4">
             <div>
-              <h1 className="text-3xl font-bold text-lightblack">
+              <h1 className="text-2xl sm:text-3xl font-bold text-lightblack">
                 Gestión de Usuarios
               </h1>
-              <p className="text-verylightblack mt-1">
+              <p className="text-verylightblack mt-1 text-sm sm:text-base">
                 Controla roles, permisos y administra la comunidad
               </p>
             </div>
@@ -114,6 +145,123 @@ export default function AdminUsersPage() {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Filtros */}
+        <div className="bg-lightwhite border border-lightaccentwhite rounded-xl overflow-hidden mb-8">
+          <div className="px-6 py-4 border-b border-lightaccentwhite bg-lightwhite">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-lightblack">Filtros</h2>
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className="flex items-center space-x-2 px-4 py-2 bg-lightwhite border border-lightaccentwhite rounded-lg hover:bg-lightaccentwhite/30 transition-all duration-200 cursor-pointer"
+              >
+                <Filter className="h-4 w-4 text-verylightblack" />
+                <span className="text-sm text-verylightblack">
+                  {showFilters ? "Ocultar" : "Mostrar"} Filtros
+                </span>
+              </button>
+            </div>
+          </div>
+
+          {showFilters && (
+            <div className="px-6 py-4 bg-lightwhite/50">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Búsqueda por texto */}
+                <div className="relative">
+                  <label className="block text-xs font-medium text-verylightblack uppercase tracking-wider mb-2">
+                    Buscar Usuario
+                  </label>
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-verylightblack" />
+                    <input
+                      type="text"
+                      placeholder="Nombre, email o nickname..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full pl-10 pr-4 py-2 bg-lightwhite border border-lightaccentwhite rounded-lg focus:outline-none focus:ring-2 focus:ring-darkaccentwhite focus:border-darkaccentwhite text-lightblack transition-all duration-200 hover:border-darkaccentwhite text-sm"
+                    />
+                    {searchTerm && (
+                      <button
+                        onClick={() => setSearchTerm("")}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-verylightblack hover:text-lightblack transition-colors cursor-pointer"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Filtro por rol */}
+                <div>
+                  <label className="block text-xs font-medium text-verylightblack uppercase tracking-wider mb-2">
+                    Filtrar por Rol
+                  </label>
+                  <div className="relative">
+                    <select
+                      value={roleFilter}
+                      onChange={(e) => setRoleFilter(e.target.value)}
+                      className="w-full appearance-none bg-lightwhite border border-lightaccentwhite rounded-lg px-4 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-darkaccentwhite focus:border-darkaccentwhite text-lightblack transition-all duration-200 hover:border-darkaccentwhite cursor-pointer"
+                    >
+                      <option value="todos">Todos los roles</option>
+                      {ROLES.map((role) => (
+                        <option key={role.value} value={role.value}>
+                          {role.label}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                      <ChevronDown className="h-4 w-4 text-verylightblack" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Botón limpiar filtros */}
+                <div className="flex items-end">
+                  <button
+                    onClick={clearFilters}
+                    disabled={!searchTerm && roleFilter === "todos"}
+                    className="w-full px-4 py-2 bg-lightwhite border border-lightaccentwhite text-lightblack rounded-lg hover:bg-lightaccentwhite/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 cursor-pointer text-sm font-medium"
+                  >
+                    Limpiar Filtros
+                  </button>
+                </div>
+              </div>
+
+              {/* Indicadores de filtros activos */}
+              {(searchTerm || roleFilter !== "todos") && (
+                <div className="mt-4 pt-4 border-t border-lightaccentwhite">
+                  <div className="flex items-center space-x-2 text-sm">
+                    <span className="text-verylightblack">
+                      Filtros activos:
+                    </span>
+                    {searchTerm && (
+                      <span className="inline-flex items-center px-2 py-1 bg-blueneon/10 text-blueneon rounded-full text-xs">
+                        Búsqueda: "{searchTerm}"
+                        <button
+                          onClick={() => setSearchTerm("")}
+                          className="ml-1 hover:text-blueneon/80 cursor-pointer"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </span>
+                    )}
+                    {roleFilter !== "todos" && (
+                      <span className="inline-flex items-center px-2 py-1 bg-pinkneon/10 text-pinkneon rounded-full text-xs">
+                        Rol: {ROLES.find((r) => r.value === roleFilter)?.label}
+                        <button
+                          onClick={() => setRoleFilter("todos")}
+                          className="ml-1 hover:text-pinkneon/80 cursor-pointer"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-lightwhite border border-lightaccentwhite rounded-xl p-6 transition-all duration-300 hover:border-darkaccentwhite">
@@ -123,9 +271,13 @@ export default function AdminUsersPage() {
               </div>
               <div>
                 <p className="text-2xl font-bold text-lightblack">
-                  {users.length}
+                  {filteredUsers.length}
                 </p>
-                <p className="text-sm text-verylightblack">Total Usuarios</p>
+                <p className="text-sm text-verylightblack">
+                  {searchTerm || roleFilter !== "todos"
+                    ? "Usuarios Filtrados"
+                    : "Total Usuarios"}
+                </p>
               </div>
             </div>
           </div>
@@ -137,7 +289,7 @@ export default function AdminUsersPage() {
               </div>
               <div>
                 <p className="text-2xl font-bold text-lightblack">
-                  {users.filter((u) => u.rol === "usuario").length}
+                  {filteredUsers.filter((u) => u.rol === "usuario").length}
                 </p>
                 <p className="text-sm text-verylightblack">Usuarios</p>
               </div>
@@ -151,7 +303,7 @@ export default function AdminUsersPage() {
               </div>
               <div>
                 <p className="text-2xl font-bold text-lightblack">
-                  {users.filter((u) => u.rol === "admin").length}
+                  {filteredUsers.filter((u) => u.rol === "admin").length}
                 </p>
                 <p className="text-sm text-verylightblack">Administradores</p>
               </div>
@@ -210,7 +362,7 @@ export default function AdminUsersPage() {
                 </tr>
               </thead>
               <tbody className="bg-lightwhite divide-y divide-lightaccentwhite">
-                {users.map((user) => {
+                {filteredUsers.map((user) => {
                   const roleInfo = getRoleInfo(user.rol);
                   const selectedRole = selectedUsers[user.id] || user.rol;
 
@@ -316,16 +468,20 @@ export default function AdminUsersPage() {
             </table>
           </div>
 
-          {users.length === 0 && !isLoading && (
+          {filteredUsers.length === 0 && !isLoading && (
             <div className="px-6 py-12 text-center">
               <div className="inline-flex p-4 bg-lightaccentwhite/50 rounded-full mb-4">
                 <Users className="h-8 w-8 text-verylightblack" />
               </div>
               <h3 className="text-lg font-semibold text-lightblack mb-2">
-                No hay usuarios
+                {searchTerm || roleFilter !== "todos"
+                  ? "No se encontraron usuarios"
+                  : "No hay usuarios"}
               </h3>
               <p className="text-sm text-verylightblack">
-                No se encontraron usuarios en el sistema.
+                {searchTerm || roleFilter !== "todos"
+                  ? "Intenta ajustar los filtros de búsqueda."
+                  : "No se encontraron usuarios en el sistema."}
               </p>
             </div>
           )}
@@ -336,7 +492,7 @@ export default function AdminUsersPage() {
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-3">
               <h2 className="text-lg font-semibold text-lightblack">
-                Lista de Usuarios ({users.length})
+                Lista de Usuarios ({filteredUsers.length})
               </h2>
             </div>
             {isLoading && (
@@ -355,20 +511,24 @@ export default function AdminUsersPage() {
             </div>
           )}
 
-          {users.length === 0 && !isLoading ? (
+          {filteredUsers.length === 0 && !isLoading ? (
             <div className="bg-lightwhite border border-lightaccentwhite rounded-xl p-8 text-center">
               <div className="inline-flex p-4 bg-lightaccentwhite/50 rounded-full mb-4">
                 <Users className="h-8 w-8 text-verylightblack" />
               </div>
               <h3 className="text-lg font-semibold text-lightblack mb-2">
-                No hay usuarios
+                {searchTerm || roleFilter !== "todos"
+                  ? "No se encontraron usuarios"
+                  : "No hay usuarios"}
               </h3>
               <p className="text-sm text-verylightblack">
-                No se encontraron usuarios en el sistema.
+                {searchTerm || roleFilter !== "todos"
+                  ? "Intenta ajustar los filtros de búsqueda."
+                  : "No se encontraron usuarios en el sistema."}
               </p>
             </div>
           ) : (
-            users.map((user) => {
+            filteredUsers.map((user) => {
               const roleInfo = getRoleInfo(user.rol);
               const selectedRole = selectedUsers[user.id] || user.rol;
 

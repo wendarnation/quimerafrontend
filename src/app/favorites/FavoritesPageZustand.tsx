@@ -95,8 +95,8 @@ function FavoritesContent() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex items-center space-x-4">
             <div>
-              <h1 className="text-3xl font-bold text-lightblack">Favoritos</h1>
-              <p className="text-verylightblack mt-1">
+              <h1 className="text-2xl sm:text-3xl font-bold text-lightblack">Favoritos</h1>
+              <p className="text-verylightblack mt-1 text-sm sm:text-base">
                 Tus zapatillas favoritas guardadas para consultar cuando quieras
               </p>
             </div>

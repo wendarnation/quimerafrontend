@@ -6,8 +6,8 @@ export default function UserManagementSkeleton() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex items-center space-x-4">
             <div>
-              <div className="h-8 bg-lightaccentwhite rounded-lg w-64 mb-2 animate-pulse"></div>
-              <div className="h-4 bg-lightaccentwhite rounded-lg w-96 animate-pulse"></div>
+              <div className="h-6 sm:h-8 bg-lightaccentwhite rounded-lg w-48 sm:w-64 mb-2 animate-pulse"></div>
+              <div className="h-3 sm:h-4 bg-lightaccentwhite rounded-lg w-72 sm:w-96 animate-pulse"></div>
             </div>
           </div>
         </div>
