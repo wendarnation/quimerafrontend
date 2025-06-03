@@ -6,6 +6,7 @@ import Image from "next/image";
 import { usePermissions } from "../hooks/usePermissions";
 import { useUserProfile } from "../hooks/useUserProfile";
 import { AuthUser } from "../types/auth";
+import { useSearchStore } from "../stores/searchStore";
 
 interface NavbarProps {
   user?: AuthUser;
@@ -14,7 +15,7 @@ interface NavbarProps {
 
 // Componente Navbar
 export default function Navbar({ user, onSearch }: NavbarProps) {
-  const [searchQuery, setSearchQuery] = useState("");
+  const { searchQuery, setSearchQuery } = useSearchStore();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const { hasAdminPermission, isLoading: permissionsLoading } =

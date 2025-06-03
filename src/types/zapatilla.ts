@@ -67,6 +67,7 @@ export interface SearchFilters {
   categoria?: string;
   precio_min?: number;
   precio_max?: number;
+  talla?: string;
   activa?: boolean;
   page?: number;
   limit?: number;

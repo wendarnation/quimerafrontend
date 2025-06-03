@@ -1,19 +1,18 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import {
   ChevronLeft,
   ChevronRight,
-  Search,
   ChevronDown,
-  ChevronUp,
-  X,
 } from "lucide-react";
 import { useAllSneakers, useSearchSneakers } from "@/hooks/useSneakers";
 import { SearchFilters, Zapatilla } from "@/types/zapatilla";
 import ZapatillaCard from "@/components/ZapatillaCard";
 import { useUser } from "@auth0/nextjs-auth0";
+import { useQuery } from "@tanstack/react-query";
+import { useSearchStore } from "@/stores/searchStore";
 
 interface SortOption {
   key: string;
@@ -24,148 +23,174 @@ interface SortOption {
 
 const sortOptions: SortOption[] = [
   {
-    key: "featured",
-    label: "Destacados",
-    sortBy: "fecha_creacion",
-    sortOrder: "desc",
-  },
-  {
     key: "newest",
-    label: "Más Nuevos",
+    label: "Más nuevos",
     sortBy: "fecha_creacion",
     sortOrder: "desc",
   },
   {
     key: "oldest",
-    label: "Más Antiguos",
+    label: "Más antiguos",
     sortBy: "fecha_creacion",
     sortOrder: "asc",
   },
   {
     key: "price-low",
-    label: "Precio: Menor a Mayor",
+    label: "Precio más bajo",
     sortBy: "precio_min",
     sortOrder: "asc",
   },
   {
     key: "price-high",
-    label: "Precio: Mayor a Menor",
+    label: "Precio más alto",
     sortBy: "precio_min",
     sortOrder: "desc",
   },
-  { key: "brand-az", label: "Marca A-Z", sortBy: "marca", sortOrder: "asc" },
-  { key: "brand-za", label: "Marca Z-A", sortBy: "marca", sortOrder: "desc" },
 ];
+
+// Opciones de precio predefinidas
+const priceOptions = [
+  { label: "€0 - €50", min: 0, max: 50 },
+  { label: "€50 - €100", min: 50, max: 100 },
+  { label: "€100 - €150", min: 100, max: 150 },
+  { label: "€150+", min: 150, max: null },
+];
+
+// Función para obtener la URL base de la API
+const getApiBaseUrl = () => {
+  return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+};
+
+// Hook para obtener todas las tallas únicas
+function useAvailableSizes() {
+  return useQuery<string[]>({
+    queryKey: ["sizes", "available"],
+    queryFn: async () => {
+      const apiUrl = `${getApiBaseUrl()}/tallas`;
+      
+      const response = await fetch(apiUrl, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error fetching sizes: ${response.status}`);
+      }
+
+      const tallasData = await response.json();
+      
+      // Extraer tallas únicas usando Set
+      const tallasUnicas = new Set<string>();
+      tallasData.forEach((talla: any) => {
+        if (talla.disponible && talla.talla) {
+          tallasUnicas.add(talla.talla);
+        }
+      });
+
+      // Convertir a array y ordenar numéricamente
+      return Array.from(tallasUnicas).sort((a, b) => {
+        const aNum = parseFloat(a);
+        const bNum = parseFloat(b);
+        if (!isNaN(aNum) && !isNaN(bNum)) {
+          return aNum - bNum;
+        }
+        return a.localeCompare(b);
+      });
+    },
+    staleTime: 10 * 60 * 1000, // 10 minutos
+  });
+}
 
 export default function BrowsePageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { user } = useUser();
+  const { clearSearch } = useSearchStore();
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState<SearchFilters>({});
-  const [tempFilters, setTempFilters] = useState<SearchFilters>({});
 
   // Estados para los desplegables de filtros
-  const [showSearchFilter, setShowSearchFilter] = useState(false);
   const [showPriceFilter, setShowPriceFilter] = useState(false);
+  const [showSizeFilter, setShowSizeFilter] = useState(false);
+  const [showSortDropdown, setShowSortDropdown] = useState(false);
 
-  // Estados para el ordenamiento
-  const [activeSortKey, setActiveSortKey] = useState("featured");
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+  // Estados para filtros seleccionados
+  const [selectedPriceRange, setSelectedPriceRange] = useState<string | null>(null);
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [selectedSort, setSelectedSort] = useState<SortOption>(sortOptions[0]);
 
-  // Estados para el slider de precio
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
-  const [tempPriceRange, setTempPriceRange] = useState<[number, number]>([
-    0, 1000,
-  ]);
+  // Obtener tallas disponibles
+  const { data: availableSizes = [], isLoading: sizesLoading } = useAvailableSizes();
 
-  // Estados para evitar actualizaciones innecesarias
-  const [isUpdatingPrice, setIsUpdatingPrice] = useState(false);
+  // Contador de filtros activos
+  const getActiveFiltersCount = () => {
+    let count = 0;
+    if (selectedPriceRange) count++;
+    return count;
+  };
 
-  // Debounce para el slider de precio
-  const debouncedPriceUpdate = useCallback(
-    (newRange: [number, number]) => {
-      if (isUpdatingPrice) return;
-
-      setIsUpdatingPrice(true);
-      setTimeout(() => {
-        const newFilters = {
-          ...filters,
-          precio_min: newRange[0] > 0 ? newRange[0] : undefined,
-          precio_max: newRange[1] < 1000 ? newRange[1] : undefined,
-          page: 1,
-          limit: 40,
-        };
-        setFilters(newFilters);
-        setTempFilters(newFilters);
-
-        // Actualizar URL sin navegar
-        const params = new URLSearchParams();
-        Object.entries(newFilters).forEach(([key, value]) => {
-          if (
-            value !== undefined &&
-            value !== null &&
-            value !== "" &&
-            key !== "limit"
-          ) {
-            params.set(key, value.toString());
-          }
-        });
-
-        const newUrl = `/browse?${params.toString()}`;
-        window.history.replaceState({}, "", newUrl);
-        setIsUpdatingPrice(false);
-      }, 300); // Debounce de 300ms
-    },
-    [filters, isUpdatingPrice]
-  );
+  const getActiveSizeFiltersCount = () => {
+    let count = 0;
+    if (selectedSize) count++;
+    return count;
+  };
 
   // Inicializar filtros desde URL
   useEffect(() => {
     const initialFilters: SearchFilters = {};
     const page = searchParams.get("page");
-    const search = searchParams.get("search");
-    const marca = searchParams.get("marca");
+    const search = searchParams.get("search"); // Mantener búsqueda del navbar
     const precio_min = searchParams.get("precio_min");
     const precio_max = searchParams.get("precio_max");
+    const talla = searchParams.get("talla");
     const sortBy = searchParams.get("sortBy");
     const sortOrder = searchParams.get("sortOrder");
 
     if (page) initialFilters.page = parseInt(page);
+    
+    // Mantener búsqueda del navbar
     if (search) initialFilters.search = search;
-    if (marca) initialFilters.marca = marca;
-    if (precio_min) {
-      initialFilters.precio_min = parseFloat(precio_min);
-      setPriceRange([parseFloat(precio_min), priceRange[1]]);
-      setTempPriceRange([parseFloat(precio_min), priceRange[1]]);
+    
+    // Restaurar rango de precio seleccionado
+    if (precio_min && precio_max) {
+      const priceOption = priceOptions.find(
+        option => option.min === parseFloat(precio_min) && 
+        (option.max === null ? parseFloat(precio_max) >= 999999 : option.max === parseFloat(precio_max))
+      );
+      if (priceOption) {
+        setSelectedPriceRange(priceOption.label);
+        initialFilters.precio_min = priceOption.min;
+        initialFilters.precio_max = priceOption.max || 999999;
+      }
     }
-    if (precio_max) {
-      initialFilters.precio_max = parseFloat(precio_max);
-      setPriceRange([priceRange[0], parseFloat(precio_max)]);
-      setTempPriceRange([priceRange[0], parseFloat(precio_max)]);
+
+    // Restaurar talla seleccionada
+    if (talla) {
+      setSelectedSize(talla);
+      initialFilters.talla = talla;
     }
+
+    // Restaurar ordenamiento
     if (sortBy && sortOrder) {
-      initialFilters.sortBy = sortBy;
-      initialFilters.sortOrder = sortOrder as "asc" | "desc";
       const matchingSortOption = sortOptions.find(
         (option) => option.sortBy === sortBy && option.sortOrder === sortOrder
       );
       if (matchingSortOption) {
-        setActiveSortKey(matchingSortOption.key);
-        setSortDirection(sortOrder as "asc" | "desc");
+        setSelectedSort(matchingSortOption);
+        initialFilters.sortBy = sortBy;
+        initialFilters.sortOrder = sortOrder as "asc" | "desc";
       }
     }
 
     initialFilters.limit = 40;
 
     setFilters(initialFilters);
-    setTempFilters(initialFilters);
     setCurrentPage(initialFilters.page || 1);
   }, [searchParams]);
 
-  // Determinar qué hook usar
-  const hasSearchFilters =
-    filters.search || filters.marca || filters.precio_min || filters.precio_max;
+  // Determinar qué hook usar (ahora incluimos talla porque se filtra en backend)
+  const hasSearchFilters = filters.search || filters.precio_min || filters.precio_max || filters.talla;
 
   const {
     data: allData,
@@ -187,6 +212,9 @@ export default function BrowsePageContent() {
   const data = hasSearchFilters ? searchData : allData;
   const isLoading = hasSearchFilters ? searchLoading : allLoading;
   const error = hasSearchFilters ? searchError : allError;
+
+  // No necesitamos filtrar en frontend, se hace en backend
+  const filteredSneakers = data?.data || [];
 
   const updateUrlAndFilters = (newFilters: SearchFilters) => {
     setFilters(newFilters);
@@ -213,72 +241,80 @@ export default function BrowsePageContent() {
     updateUrlAndFilters(newFilters);
   };
 
-  const handleSortClick = (option: SortOption) => {
-    let newDirection: "asc" | "desc" = option.sortOrder;
-
-    if (activeSortKey === option.key) {
-      newDirection = sortDirection === "asc" ? "desc" : "asc";
-    }
-
-    setActiveSortKey(option.key);
-    setSortDirection(newDirection);
-
+  const handleSortChange = (option: SortOption) => {
+    setSelectedSort(option);
     const newFilters = {
       ...filters,
       sortBy: option.sortBy,
-      sortOrder: newDirection,
+      sortOrder: option.sortOrder,
       page: 1,
       limit: 40,
     };
     updateUrlAndFilters(newFilters);
-    setTempFilters(newFilters);
+    setShowSortDropdown(false);
   };
 
-  const handleFilterChange = (newFilters: Partial<SearchFilters>) => {
-    setTempFilters((prev) => ({ ...prev, ...newFilters }));
-  };
+  const handlePriceFilterChange = (priceOption: typeof priceOptions[0]) => {
+    const newSelectedRange = selectedPriceRange === priceOption.label ? null : priceOption.label;
+    setSelectedPriceRange(newSelectedRange);
 
-  const handlePriceRangeChange = (newRange: [number, number]) => {
-    setTempPriceRange(newRange);
-    setPriceRange(newRange);
-    debouncedPriceUpdate(newRange);
-  };
-
-  const removeActiveFilter = (filterKey: keyof SearchFilters) => {
     const newFilters = { ...filters };
-    delete newFilters[filterKey];
-
-    if (filterKey === "precio_min" || filterKey === "precio_max") {
+    
+    if (newSelectedRange) {
+      newFilters.precio_min = priceOption.min;
+      newFilters.precio_max = priceOption.max || 999999;
+    } else {
       delete newFilters.precio_min;
       delete newFilters.precio_max;
-      setPriceRange([0, 1000]);
-      setTempPriceRange([0, 1000]);
     }
 
     const updatedFilters = { ...newFilters, page: 1, limit: 40 };
     updateUrlAndFilters(updatedFilters);
-    setTempFilters(updatedFilters);
   };
 
-  const applySearchFilter = () => {
-    const updatedFilters = { ...tempFilters, page: 1, limit: 40 };
+  const handleSizeFilterChange = (size: string) => {
+    const newSelectedSize = selectedSize === size ? null : size;
+    setSelectedSize(newSelectedSize);
+
+    const newFilters = { ...filters };
+    
+    if (newSelectedSize) {
+      newFilters.talla = newSelectedSize;
+    } else {
+      delete newFilters.talla;
+    }
+
+    const updatedFilters = { ...newFilters, page: 1, limit: 40 };
     updateUrlAndFilters(updatedFilters);
-  };
-
-  const clearFilters = () => {
-    setFilters({ limit: 40 });
-    setTempFilters({ limit: 40 });
-    setPriceRange([0, 1000]);
-    setTempPriceRange([0, 1000]);
-    setCurrentPage(1);
-    router.push("/browse");
   };
 
   const handleSneakerClick = (sneaker: Zapatilla) => {
     router.push(`/sneaker/${sneaker.id}`);
   };
 
-  if (isLoading) {
+  const clearAllFilters = () => {
+    setSelectedPriceRange(null);
+    setSelectedSize(null);
+    setSelectedSort(sortOptions[0]);
+    
+    // Limpiar la búsqueda del navbar usando Zustand
+    clearSearch();
+    
+    const clearedFilters = {
+      limit: 40,
+      sortBy: sortOptions[0].sortBy,
+      sortOrder: sortOptions[0].sortOrder,
+      page: 1,
+    };
+    
+    setFilters(clearedFilters);
+    setCurrentPage(1);
+    
+    // Redireccionar a browse sin parámetros
+    router.push('/browse');
+  };
+
+  if (isLoading || sizesLoading) {
     return (
       <div className="min-h-screen bg-lightwhite">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -328,7 +364,7 @@ export default function BrowsePageContent() {
     );
   }
 
-  const sneakers = data?.data || [];
+  const sneakers = filteredSneakers;
   const pagination = data?.pagination;
 
   return (
@@ -350,63 +386,18 @@ export default function BrowsePageContent() {
           )}
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-18">
+        <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar con filtros */}
           <div className="w-full lg:w-64 flex-shrink-0">
-            {/* Toggle para móvil */}
-
-            {/* Filtro de Búsqueda General */}
-            <div className="mb-6">
-              <button
-                onClick={() => setShowSearchFilter(!showSearchFilter)}
-                className="flex items-center justify-between w-full py-3 text-left font-medium text-lightblack border-b border-lightaccentwhite"
-              >
-                <span>BÚSQUEDA GENERAL</span>
-                <ChevronDown
-                  className={`w-4 h-4 transform transition-transform ${
-                    showSearchFilter ? "rotate-180" : ""
-                  }`}
-                />
-              </button>
-              {showSearchFilter && (
-                <div className="pt-4 space-y-3">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-verylightblack" />
-                    <input
-                      type="text"
-                      placeholder="Marca, modelo o ambos..."
-                      value={tempFilters.search || ""}
-                      onChange={(e) =>
-                        handleFilterChange({ search: e.target.value })
-                      }
-                      className="w-full pl-10 pr-4 py-2 bg-lightwhite border border-lightaccentwhite rounded-lg focus:outline-none focus:ring-1 focus:ring-lightblack focus:border-transparent text-lightblack transition-all duration-200 hover:border-darkaccentwhite text-sm"
-                    />
-                    {tempFilters.search && (
-                      <button
-                        onClick={() => handleFilterChange({ search: "" })}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-verylightblack hover:text-lightblack transition-colors cursor-pointer"
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
-                    )}
-                  </div>
-                  <button
-                    onClick={applySearchFilter}
-                    className="w-full px-4 py-2 bg-lightblack text-lightwhite rounded-lg hover:bg-verylightblack transition-colors text-sm font-medium"
-                  >
-                    Aplicar Búsqueda
-                  </button>
-                </div>
-              )}
-            </div>
-
             {/* Filtro de Precio */}
             <div className="mb-6">
               <button
                 onClick={() => setShowPriceFilter(!showPriceFilter)}
                 className="flex items-center justify-between w-full py-3 text-left font-medium text-lightblack border-b border-lightaccentwhite"
               >
-                <span>PRECIO</span>
+                <span>
+                  Filtrar por precio {getActiveFiltersCount() > 0 && `(${getActiveFiltersCount()})`}
+                </span>
                 <ChevronDown
                   className={`w-4 h-4 transform transition-transform ${
                     showPriceFilter ? "rotate-180" : ""
@@ -414,62 +405,53 @@ export default function BrowsePageContent() {
                 />
               </button>
               {showPriceFilter && (
-                <div className="pt-4 space-y-4">
-                  <div className="flex items-center justify-between text-sm text-lightblack mb-2">
-                    <span>€{tempPriceRange[0]}</span>
-                    <span>
-                      €{tempPriceRange[1] >= 1000 ? "1000+" : tempPriceRange[1]}
-                    </span>
-                  </div>
-
-                  {/* Slider de precio personalizado */}
-                  <div className="relative">
-                    <div className="h-2 bg-lightaccentwhite rounded-full">
-                      <div
-                        className="h-2 bg-lightblack rounded-full"
-                        style={{
-                          marginLeft: `${(tempPriceRange[0] / 1000) * 100}%`,
-                          width: `${
-                            ((tempPriceRange[1] - tempPriceRange[0]) / 1000) *
-                            100
-                          }%`,
-                        }}
+                <div className="pt-4 space-y-2">
+                  {priceOptions.map((option) => (
+                    <label key={option.label} className="flex items-center space-x-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={selectedPriceRange === option.label}
+                        onChange={() => handlePriceFilterChange(option)}
+                        className="w-4 h-4 text-lightblack focus:ring-lightblack border-gray-300 rounded"
                       />
-                    </div>
-                    <input
-                      type="range"
-                      min="0"
-                      max="1000"
-                      value={tempPriceRange[0]}
-                      onChange={(e) => {
-                        const newMin = parseInt(e.target.value);
-                        if (newMin <= tempPriceRange[1]) {
-                          const newRange: [number, number] = [
-                            newMin,
-                            tempPriceRange[1],
-                          ];
-                          handlePriceRangeChange(newRange);
-                        }
-                      }}
-                      className="absolute top-0 w-full h-2 bg-transparent appearance-none cursor-pointer slider-thumb"
-                    />
-                    <input
-                      type="range"
-                      min="0"
-                      max="1000"
-                      value={tempPriceRange[1]}
-                      onChange={(e) => {
-                        const newMax = parseInt(e.target.value);
-                        if (newMax >= tempPriceRange[0]) {
-                          const newRange: [number, number] = [
-                            tempPriceRange[0],
-                            newMax,
-                          ];
-                          handlePriceRangeChange(newRange);
-                        }
-                      }}
-                      className="absolute top-0 w-full h-2 bg-transparent appearance-none cursor-pointer slider-thumb"
-                    />
+                      <span className="text-sm text-lightblack">{option.label}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Filtro de Talla */}
+            <div className="mb-6">
+              <button
+                onClick={() => setShowSizeFilter(!showSizeFilter)}
+                className="flex items-center justify-between w-full py-3 text-left font-medium text-lightblack border-b border-lightaccentwhite"
+              >
+                <span>
+                  Talla {getActiveSizeFiltersCount() > 0 && `(${getActiveSizeFiltersCount()})`}
+                </span>
+                <ChevronDown
+                  className={`w-4 h-4 transform transition-transform ${
+                    showSizeFilter ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+              {showSizeFilter && (
+                <div className="pt-4">
+                  <div className="grid grid-cols-3 gap-2">
+                    {availableSizes.map((size) => (
+                      <button
+                        key={size}
+                        onClick={() => handleSizeFilterChange(size)}
+                        className={`px-2 py-1 text-sm border rounded transition-colors ${
+                          selectedSize === size
+                            ? "bg-lightblack text-lightwhite border-lightblack"
+                            : "bg-lightwhite text-lightblack border-lightaccentwhite hover:border-darkaccentwhite"
+                        }`}
+                      >
+                        {size}
+                      </button>
+                    ))}
                   </div>
                 </div>
               )}
@@ -478,85 +460,42 @@ export default function BrowsePageContent() {
 
           {/* Contenido principal */}
           <div className="flex-1">
-            {/* Breadcrumb y controles de ordenamiento */}
+            {/* Controles de ordenamiento */}
             <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center space-x-1">
-                <span className="text-sm text-lightblack mr-3">Ordenar:</span>
-                {sortOptions.map((option) => (
+              <div></div> {/* Espacio vacío a la izquierda */}
+              <div className="flex items-center space-x-4">
+                <button
+                  onClick={clearAllFilters}
+                  className="text-sm text-lightblack hover:text-verylightblack underline transition-colors"
+                >
+                  Limpiar filtros
+                </button>
+                <div className="relative">
                   <button
-                    key={option.key}
-                    onClick={() => handleSortClick(option)}
-                    className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm transition-colors ${
-                      activeSortKey === option.key
-                        ? "bg-lightblack text-lightwhite"
-                        : "text-lightblack hover:bg-darkwhite"
-                    }`}
+                    onClick={() => setShowSortDropdown(!showSortDropdown)}
+                    className="flex items-center space-x-2 px-4 py-2 bg-lightwhite border border-lightaccentwhite rounded-md hover:border-darkaccentwhite transition-colors"
                   >
-                    <span>{option.label}</span>
-                    {activeSortKey === option.key &&
-                      (sortDirection === "asc" ? (
-                        <ChevronUp className="w-3 h-3" />
-                      ) : (
-                        <ChevronDown className="w-3 h-3" />
-                      ))}
+                    <span className="text-sm text-lightblack">Ordenar</span>
+                    <ChevronDown className="w-4 h-4 text-lightblack" />
                   </button>
-                ))}
+                  {showSortDropdown && (
+                    <div className="absolute z-10 mt-2 w-48 bg-lightwhite border border-lightaccentwhite rounded-md shadow-lg right-0">
+                      {sortOptions.map((option) => (
+                        <button
+                          key={option.key}
+                          onClick={() => handleSortChange(option)}
+                          className={`w-full text-left px-4 py-2 text-sm hover:bg-darkwhite transition-colors ${
+                            selectedSort.key === option.key ? "bg-darkwhite" : ""
+                          }`}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-
-            {/* Filtros activos */}
-            {(filters.search ||
-              filters.marca ||
-              filters.precio_min ||
-              filters.precio_max) && (
-              <div className="flex flex-wrap gap-2 mb-6">
-                <span className="text-sm text-lightblack mr-2">
-                  Filtros activos:
-                </span>
-                {filters.search && (
-                  <span className="px-3 py-1 bg-lightblack text-lightwhite rounded-full text-sm flex items-center space-x-1">
-                    <span>"{filters.search}"</span>
-                    <button
-                      onClick={() => removeActiveFilter("search")}
-                      className="text-lightwhite hover:text-lightaccentwhite"
-                    >
-                      ×
-                    </button>
-                  </span>
-                )}
-                {filters.marca && (
-                  <span className="px-3 py-1 bg-lightblack text-lightwhite rounded-full text-sm flex items-center space-x-1">
-                    <span>{filters.marca}</span>
-                    <button
-                      onClick={() => removeActiveFilter("marca")}
-                      className="text-lightwhite hover:text-lightaccentwhite"
-                    >
-                      ×
-                    </button>
-                  </span>
-                )}
-                {(filters.precio_min || filters.precio_max) && (
-                  <span className="px-3 py-1 bg-lightblack text-lightwhite rounded-full text-sm flex items-center space-x-1">
-                    <span>
-                      €{filters.precio_min || 0} - €
-                      {filters.precio_max || "1000+"}
-                    </span>
-                    <button
-                      onClick={() => removeActiveFilter("precio_min")}
-                      className="text-lightwhite hover:text-lightaccentwhite"
-                    >
-                      ×
-                    </button>
-                  </span>
-                )}
-                <button
-                  onClick={clearFilters}
-                  className="text-sm text-darkaccentwhite hover:text-lightblack underline"
-                >
-                  Limpiar Todo
-                </button>
-              </div>
-            )}
 
             {/* Grid de zapatillas - 2 columnas en móvil, 4 en desktop */}
             {sneakers.length > 0 ? (
@@ -574,12 +513,6 @@ export default function BrowsePageContent() {
                 <p className="text-darkaccentwhite mb-4">
                   No se encontraron zapatillas que coincidan con tus criterios
                 </p>
-                <button
-                  onClick={clearFilters}
-                  className="px-4 py-2 bg-lightblack text-lightwhite rounded-md hover:bg-verylightblack transition-colors"
-                >
-                  Limpiar Filtros
-                </button>
               </div>
             )}
 
@@ -648,29 +581,6 @@ export default function BrowsePageContent() {
           </div>
         </div>
       </div>
-
-      {/* Estilos para el slider de precio */}
-      <style jsx>{`
-        .slider-thumb::-webkit-slider-thumb {
-          appearance: none;
-          width: 16px;
-          height: 16px;
-          border-radius: 50%;
-          background: #191717;
-          cursor: pointer;
-          border: 2px solid #ffffff;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-        .slider-thumb::-moz-range-thumb {
-          width: 16px;
-          height: 16px;
-          border-radius: 50%;
-          background: #191717;
-          cursor: pointer;
-          border: 2px solid #ffffff;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-      `}</style>
     </div>
   );
 }
