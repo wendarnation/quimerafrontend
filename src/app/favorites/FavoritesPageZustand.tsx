@@ -377,7 +377,7 @@ function FavoritesContent() {
 
 export default function FavoritesPageZustand() {
   return (
-    <AuthGuard>
+    <AuthGuard fallback={<FavoritesContent />}>
       <FavoritesContent />
     </AuthGuard>
   );

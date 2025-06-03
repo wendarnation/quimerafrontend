@@ -174,7 +174,7 @@ export default function AdminUsersPage() {
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-verylightblack" />
                     <input
                       type="text"
-                      placeholder="Nombre, email o nickname..."
+                      placeholder="Nombre, email o nombre de usuario..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="w-full pl-10 pr-4 py-2 bg-lightwhite border border-lightaccentwhite rounded-lg focus:outline-none focus:ring-2 focus:ring-darkaccentwhite focus:border-darkaccentwhite text-lightblack transition-all duration-200 hover:border-darkaccentwhite text-sm"
