@@ -1,7 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { User, Settings, Trash2, Save, Eye, EyeOff, LogOut } from "lucide-react";
+import {
+  User,
+  Settings,
+  Trash2,
+  Save,
+  LogOut,
+  AlertTriangle,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface Auth0User {
@@ -34,8 +41,7 @@ export default function SettingsClient({ user }: SettingsClientProps) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
-  
+
   // Form state
   const [formData, setFormData] = useState({
     nickname: "",
@@ -77,9 +83,9 @@ export default function SettingsClient({ user }: SettingsClientProps) {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -87,7 +93,6 @@ export default function SettingsClient({ user }: SettingsClientProps) {
     e.preventDefault();
     setSaving(true);
     setError(null);
-    setSuccess(null);
 
     try {
       const response = await fetch("/api/users/profile", {
@@ -103,8 +108,6 @@ export default function SettingsClient({ user }: SettingsClientProps) {
         throw new Error("Error al actualizar el perfil");
       }
 
-      setSuccess("Perfil actualizado correctamente");
-      
       // Update local profile state
       if (profile) {
         setProfile({
@@ -145,199 +148,232 @@ export default function SettingsClient({ user }: SettingsClientProps) {
       // Redirect to logout
       window.location.href = "/auth/logout";
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error al eliminar la cuenta");
+      setError(
+        err instanceof Error ? err.message : "Error al eliminar la cuenta"
+      );
       setDeleting(false);
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-white mx-auto"></div>
-          <p className="mt-4 text-gray-400">Cargando...</p>
+      <div className="min-h-screen bg-lightwhite">
+        {/* Header Section */}
+        <div className="bg-lightwhite">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div className="flex items-center space-x-4">
+              <div>
+                <div className="h-8 bg-lightaccentwhite rounded animate-pulse w-48"></div>
+                <div className="h-4 bg-lightaccentwhite rounded animate-pulse w-80 mt-2"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Loading Skeleton */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="bg-lightwhite border border-lightaccentwhite rounded-xl shadow-sm overflow-hidden">
+            <div className="px-6 py-4 border-b border-lightaccentwhite bg-lightwhite">
+              <div className="h-6 bg-lightaccentwhite rounded animate-pulse w-40"></div>
+            </div>
+            <div className="p-6 space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {Array.from({ length: 4 }).map((_, index) => (
+                  <div key={index}>
+                    <div className="h-4 bg-lightaccentwhite rounded animate-pulse w-24 mb-2"></div>
+                    <div className="h-10 bg-lightaccentwhite rounded animate-pulse"></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 py-8">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-gray-800 shadow rounded-lg border border-gray-700">
-          {/* Header */}
-          <div className="px-6 py-4 border-b border-gray-700">
+    <div className="min-h-screen bg-lightwhite">
+      {/* Header Section */}
+      <div className="bg-lightwhite">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-bold text-lightblack">
+                  Ajustes de Usuario
+                </h1>
+                <p className="text-verylightblack mt-1 text-sm sm:text-base">
+                  Gestiona tu perfil y configuración de cuenta
+                </p>
+              </div>
+            </div>
+
+            {/* Logout Button */}
+            <a
+              href="/auth/logout"
+              className="inline-flex items-center bg-lightblack cursor-pointer hover:bg-pinkneon text-darkwhite hover:text-white px-4 py-2 md:px-6 md:py-2 rounded-lg font-semibold transition-all duration-500 ease-in-out"
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              Cerrar sesión
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Messages */}
+        {error && (
+          <div className="mb-6 bg-lightwhite border border-redneon/20 rounded-xl p-4">
             <div className="flex items-center space-x-3">
-              <Settings className="h-6 w-6 text-gray-400" />
-              <h1 className="text-2xl font-bold text-white">Ajustes de Usuario</h1>
+              <AlertTriangle className="h-5 w-5 text-redneon flex-shrink-0" />
+              <p className="text-redneon text-sm font-medium">{error}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Profile Settings */}
+        <div className="bg-lightwhite border border-lightaccentwhite rounded-xl shadow-sm overflow-hidden mb-8">
+          <div className="px-6 py-4 border-b border-lightaccentwhite bg-lightwhite">
+            <div className="flex items-center space-x-3">
+              <User className="h-5 w-5 text-verylightblack" />
+              <h2 className="text-lg font-semibold text-lightblack">
+                Información del Perfil
+              </h2>
             </div>
           </div>
 
           <div className="p-6">
-            {/* Logout Button */}
-            <div className="mb-6 flex justify-end">
-              <a
-                href="/auth/logout"
-                className="inline-flex items-center px-4 py-2 border border-red-600 text-sm font-medium rounded-md text-red-200 bg-red-800 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
-              >
-                <LogOut className="h-4 w-4 mr-2" />
-                Cerrar sesión
-              </a>
-            </div>
-
-            {/* Messages */}
-            {error && (
-              <div className="mb-4 bg-red-900 border border-red-700 rounded-md p-4">
-                <p className="text-red-200 text-sm">{error}</p>
+            <form onSubmit={handleSaveProfile} className="space-y-6">
+              {/* Email (Read-only) */}
+              <div>
+                <label className="block text-xs font-medium text-verylightblack uppercase tracking-wider mb-2">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  value={user.email || ""}
+                  disabled
+                  className="w-full px-4 py-2 bg-lightaccentwhite/30 border border-lightaccentwhite rounded-md text-verylightblack cursor-not-allowed text-sm focus:outline-none"
+                />
               </div>
-            )}
-            
-            {success && (
-              <div className="mb-4 bg-green-900 border border-green-700 rounded-md p-4">
-                <p className="text-green-200 text-sm">{success}</p>
-              </div>
-            )}
 
-            {/* Profile Information */}
-            <div className="mb-8">
-              <h2 className="text-lg font-medium text-white mb-4">
-                Información del Perfil
-              </h2>
-              
-              <form onSubmit={handleSaveProfile} className="space-y-6">
-                {/* Auth0 Info (Read-only) */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300">
-                      Email (Auth0)
-                    </label>
-                    <input
-                      type="email"
-                      value={user.email || ""}
-                      disabled
-                      className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md shadow-sm text-gray-400 cursor-not-allowed"
-                    />
-                    <p className="mt-1 text-xs text-gray-500">
-                      El email se gestiona a través de Auth0
-                    </p>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300">
-                      Rol
-                    </label>
-                    <input
-                      type="text"
-                      value={profile?.rol || "usuario"}
-                      disabled
-                      className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md shadow-sm text-gray-400 cursor-not-allowed"
-                    />
-                  </div>
-                </div>
-
-                {/* Editable Fields */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label htmlFor="nickname" className="block text-sm font-medium text-gray-300">
-                      Nickname
-                    </label>
-                    <input
-                      type="text"
-                      id="nickname"
-                      name="nickname"
-                      value={formData.nickname}
-                      onChange={handleInputChange}
-                      className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-gray-700 text-white placeholder-gray-400"
-                      placeholder="Tu nickname"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="nombre_completo" className="block text-sm font-medium text-gray-300">
-                      Nombre Completo
-                    </label>
-                    <input
-                      type="text"
-                      id="nombre_completo"
-                      name="nombre_completo"
-                      value={formData.nombre_completo}
-                      onChange={handleInputChange}
-                      className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-gray-700 text-white placeholder-gray-400"
-                      placeholder="Tu nombre completo"
-                    />
-                  </div>
-                </div>
-
-                {/* Save Button */}
-                <div className="flex justify-end">
-                  <button
-                    type="submit"
-                    disabled={saving}
-                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              {/* Editable Fields */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label
+                    htmlFor="nickname"
+                    className="block text-xs font-medium text-verylightblack uppercase tracking-wider mb-2"
                   >
-                    <Save className="h-4 w-4 mr-2" />
-                    {saving ? "Guardando..." : "Guardar Cambios"}
-                  </button>
+                    Nombre de Usuario
+                  </label>
+                  <input
+                    type="text"
+                    id="nickname"
+                    name="nickname"
+                    value={formData.nickname}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 bg-lightwhite border border-lightaccentwhite rounded-md focus:outline-none focus:ring-1 focus:ring-lightblack focus:border-transparent text-lightblack transition-all duration-200 hover:border-darkaccentwhite text-sm"
+                    placeholder="Tu nombre de usuario"
+                  />
                 </div>
-              </form>
+
+                <div>
+                  <label
+                    htmlFor="nombre_completo"
+                    className="block text-xs font-medium text-verylightblack uppercase tracking-wider mb-2"
+                  >
+                    Nombre Completo
+                  </label>
+                  <input
+                    type="text"
+                    id="nombre_completo"
+                    name="nombre_completo"
+                    value={formData.nombre_completo}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 bg-lightwhite border border-lightaccentwhite rounded-md focus:outline-none focus:ring-1 focus:ring-lightblack focus:border-transparent text-lightblack transition-all duration-200 hover:border-darkaccentwhite text-sm"
+                    placeholder="Tu nombre completo"
+                  />
+                </div>
+              </div>
+
+              {/* Save Button */}
+              <div className="flex justify-end pt-4">
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="inline-flex items-center bg-lightaccentwhite cursor-pointer hover:bg-lightblack text-lightblack hover:text-darkwhite px-4 py-2 md:px-6 md:py-2 rounded-lg font-semibold transition-all duration-500 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Save className="h-4 w-4 mr-2" />
+                  {saving ? "Guardando..." : "Guardar cambios"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        {/* Danger Zone */}
+        <div className="bg-lightwhite border border-redneon/20 rounded-xl shadow-sm overflow-hidden">
+          <div className="px-6 py-4 border-b border-redneon/20 bg-redneon/5">
+            <div className="flex items-center space-x-3">
+              <Trash2 className="h-5 w-5 text-redneon" />
+              <h2 className="text-lg font-semibold text-redneon">
+                Zona de Peligro
+              </h2>
             </div>
+          </div>
 
-            {/* Danger Zone */}
-            <div className="border-t border-gray-700 pt-8">
-              <div className="bg-red-900 border border-red-700 rounded-md p-6">
-                <div className="flex items-center mb-4">
-                  <Trash2 className="h-5 w-5 text-red-400 mr-2" />
-                  <h3 className="text-lg font-medium text-red-200">
-                    Zona de Peligro
-                  </h3>
-                </div>
-                
-                <p className="text-red-300 text-sm mb-4">
-                  Una vez que elimines tu cuenta, no hay vuelta atrás. Por favor, asegúrate de que realmente quieres hacer esto.
+          <div className="p-6">
+            <p className="text-verylightblack text-sm mb-6">
+              Una vez que elimines tu cuenta, no hay vuelta atrás. Se eliminarán
+              todos tus datos, favoritos y configuraciones. Por favor, asegúrate
+              de que realmente quieres hacer esto.
+            </p>
+
+            {!showDeleteConfirm ? (
+              <button
+                onClick={() => setShowDeleteConfirm(true)}
+                className="inline-flex items-center bg-lightwhite cursor-pointer hover:bg-redneon text-redneon hover:text-lightwhite px-4 py-2 md:px-6 md:py-2 rounded-lg font-semibold transition-all duration-500 ease-in-out"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Eliminar mi cuenta
+              </button>
+            ) : (
+              <div className="space-y-4">
+                <p className="text-lightblack text-sm font-medium">
+                  Para confirmar la eliminación de tu cuenta, escribe "ELIMINAR"
+                  en el siguiente campo:
                 </p>
-
-                {!showDeleteConfirm ? (
+                <input
+                  type="text"
+                  value={deleteConfirmText}
+                  onChange={(e) => setDeleteConfirmText(e.target.value)}
+                  className="block w-full max-w-xs px-4 py-2 bg-lightwhite border border-redneon rounded-md focus:outline-none focus:ring-1 focus:ring-lightblack focus:border-transparent text-lightblack text-sm"
+                  placeholder="ELIMINAR"
+                />
+                <div className="flex space-x-3">
                   <button
-                    onClick={() => setShowDeleteConfirm(true)}
-                    className="inline-flex items-center px-4 py-2 border border-red-600 text-sm font-medium rounded-md text-red-200 bg-red-800 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                    onClick={handleDeleteAccount}
+                    disabled={deleting || deleteConfirmText !== "ELIMINAR"}
+                    className="inline-flex items-center bg-lightwhite cursor-pointer hover:bg-redneon text-redneon hover:text-lightwhite px-4 py-2 md:px-6 md:py-2 rounded-lg font-semibold transition-all duration-500 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Trash2 className="h-4 w-4 mr-2" />
-                    Eliminar mi cuenta
+                    {deleting ? "Eliminando..." : "Confirmar Eliminación"}
                   </button>
-                ) : (
-                  <div className="space-y-4">
-                    <p className="text-red-200 text-sm font-medium">
-                      Para confirmar, escribe "ELIMINAR" en el siguiente campo:
-                    </p>
-                    <input
-                      type="text"
-                      value={deleteConfirmText}
-                      onChange={(e) => setDeleteConfirmText(e.target.value)}
-                      className="block w-full max-w-xs px-3 py-2 border border-red-600 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 bg-red-800 text-white placeholder-red-300"
-                      placeholder="ELIMINAR"
-                    />
-                    <div className="flex space-x-3">
-                      <button
-                        onClick={handleDeleteAccount}
-                        disabled={deleting || deleteConfirmText !== "ELIMINAR"}
-                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {deleting ? "Eliminando..." : "Confirmar Eliminación"}
-                      </button>
-                      <button
-                        onClick={() => {
-                          setShowDeleteConfirm(false);
-                          setDeleteConfirmText("");
-                        }}
-                        className="inline-flex items-center px-4 py-2 border border-gray-600 text-sm font-medium rounded-md text-gray-300 bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                      >
-                        Cancelar
-                      </button>
-                    </div>
-                  </div>
-                )}
+                  <button
+                    onClick={() => {
+                      setShowDeleteConfirm(false);
+                      setDeleteConfirmText("");
+                      setError(null);
+                    }}
+                    className="inline-flex items-center bg-lightaccentwhite cursor-pointer hover:bg-lightaccentwhite/50 text-lightblack hover:text-verylightblack px-4 py-2 md:px-6 md:py-2 rounded-lg font-semibold transition-all duration-500 ease-in-out"
+                  >
+                    Cancelar
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
