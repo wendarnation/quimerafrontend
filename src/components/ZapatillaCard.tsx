@@ -64,7 +64,7 @@ export default function ZapatillaCard({
       <div className="px-4 -mt-6 pt-1 pb-4 relative z-10">
         {/* Título - Marca y Modelo en filas separadas */}
         <div className="mb-3">
-          <h3 className="font-bold text-lightblack text-sm md:text-base leading-tight line-clamp-1 group-hover:text-verylightblack transition-colors">
+          <h3 className="font-bold text-lightblack text-xs md:text-base leading-tight line-clamp-1 group-hover:text-verylightblack transition-colors">
             {zapatilla.marca}
           </h3>
           <p className="font-normal text-darkaccentwhite text-xs md:text-sm leading-tight line-clamp-1 mt-0.5">

@@ -412,20 +412,8 @@ export default function AdminUsersPage() {
                             onChange={(e) =>
                               handleRoleChange(user.id, e.target.value)
                             }
-                            onFocus={() =>
-                              setOpenSelects((prev) => ({
-                                ...prev,
-                                [user.id]: true,
-                              }))
-                            }
-                            onBlur={() =>
-                              setOpenSelects((prev) => ({
-                                ...prev,
-                                [user.id]: false,
-                              }))
-                            }
                             disabled={operationLoading === user.id}
-                            className="appearance-none bg-lightwhite border border-lightaccentwhite rounded-lg px-4 py-2 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-darkaccentwhite focus:border-darkaccentwhite disabled:bg-lightaccentwhite disabled:cursor-not-allowed cursor-pointer text-lightblack transition-all duration-200 hover:border-darkaccentwhite w-full"
+                            className="appearance-none bg-lightwhite border border-darkaccentwhite rounded-md px-4 py-2 pr-10 text-sm focus:outline-none focus:ring-1 focus:ring-lightblack focus:border-transparent disabled:bg-lightaccentwhite disabled:cursor-not-allowed cursor-pointer text-lightblack transition-colors hover:border-darkaccentwhite w-full shadow-lg"
                           >
                             {ROLES.map((role) => (
                               <option key={role.value} value={role.value}>
@@ -434,14 +422,10 @@ export default function AdminUsersPage() {
                             ))}
                           </select>
                           <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                            <ChevronDown
-                              className={`h-4 w-4 text-verylightblack transition-transform duration-200 ${
-                                openSelects[user.id] ? "rotate-180" : ""
-                              }`}
-                            />
+                            <ChevronDown className="h-4 w-4 text-lightblack" />
                           </div>
                           {operationLoading === user.id && (
-                            <div className="absolute right-12 top-1/2 transform -translate-y-1/2">
+                            <div className="absolute right-10 top-1/2 transform -translate-y-1/2">
                               <Loader2 className="h-4 w-4 animate-spin text-verylightblack" />
                             </div>
                           )}
@@ -594,20 +578,8 @@ export default function AdminUsersPage() {
                           onChange={(e) =>
                             handleRoleChange(user.id, e.target.value)
                           }
-                          onFocus={() =>
-                            setOpenSelects((prev) => ({
-                              ...prev,
-                              [user.id]: true,
-                            }))
-                          }
-                          onBlur={() =>
-                            setOpenSelects((prev) => ({
-                              ...prev,
-                              [user.id]: false,
-                            }))
-                          }
                           disabled={operationLoading === user.id}
-                          className="appearance-none bg-lightwhite border border-lightaccentwhite rounded-lg px-4 py-2 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-darkaccentwhite focus:border-darkaccentwhite disabled:bg-lightaccentwhite disabled:cursor-not-allowed cursor-pointer text-lightblack transition-all duration-200 hover:border-darkaccentwhite w-full"
+                          className="appearance-none bg-lightwhite border border-darkaccentwhite rounded-md px-4 py-2 pr-10 text-sm focus:outline-none focus:ring-1 focus:ring-lightblack focus:border-transparent disabled:bg-lightaccentwhite disabled:cursor-not-allowed cursor-pointer text-lightblack transition-colors hover:border-darkaccentwhite w-full shadow-lg"
                         >
                           {ROLES.map((role) => (
                             <option key={role.value} value={role.value}>
@@ -616,14 +588,10 @@ export default function AdminUsersPage() {
                           ))}
                         </select>
                         <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                          <ChevronDown
-                            className={`h-4 w-4 text-verylightblack transition-transform duration-200 ${
-                              openSelects[user.id] ? "rotate-180" : ""
-                            }`}
-                          />
+                          <ChevronDown className="h-4 w-4 text-lightblack" />
                         </div>
                         {operationLoading === user.id && (
-                          <div className="absolute right-12 top-1/2 transform -translate-y-1/2">
+                          <div className="absolute right-10 top-1/2 transform -translate-y-1/2">
                             <Loader2 className="h-4 w-4 animate-spin text-verylightblack" />
                           </div>
                         )}
