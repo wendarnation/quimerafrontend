@@ -5,14 +5,16 @@ import { useState } from "react";
 import { MessageCircle, Trash2, Send, User } from "lucide-react";
 import { useCurrentUser, useIsAuthenticated } from "@/hooks/useCurrentUser";
 import { useComentarios, useCreateComentario, useDeleteComentario } from "@/hooks/useComentarios";
+import ReportCommentButton from "@/components/reports/ReportCommentButton";
 import { Comentario } from "@/types/comentarios";
 
 interface CommentSectionProps {
   zapatillaId: number;
   hideTitle?: boolean;
+  sneakerName?: string;
 }
 
-export default function CommentSection({ zapatillaId, hideTitle = false }: CommentSectionProps) {
+export default function CommentSection({ zapatillaId, hideTitle = false, sneakerName = "" }: CommentSectionProps) {
   const { isAuthenticated, isLoading: authLoading, user: currentUser } = useIsAuthenticated();
   const { data: comentarios, isLoading: comentariosLoading, error } = useComentarios(zapatillaId);
   
@@ -170,15 +172,23 @@ export default function CommentSection({ zapatillaId, hideTitle = false }: Comme
                   </div>
                 </div>
                 
-                {canDeleteComment(comentario) && (
-                  <button
-                    onClick={() => handleDeleteComment(comentario.id)}
-                    className="p-1 text-darkaccentwhite hover:text-redneon transition-colors"
-                    title="Eliminar comentario"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                )}
+                <div className="flex items-center space-x-1">
+                  <ReportCommentButton
+                    commentText={comentario.texto}
+                    commentAuthor={comentario.usuario.nickname || comentario.usuario.email.split('@')[0]}
+                    sneakerId={zapatillaId}
+                    sneakerName={sneakerName}
+                  />
+                  {canDeleteComment(comentario) && (
+                    <button
+                      onClick={() => handleDeleteComment(comentario.id)}
+                      className="p-1 text-darkaccentwhite hover:text-redneon transition-colors cursor-pointer"
+                      title="Eliminar comentario"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
               </div>
               
               <p className="text-lightblack text-sm leading-relaxed ml-10">

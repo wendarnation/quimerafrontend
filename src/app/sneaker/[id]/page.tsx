@@ -13,6 +13,7 @@ import { useSneakerDetails, useSneakerSizes } from "@/hooks/useSneakers";
 import FavoriteButtonZustand from "@/components/favorites/FavoriteButtonZustand";
 import StarRating from "@/components/ratings/StarRating";
 import CommentSection from "@/components/comments/CommentSection";
+import ReportSneakerButton from "@/components/reports/ReportSneakerButton";
 import { Talla } from "@/types/zapatilla";
 
 export default function SneakerDetailsPage() {
@@ -219,11 +220,17 @@ export default function SneakerDetailsPage() {
                 SKU: {sneaker.sku}
               </p>
             </div>
-            <FavoriteButtonZustand
-              zapatillaId={sneaker.id}
-              className="p-2 rounded-full bg-lightwhite cursor-pointer transition-all duration-200"
-              size="md"
-            />
+            <div className="flex items-center space-x-2">
+              <ReportSneakerButton 
+                sneakerId={sneaker.id}
+                sneakerName={`${sneaker.marca} ${sneaker.modelo}`}
+              />
+              <FavoriteButtonZustand
+                zapatillaId={sneaker.id}
+                className="p-2 rounded-full bg-lightwhite cursor-pointer transition-all duration-200"
+                size="md"
+              />
+            </div>
           </div>
 
           {/* Precio Mobile */}
@@ -416,7 +423,11 @@ export default function SneakerDetailsPage() {
               </button>
               {showComments && (
                 <div className="border-t border-lightaccentwhite">
-                  <CommentSection zapatillaId={sneaker.id} hideTitle={true} />
+                  <CommentSection 
+                    zapatillaId={sneaker.id} 
+                    hideTitle={true} 
+                    sneakerName={`${sneaker.marca} ${sneaker.modelo}`}
+                  />
                 </div>
               )}
             </div>
@@ -437,11 +448,17 @@ export default function SneakerDetailsPage() {
                   SKU: {sneaker.sku}
                 </p>
               </div>
-              <FavoriteButtonZustand
-                zapatillaId={sneaker.id}
-                className="p-3 rounded-full bg-lightwhite cursor-pointer transition-all duration-200"
-                size="lg"
-              />
+              <div className="flex items-center space-x-3">
+                <ReportSneakerButton 
+                  sneakerId={sneaker.id}
+                  sneakerName={`${sneaker.marca} ${sneaker.modelo}`}
+                />
+                <FavoriteButtonZustand
+                  zapatillaId={sneaker.id}
+                  className="p-3 rounded-full bg-lightwhite cursor-pointer transition-all duration-200"
+                  size="lg"
+                />
+              </div>
             </div>
 
             {/* Precio Desktop */}
