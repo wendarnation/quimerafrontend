@@ -9,9 +9,10 @@ import { Comentario } from "@/types/comentarios";
 
 interface CommentSectionProps {
   zapatillaId: number;
+  hideTitle?: boolean;
 }
 
-export default function CommentSection({ zapatillaId }: CommentSectionProps) {
+export default function CommentSection({ zapatillaId, hideTitle = false }: CommentSectionProps) {
   const { isAuthenticated, isLoading: authLoading, user: currentUser } = useIsAuthenticated();
   const { data: comentarios, isLoading: comentariosLoading, error } = useComentarios(zapatillaId);
   
@@ -74,14 +75,14 @@ export default function CommentSection({ zapatillaId }: CommentSectionProps) {
 
   if (comentariosLoading) {
     return (
-      <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
+      <div className="p-6">
         <div className="animate-pulse">
-          <div className="h-6 bg-gray-700 rounded w-32 mb-4"></div>
+          <div className="h-6 bg-lightaccentwhite rounded w-32 mb-4"></div>
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="border-b border-gray-700 pb-4">
-                <div className="h-4 bg-gray-700 rounded w-24 mb-2"></div>
-                <div className="h-12 bg-gray-700 rounded"></div>
+              <div key={i} className="border-b border-lightaccentwhite pb-4">
+                <div className="h-4 bg-lightaccentwhite rounded w-24 mb-2"></div>
+                <div className="h-12 bg-lightaccentwhite rounded"></div>
               </div>
             ))}
           </div>
@@ -92,28 +93,32 @@ export default function CommentSection({ zapatillaId }: CommentSectionProps) {
 
   if (error) {
     return (
-      <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
-        <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
-          <MessageCircle className="h-5 w-5 mr-2" />
-          Comentarios
-        </h3>
-        <p className="text-red-400">Error al cargar los comentarios</p>
+      <div className="p-6">
+        {!hideTitle && (
+          <h3 className="text-lg font-semibold text-lightblack mb-4 flex items-center">
+            <MessageCircle className="h-5 w-5 mr-2" />
+            Comentarios
+          </h3>
+        )}
+        <p className="text-redneon">Error al cargar los comentarios</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
-      <h3 className="text-lg font-semibold text-white mb-6 flex items-center">
-        <MessageCircle className="h-5 w-5 mr-2" />
-        Comentarios ({comentarios?.length || 0})
-      </h3>
+    <div className="p-6">
+      {!hideTitle && (
+        <h3 className="text-lg font-semibold text-lightblack mb-6 flex items-center">
+          <MessageCircle className="h-5 w-5 mr-2" />
+          Comentarios ({comentarios?.length || 0})
+        </h3>
+      )}
 
       {/* Formulario para nuevo comentario */}
       {isAuthenticated && currentUser ? (
         <form onSubmit={handleSubmitComment} className="mb-6">
           <div className="mb-4">
-            <label htmlFor="comment" className="block text-sm font-medium text-gray-300 mb-2">
+            <label htmlFor="comment" className="block text-sm font-medium text-lightblack mb-2">
               Escribe un comentario
             </label>
             <textarea
@@ -121,7 +126,7 @@ export default function CommentSection({ zapatillaId }: CommentSectionProps) {
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               placeholder="Comparte tu opinión sobre esta zapatilla..."
-              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+              className="w-full px-3 py-2 bg-lightwhite border border-lightaccentwhite rounded-md text-lightblack placeholder-darkaccentwhite focus:outline-none focus:ring-2 focus:ring-blueneon focus:border-transparent resize-none"
               rows={3}
               disabled={isSubmitting}
             />
@@ -130,7 +135,7 @@ export default function CommentSection({ zapatillaId }: CommentSectionProps) {
             <button
               type="submit"
               disabled={!newComment.trim() || isSubmitting}
-              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center space-x-2 px-4 py-2 bg-lightblack text-lightwhite rounded-md hover:bg-verylightblack focus:outline-none focus:ring-2 focus:ring-blueneon focus:ring-offset-2 focus:ring-offset-lightwhite disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <Send className="h-4 w-4" />
               <span>{isSubmitting ? "Enviando..." : "Comentar"}</span>
@@ -138,8 +143,8 @@ export default function CommentSection({ zapatillaId }: CommentSectionProps) {
           </div>
         </form>
       ) : (
-        <div className="mb-6 p-4 bg-gray-700 rounded-md border border-gray-600">
-          <p className="text-gray-300 text-sm">
+        <div className="mb-6 p-4 bg-lightaccentwhite rounded-md border border-lightaccentwhite">
+          <p className="text-lightblack text-sm">
             {authLoading ? "Cargando..." : "Inicia sesión para escribir un comentario"}
           </p>
         </div>
@@ -149,17 +154,17 @@ export default function CommentSection({ zapatillaId }: CommentSectionProps) {
       <div className="space-y-4">
         {comentarios && comentarios.length > 0 ? (
           comentarios.map((comentario) => (
-            <div key={comentario.id} className="border-b border-gray-700 pb-4 last:border-b-0">
+            <div key={comentario.id} className="border-b border-lightaccentwhite pb-4 last:border-b-0">
               <div className="flex items-start justify-between mb-2">
                 <div className="flex items-center space-x-2">
-                  <div className="flex items-center justify-center w-8 h-8 bg-gray-600 rounded-full">
-                    <User className="h-4 w-4 text-gray-300" />
+                  <div className="flex items-center justify-center w-8 h-8 bg-lightaccentwhite rounded-full">
+                    <User className="h-4 w-4 text-darkaccentwhite" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-medium text-white">
+                    <h4 className="text-sm font-medium text-lightblack">
                       {comentario.usuario.nickname || comentario.usuario.email.split('@')[0]}
                     </h4>
-                    <p className="text-xs text-gray-400">
+                    <p className="text-xs text-darkaccentwhite">
                       {formatDate(comentario.fecha)}
                     </p>
                   </div>
@@ -168,7 +173,7 @@ export default function CommentSection({ zapatillaId }: CommentSectionProps) {
                 {canDeleteComment(comentario) && (
                   <button
                     onClick={() => handleDeleteComment(comentario.id)}
-                    className="p-1 text-gray-400 hover:text-red-400 transition-colors"
+                    className="p-1 text-darkaccentwhite hover:text-redneon transition-colors"
                     title="Eliminar comentario"
                   >
                     <Trash2 className="h-4 w-4" />
@@ -176,15 +181,15 @@ export default function CommentSection({ zapatillaId }: CommentSectionProps) {
                 )}
               </div>
               
-              <p className="text-gray-300 text-sm leading-relaxed ml-10">
+              <p className="text-lightblack text-sm leading-relaxed ml-10">
                 {comentario.texto}
               </p>
             </div>
           ))
         ) : (
           <div className="text-center py-8">
-            <MessageCircle className="h-12 w-12 text-gray-600 mx-auto mb-4" />
-            <p className="text-gray-400">
+            <MessageCircle className="h-12 w-12 text-darkaccentwhite mx-auto mb-4" />
+            <p className="text-darkaccentwhite">
               Aún no hay comentarios. ¡Sé el primero en comentar!
             </p>
           </div>

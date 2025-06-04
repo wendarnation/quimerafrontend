@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, ExternalLink, Heart, ShoppingBag } from "lucide-react";
+import { ArrowLeft, ExternalLink, Heart, ShoppingBag, ChevronDown } from "lucide-react";
 import { useSneakerDetails, useSneakerSizes } from "@/hooks/useSneakers";
 import FavoriteButtonZustand from "@/components/favorites/FavoriteButtonZustand";
 import StarRating from "@/components/ratings/StarRating";
@@ -14,27 +14,31 @@ export default function SneakerDetailsPage() {
   const router = useRouter();
   const id = parseInt(params.id as string);
   const [imageError, setImageError] = useState(false);
+  
+  // Estados para los desplegables
+  const [showRatings, setShowRatings] = useState(false);
+  const [showComments, setShowComments] = useState(false);
 
   const { data: sneaker, isLoading: sneakerLoading, error: sneakerError } = useSneakerDetails(id);
   const { data: sizes, isLoading: sizesLoading, error: sizesError } = useSneakerSizes(id);
 
   if (sneakerLoading || sizesLoading) {
     return (
-      <div className="min-h-screen bg-gray-900">
+      <div className="min-h-screen bg-lightwhite">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="animate-pulse">
-            <div className="h-8 bg-gray-700 rounded w-32 mb-8"></div>
+            <div className="h-8 bg-lightaccentwhite rounded w-32 mb-8"></div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="space-y-6">
-                <div className="aspect-square bg-gray-700 rounded-lg"></div>
-                <div className="h-32 bg-gray-700 rounded"></div>
-                <div className="h-48 bg-gray-700 rounded"></div>
+                <div className="aspect-square bg-lightaccentwhite rounded-lg"></div>
+                <div className="h-32 bg-lightaccentwhite rounded"></div>
+                <div className="h-48 bg-lightaccentwhite rounded"></div>
               </div>
               <div className="space-y-6">
-                <div className="h-8 bg-gray-700 rounded w-3/4"></div>
-                <div className="h-6 bg-gray-700 rounded w-1/2"></div>
-                <div className="h-32 bg-gray-700 rounded"></div>
-                <div className="h-48 bg-gray-700 rounded"></div>
+                <div className="h-8 bg-lightaccentwhite rounded w-3/4"></div>
+                <div className="h-6 bg-lightaccentwhite rounded w-1/2"></div>
+                <div className="h-32 bg-lightaccentwhite rounded"></div>
+                <div className="h-48 bg-lightaccentwhite rounded"></div>
               </div>
             </div>
           </div>
@@ -45,17 +49,17 @@ export default function SneakerDetailsPage() {
 
   if (sneakerError || (!sneakerLoading && !sneaker)) {
     return (
-      <div className="min-h-screen bg-gray-900">
+      <div className="min-h-screen bg-lightwhite">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <button
             onClick={() => router.back()}
-            className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors mb-8"
+            className="flex items-center space-x-2 text-darkaccentwhite hover:text-lightblack transition-colors mb-8"
           >
             <ArrowLeft className="h-5 w-5" />
             <span>Volver</span>
           </button>
           <div className="text-center py-12">
-            <p className="text-red-400 mb-4">
+            <p className="text-redneon mb-4">
               {sneakerError 
                 ? `Error al cargar detalles de la zapatilla: ${sneakerError.message}` 
                 : 'Zapatilla no encontrada'
@@ -63,7 +67,7 @@ export default function SneakerDetailsPage() {
             </p>
             <button
               onClick={() => router.back()}
-              className="px-4 py-2 bg-white text-gray-900 rounded-md hover:bg-gray-100 transition-colors"
+              className="px-4 py-2 bg-lightblack text-lightwhite rounded-md hover:bg-verylightblack transition-colors"
             >
               Volver
             </button>
@@ -152,22 +156,22 @@ export default function SneakerDetailsPage() {
   }, {} as Record<string, { url_producto: string, logo_url?: string }>) || {};
 
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-lightwhite">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Back Button */}
         <button
           onClick={() => router.back()}
-          className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors mb-8"
+          className="flex items-center space-x-2 text-darkaccentwhite hover:text-lightblack transition-colors mb-8"
         >
           <ArrowLeft className="h-5 w-5" />
           <span>Volver</span>
         </button>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Columna izquierda - Imagen, Valoraciones y Comentarios */}
+          {/* Columna izquierda - Imagen */}
           <div className="space-y-6">
             {/* Imagen */}
-            <div className="aspect-square bg-white rounded-lg shadow-sm overflow-hidden">
+            <div className="aspect-square bg-lightwhite rounded-lg shadow-sm overflow-hidden">
               {sneaker.imagen && !imageError ? (
                 <img
                   src={sneaker.imagen}
@@ -176,21 +180,57 @@ export default function SneakerDetailsPage() {
                   onError={() => setImageError(true)}
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                <div className="w-full h-full flex items-center justify-center bg-lightaccentwhite">
                   <img
                     src="/placeholder-sneaker.svg"
                     alt={`${sneaker.marca} ${sneaker.modelo}`}
                     className="w-2/3 h-2/3 object-cover opacity-60"
                   />
                 </div>
+              )}              
+            </div>
+            
+            {/* Valoraciones - Desplegable */}
+            <div className="bg-lightwhite rounded-lg">
+              <button
+                onClick={() => setShowRatings(!showRatings)}
+                className="flex items-center justify-between w-full p-6 text-left font-semibold text-lightblack cursor-pointer"
+              >
+                <span className="text-lg">Valoraciones</span>
+                <ChevronDown
+                  className={`w-5 h-5 transform transition-transform ${
+                    showRatings ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+              {showRatings && (
+                <div className="px-6 pb-6 border-t border-lightaccentwhite">
+                  <div className="pt-6">
+                    <StarRating zapatillaId={sneaker.id} hideTitle={true} />
+                  </div>
+                </div>
               )}
             </div>
 
-            {/* Sistema de valoraciones */}
-            <StarRating zapatillaId={sneaker.id} />
-
-            {/* Sección de comentarios */}
-            <CommentSection zapatillaId={sneaker.id} />
+            {/* Comentarios - Desplegable */}
+            <div className="bg-lightwhite rounded-lg">
+              <button
+                onClick={() => setShowComments(!showComments)}
+                className="flex items-center justify-between w-full p-6 text-left font-semibold text-lightblack cursor-pointer"
+              >
+                <span className="text-lg">Comentarios</span>
+                <ChevronDown
+                  className={`w-5 h-5 transform transition-transform ${
+                    showComments ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+              {showComments && (
+                <div className="border-t border-lightaccentwhite">
+                  <CommentSection zapatillaId={sneaker.id} hideTitle={true} />
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Columna derecha - Detalles y Tallas */}
@@ -198,97 +238,50 @@ export default function SneakerDetailsPage() {
             {/* Header */}
             <div className="flex items-start justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-white">
+                <h1 className="text-3xl font-bold text-lightblack">
                   {sneaker.marca} {sneaker.modelo}
                 </h1>
-                <p className="text-gray-400 mt-1">SKU: {sneaker.sku}</p>
+                <p className="text-darkaccentwhite mt-1">SKU: {sneaker.sku}</p>
               </div>
               <FavoriteButtonZustand 
                 zapatillaId={sneaker.id} 
-                className="p-3 rounded-full bg-gray-800 shadow-md hover:shadow-lg transition-all duration-200"
+                className="p-3 rounded-full bg-lightwhite shadow-md hover:shadow-lg transition-all duration-200"
                 size="lg"
               />
             </div>
 
             {/* Precio */}
-            <div className="bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-700">
+            <div className="bg-lightwhite p-6 rounded-lg shadow-sm border border-lightaccentwhite">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-gray-400 mb-1">Precio Más Bajo</p>
-                  <p className="text-2xl font-bold text-white">
+                  <p className="text-sm text-darkaccentwhite mb-1">Precio Más Bajo</p>
+                  <p className="text-2xl font-bold text-greenneon">
                     {formatPrice(precio_min)}
                   </p>
                 </div>
                 {precio_max && precio_max !== precio_min && (
                   <div>
-                    <p className="text-sm text-gray-400 mb-1">Precio Más Alto</p>
-                    <p className="text-2xl font-bold text-white">
+                    <p className="text-sm text-darkaccentwhite mb-1">Precio Más Alto</p>
+                    <p className="text-2xl font-bold text-lightblack">
                       {formatPrice(precio_max)}
                     </p>
                   </div>
                 )}
               </div>
-              {precio_promedio && (
-                <div className="mt-4 pt-4 border-t border-gray-700">
-                  <p className="text-sm text-gray-400 mb-1">Precio Promedio</p>
-                  <p className="text-lg font-semibold text-white">
-                    {formatPrice(precio_promedio)}
-                  </p>
-                </div>
-              )}
             </div>
 
-            {/* Información adicional */}
-            <div className="bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-700">
-              <h3 className="text-lg font-semibold text-white mb-4">Detalles</h3>
-              <dl className="grid grid-cols-2 gap-4">
-                <div>
-                  <dt className="text-sm text-gray-400">Categoría</dt>
-                  <dd className="text-sm font-medium text-white">{sneaker.categoria || "General"}</dd>
-                </div>
-                <div>
-                  <dt className="text-sm text-gray-400">Tiendas Disponibles</dt>
-                  <dd className="text-sm font-medium text-white">
-                    {sneaker.zapatillasTienda?.filter(zt => zt.disponible).length || 0}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-sm text-gray-400">Fecha de Lanzamiento</dt>
-                  <dd className="text-sm font-medium text-white">
-                    {new Date(sneaker.fecha_creacion).toLocaleDateString()}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-sm text-gray-400">Estado</dt>
-                  <dd className="text-sm font-medium text-white">
-                    <span className={`inline-flex px-2 py-1 text-xs rounded-full ${
-                      sneaker.activa 
-                        ? "bg-green-100 text-green-800" 
-                        : "bg-red-100 text-red-800"
-                    }`}>
-                      {sneaker.activa ? "Activo" : "Inactivo"}
-                    </span>
-                  </dd>
-                </div>
-              </dl>
-              {sneaker.descripcion && (
-                <div className="mt-4 pt-4 border-t border-gray-700">
-                  <dt className="text-sm text-gray-400 mb-2">Descripción</dt>
-                  <dd className="text-sm text-gray-300">{sneaker.descripcion}</dd>
-                </div>
-              )}
-            </div>
+
 
             {/* Tallas Disponibles */}
-            <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
-              <h3 className="text-lg font-semibold text-white mb-4">Tallas Disponibles</h3>
+            <div className="bg-lightwhite p-6 rounded-lg border border-lightaccentwhite shadow-sm">
+              <h3 className="text-lg font-semibold text-lightblack mb-4">Tallas Disponibles</h3>
               
               {Object.keys(sizesByStore).length > 0 ? (
                 <div className="space-y-4">
                   {Object.entries(sizesByStore).map(([storeName, storeData]) => {
                     const storeInfo = storeUrls[storeName] || {};
                     return (
-                      <div key={storeName} className="border border-gray-600 rounded-lg p-4">
+                      <div key={storeName} className="border border-lightaccentwhite rounded-lg p-4 bg-lightwhite">
                         <div className="flex items-center justify-between mb-3">
                           <div className="flex items-center space-x-3">
                             {storeInfo.logo_url && (
@@ -299,8 +292,8 @@ export default function SneakerDetailsPage() {
                               />
                             )}
                             <div>
-                              <h4 className="font-semibold text-white">{storeName}</h4>
-                              <p className="text-sm text-gray-400">{formatPrice(storeData.precio)}</p>
+                              <h4 className="font-semibold text-lightblack">{storeName}</h4>
+                              <p className="text-sm text-greenneon font-semibold">{formatPrice(storeData.precio)}</p>
                             </div>
                           </div>
                         </div>
@@ -308,12 +301,12 @@ export default function SneakerDetailsPage() {
                         {storeData.tallas.length > 0 ? (
                           <>
                             <div className="mb-4">
-                              <p className="text-sm text-gray-400 mb-2">Tallas:</p>
+                              <p className="text-sm text-darkaccentwhite mb-2">Tallas:</p>
                               <div className="flex flex-wrap gap-2">
                                 {storeData.tallas.map((size) => (
                                   <span
                                     key={size.id}
-                                    className="px-3 py-1 bg-gray-700 text-white rounded-md text-sm font-medium"
+                                    className="px-3 py-1 bg-lightaccentwhite text-lightblack rounded-md text-sm font-medium"
                                   >
                                     {size.talla}
                                   </span>
@@ -326,7 +319,7 @@ export default function SneakerDetailsPage() {
                                 href={storeInfo.url_producto}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="w-full flex items-center justify-center space-x-2 bg-white text-gray-900 px-4 py-2 rounded-md hover:bg-gray-100 transition-colors"
+                                className="w-full flex items-center justify-center space-x-2 bg-lightblack text-lightwhite px-4 py-2 rounded-md hover:bg-verylightblack transition-colors"
                               >
                                 <ShoppingBag className="h-4 w-4" />
                                 <span>Comprar en {storeName}</span>
@@ -336,7 +329,7 @@ export default function SneakerDetailsPage() {
                           </>
                         ) : (
                           <div className="text-center py-4">
-                            <p className="text-gray-500 text-sm">Sin tallas disponibles</p>
+                            <p className="text-darkaccentwhite text-sm">Sin tallas disponibles</p>
                           </div>
                         )}
                       </div>
@@ -345,9 +338,9 @@ export default function SneakerDetailsPage() {
                 </div>
               ) : (
                 <div className="text-center py-8">
-                  <ShoppingBag className="h-12 w-12 text-gray-600 mx-auto mb-4" />
-                  <h4 className="text-lg font-semibold text-white mb-2">No Hay Tallas Disponibles</h4>
-                  <p className="text-gray-400">
+                  <ShoppingBag className="h-12 w-12 text-darkaccentwhite mx-auto mb-4" />
+                  <h4 className="text-lg font-semibold text-lightblack mb-2">No Hay Tallas Disponibles</h4>
+                  <p className="text-darkaccentwhite">
                     Esta zapatilla no está disponible actualmente en ninguna tienda.
                   </p>
                 </div>
