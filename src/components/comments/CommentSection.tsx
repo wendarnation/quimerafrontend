@@ -126,7 +126,7 @@ export default function CommentSection({ zapatillaId, hideTitle = false }: Comme
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               placeholder="Comparte tu opinión sobre esta zapatilla..."
-              className="w-full px-3 py-2 bg-lightwhite border border-lightaccentwhite rounded-md text-lightblack placeholder-darkaccentwhite focus:outline-none focus:ring-2 focus:ring-blueneon focus:border-transparent resize-none"
+              className="w-full px-3 py-2 bg-lightwhite text-darkaccentwhite placeholder-darkaccentwhite border border-lightaccentwhite hover:border-darkaccentwhite rounded-lg focus:outline-none focus:ring-1 focus:ring-lightblack focus:border-transparent resize-none transition-colors"
               rows={3}
               disabled={isSubmitting}
             />
@@ -135,7 +135,7 @@ export default function CommentSection({ zapatillaId, hideTitle = false }: Comme
             <button
               type="submit"
               disabled={!newComment.trim() || isSubmitting}
-              className="flex items-center space-x-2 px-4 py-2 bg-lightblack text-lightwhite rounded-md hover:bg-verylightblack focus:outline-none focus:ring-2 focus:ring-blueneon focus:ring-offset-2 focus:ring-offset-lightwhite disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center space-x-2 px-4 py-2 bg-lightblack text-lightwhite rounded-md hover:bg-verylightblack focus:outline-none focus:ring-2 focus:ring-blueneon focus:ring-offset-2 focus:ring-offset-lightwhite disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
             >
               <Send className="h-4 w-4" />
               <span>{isSubmitting ? "Enviando..." : "Comentar"}</span>
