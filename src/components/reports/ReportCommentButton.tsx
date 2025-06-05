@@ -4,6 +4,7 @@
 import { useState } from "react";
 import { Flag } from "lucide-react";
 import { useIsAuthenticated } from "@/hooks/useCurrentUser";
+import { USER_ROLES } from "@/types/auth";
 import ReportModal from "./ReportModal";
 
 interface ReportCommentButtonProps {
@@ -24,8 +25,8 @@ export default function ReportCommentButton({
   const { isAuthenticated, user } = useIsAuthenticated();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Solo mostrar el botón si el usuario está autenticado
-  if (!isAuthenticated || !user) {
+  // Solo mostrar el botón si el usuario está autenticado Y tiene rol de 'usuario' (no admin)
+  if (!isAuthenticated || !user || user.rol !== USER_ROLES.USUARIO) {
     return null;
   }
 

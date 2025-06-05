@@ -149,7 +149,7 @@ export default function ReportModal({
                 ? "Ejemplo: Los precios están desactualizados, la imagen no corresponde al modelo, etc."
                 : "Ejemplo: Contenido ofensivo, spam, información falsa, etc."
               }
-              className="w-full px-2 lg:px-3 py-2 lg:py-3 bg-lightwhite text-lightblack placeholder-darkaccentwhite border border-lightaccentwhite hover:border-darkaccentwhite rounded-lg focus:outline-none focus:ring-2 focus:ring-blueneon focus:border-transparent resize-none transition-colors text-xs lg:text-sm"
+              className="w-full px-3 py-2 bg-lightwhite text-darkaccentwhite placeholder-darkaccentwhite border border-lightaccentwhite hover:border-darkaccentwhite rounded-lg focus:outline-none focus:ring-1 focus:ring-lightblack focus:border-transparent resize-none transition-colors"
               rows={3}
               disabled={isSubmitting}
               required

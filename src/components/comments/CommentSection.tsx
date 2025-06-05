@@ -6,6 +6,8 @@ import { MessageCircle, Trash2, Send, User } from "lucide-react";
 import { useCurrentUser, useIsAuthenticated } from "@/hooks/useCurrentUser";
 import { useComentarios, useCreateComentario, useDeleteComentario } from "@/hooks/useComentarios";
 import ReportCommentButton from "@/components/reports/ReportCommentButton";
+import ConfirmationModal from "@/components/ui/ConfirmationModal";
+import { USER_ROLES } from "@/types/auth";
 import { Comentario } from "@/types/comentarios";
 
 interface CommentSectionProps {
@@ -23,6 +25,8 @@ export default function CommentSection({ zapatillaId, hideTitle = false, sneaker
   
   const [newComment, setNewComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState<number | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleSubmitComment = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,14 +51,20 @@ export default function CommentSection({ zapatillaId, hideTitle = false, sneaker
 
   const handleDeleteComment = async (comentarioId: number) => {
     if (!isAuthenticated || !currentUser) return;
+    setShowDeleteModal(comentarioId);
+  };
 
-    const confirmed = window.confirm("¿Estás seguro de que quieres eliminar este comentario?");
-    if (!confirmed) return;
+  const confirmDeleteComment = async () => {
+    if (!showDeleteModal) return;
 
     try {
-      await deleteComentario.mutateAsync(comentarioId);
+      setIsDeleting(true);
+      await deleteComentario.mutateAsync(showDeleteModal);
+      setShowDeleteModal(null);
     } catch (error) {
       console.error('Error al eliminar comentario:', error);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -72,7 +82,7 @@ export default function CommentSection({ zapatillaId, hideTitle = false, sneaker
   const canDeleteComment = (comentario: Comentario) => {
     if (!currentUser) return false;
     // El usuario puede eliminar su propio comentario, o si es admin puede eliminar cualquiera
-    return comentario.usuario_id === currentUser.id || currentUser.rol === 'admin';
+    return comentario.usuario_id === currentUser.id || currentUser.rol === USER_ROLES.ADMIN;
   };
 
   if (comentariosLoading) {
@@ -205,6 +215,18 @@ export default function CommentSection({ zapatillaId, hideTitle = false, sneaker
           </div>
         )}
       </div>
+
+      {/* Modal de confirmación para eliminar comentario */}
+      <ConfirmationModal
+        isOpen={showDeleteModal !== null}
+        onClose={() => setShowDeleteModal(null)}
+        onConfirm={confirmDeleteComment}
+        isLoading={isDeleting}
+        title="Eliminar comentario"
+        message="¿Estás seguro de que quieres eliminar este comentario? Esta acción no se puede deshacer."
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+      />
     </div>
   );
 }
