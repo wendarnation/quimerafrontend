@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   Users,
   Trash2,
@@ -55,11 +55,44 @@ export default function AdminUsersPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState("todos");
   const [showFilters, setShowFilters] = useState(false);
+  const [showRoleFilterDropdown, setShowRoleFilterDropdown] = useState(false);
+  const [showRoleChangeDropdowns, setShowRoleChangeDropdowns] = useState<{ [key: number]: boolean }>({});
+  
+  // Refs para los dropdowns
+  const roleFilterDropdownRef = useRef<HTMLDivElement>(null);
+  const roleChangeDropdownRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
 
   // Cargar usuarios al montar el componente
   useEffect(() => {
     fetchUsers();
   }, [fetchUsers]);
+
+  // Click fuera para cerrar dropdowns
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      // Cerrar dropdown de filtro de rol
+      if (roleFilterDropdownRef.current && !roleFilterDropdownRef.current.contains(event.target as Node)) {
+        setShowRoleFilterDropdown(false);
+      }
+      
+      // Cerrar dropdowns de cambio de rol
+      Object.entries(roleChangeDropdownRefs.current).forEach(([refKey, ref]) => {
+        if (ref && !ref.contains(event.target as Node)) {
+          // Extraer el userId real del refKey (puede ser "userId" o "mobile-userId")
+          const userId = refKey.startsWith('mobile-') ? parseInt(refKey.replace('mobile-', '')) : parseInt(refKey);
+          setShowRoleChangeDropdowns(prev => ({
+            ...prev,
+            [userId]: false
+          }));
+        }
+      });
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const showNotification = (type: "success" | "error", message: string) => {
     setNotification({ type, message });
@@ -71,12 +104,26 @@ export default function AdminUsersPage() {
     try {
       await updateUserRole(userId, newRole);
       setSelectedUsers((prev) => ({ ...prev, [userId]: newRole }));
+      // Cerrar el dropdown
+      setShowRoleChangeDropdowns(prev => ({ ...prev, [userId]: false }));
     } catch (error) {
       showNotification("error", "Error al actualizar el rol");
       console.error("Error updating role:", error);
     } finally {
       setOperationLoading(null);
     }
+  };
+
+  const handleRoleFilterChange = (role: string) => {
+    setRoleFilter(role);
+    setShowRoleFilterDropdown(false);
+  };
+
+  const toggleRoleChangeDropdown = (userId: number) => {
+    setShowRoleChangeDropdowns(prev => ({
+      ...prev,
+      [userId]: !prev[userId]
+    }));
   };
 
   const handleDeleteUser = async (userId: number) => {
@@ -146,8 +193,8 @@ export default function AdminUsersPage() {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Filtros */}
-        <div className="bg-lightwhite border border-lightaccentwhite rounded-xl overflow-hidden mb-8">
-          <div className="px-6 py-4 border-b border-lightaccentwhite bg-lightwhite">
+        <div className="bg-lightwhite border border-lightaccentwhite rounded-xl mb-8 relative z-0">
+          <div className="px-6 py-4 border-b border-lightaccentwhite bg-lightwhite rounded-t-xl overflow-hidden">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-lightblack">Filtros</h2>
               <button
@@ -163,7 +210,7 @@ export default function AdminUsersPage() {
           </div>
 
           {showFilters && (
-            <div className="px-6 py-4 bg-lightwhite/50">
+            <div className="px-6 py-4 bg-lightwhite/50 overflow-visible">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* Búsqueda por texto */}
                 <div className="relative">
@@ -195,22 +242,51 @@ export default function AdminUsersPage() {
                   <label className="block text-xs font-medium text-verylightblack uppercase tracking-wider mb-2">
                     Filtrar por Rol
                   </label>
-                  <div className="relative">
-                    <select
-                      value={roleFilter}
-                      onChange={(e) => setRoleFilter(e.target.value)}
-                      className="w-full appearance-none bg-lightwhite border border-lightaccentwhite rounded-lg px-4 py-2 pr-10 text-sm focus:outline-none focus:ring-1 focus:ring-lightblack focus:border-transparent text-lightblack transition-all duration-200 hover:border-darkaccentwhite cursor-pointer"
+                  <div className="relative z-10" ref={roleFilterDropdownRef}>
+                    <button
+                      type="button"
+                      onClick={() => setShowRoleFilterDropdown(!showRoleFilterDropdown)}
+                      className="w-full flex items-center justify-between px-4 py-2 bg-lightwhite border border-lightaccentwhite rounded-lg focus:outline-none focus:ring-1 focus:ring-lightblack focus:border-transparent text-lightblack transition-all duration-200 hover:border-darkaccentwhite text-sm cursor-pointer"
                     >
-                      <option value="todos">Todos los roles</option>
-                      {ROLES.map((role) => (
-                        <option key={role.value} value={role.value}>
-                          {role.label}
-                        </option>
-                      ))}
-                    </select>
-                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                      <span className={roleFilter === "todos" ? "text-darkaccentwhite" : "text-lightblack"}>
+                        {roleFilter === "todos" 
+                          ? "Todos los roles" 
+                          : ROLES.find(r => r.value === roleFilter)?.label || "Todos los roles"
+                        }
+                      </span>
                       <ChevronDown className="h-4 w-4 text-verylightblack" />
-                    </div>
+                    </button>
+                    {showRoleFilterDropdown && (
+                      <div className="absolute z-[9999] mt-2 w-full bg-lightwhite border border-darkaccentwhite rounded-lg shadow-xl">
+                        <button
+                          type="button"
+                          onClick={() => handleRoleFilterChange("todos")}
+                          className={`w-full text-left px-4 py-2 text-sm transition-colors cursor-pointer first:rounded-t-lg last:rounded-b-lg ${
+                            roleFilter === "todos"
+                              ? "bg-lightblack text-lightwhite"
+                              : "text-lightblack hover:bg-lightaccentwhite hover:text-lightblack"
+                          }`}
+                        >
+                          Todos los roles
+                        </button>
+                        {ROLES.map((role, index) => (
+                          <button
+                            key={role.value}
+                            type="button"
+                            onClick={() => handleRoleFilterChange(role.value)}
+                            className={`w-full text-left px-4 py-2 text-sm transition-colors cursor-pointer ${
+                              index === ROLES.length - 1 ? 'rounded-b-lg' : ''
+                            } ${
+                              roleFilter === role.value
+                                ? "bg-lightblack text-lightwhite"
+                                : "text-lightblack hover:bg-lightaccentwhite hover:text-lightblack"
+                            }`}
+                          >
+                            {role.label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -406,27 +482,45 @@ export default function AdminUsersPage() {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="relative">
-                          <select
-                            value={selectedRole}
-                            onChange={(e) =>
-                              handleRoleChange(user.id, e.target.value)
-                            }
+                        <div className="relative" ref={(el) => {
+                          if (el) roleChangeDropdownRefs.current[user.id] = el;
+                        }}>
+                          <button
+                            type="button"
+                            onClick={() => toggleRoleChangeDropdown(user.id)}
                             disabled={operationLoading === user.id}
-                            className="appearance-none bg-lightwhite border border-darkaccentwhite rounded-md px-4 py-2 pr-10 text-sm focus:outline-none focus:ring-1 focus:ring-lightblack focus:border-transparent disabled:bg-lightaccentwhite disabled:cursor-not-allowed cursor-pointer text-lightblack transition-colors hover:border-darkaccentwhite w-full shadow-lg"
+                            className="w-full flex items-center justify-between px-4 py-2 bg-lightwhite border border-darkaccentwhite rounded-md focus:outline-none focus:ring-1 focus:ring-lightblack focus:border-transparent text-lightblack transition-all duration-200 hover:border-darkaccentwhite text-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                           >
-                            {ROLES.map((role) => (
-                              <option key={role.value} value={role.value}>
-                                {role.label}
-                              </option>
-                            ))}
-                          </select>
-                          <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                            <ChevronDown className="h-4 w-4 text-lightblack" />
-                          </div>
-                          {operationLoading === user.id && (
-                            <div className="absolute right-10 top-1/2 transform -translate-y-1/2">
-                              <Loader2 className="h-4 w-4 animate-spin text-verylightblack" />
+                            <span>
+                              {ROLES.find(r => r.value === selectedRole)?.label || "Seleccionar rol"}
+                            </span>
+                            <div className="flex items-center space-x-2">
+                              {operationLoading === user.id && (
+                                <Loader2 className="h-4 w-4 animate-spin text-verylightblack" />
+                              )}
+                              <ChevronDown className="h-4 w-4 text-verylightblack" />
+                            </div>
+                          </button>
+                          {showRoleChangeDropdowns[user.id] && (
+                            <div className="absolute z-[60] mt-2 w-full bg-lightwhite border border-darkaccentwhite rounded-md shadow-lg">
+                              {ROLES.map((role, index) => (
+                                <button
+                                  key={role.value}
+                                  type="button"
+                                  onClick={() => handleRoleChange(user.id, role.value)}
+                                  className={`w-full text-left px-4 py-2 text-sm transition-colors cursor-pointer block ${
+                                    index === 0 ? 'rounded-t-md' : ''
+                                  } ${
+                                    index === ROLES.length - 1 ? 'rounded-b-md' : ''
+                                  } ${
+                                    selectedRole === role.value
+                                      ? "bg-lightblack text-lightwhite"
+                                      : "text-lightblack hover:bg-lightaccentwhite hover:text-lightblack"
+                                  }`}
+                                >
+                                  {role.label}
+                                </button>
+                              ))}
                             </div>
                           )}
                         </div>
@@ -572,27 +666,45 @@ export default function AdminUsersPage() {
                       <label className="block text-xs font-medium text-verylightblack uppercase tracking-wider mb-2">
                         Cambiar Rol
                       </label>
-                      <div className="relative">
-                        <select
-                          value={selectedRole}
-                          onChange={(e) =>
-                            handleRoleChange(user.id, e.target.value)
-                          }
+                      <div className="relative" ref={(el) => {
+                        if (el) roleChangeDropdownRefs.current[`mobile-${user.id}`] = el;
+                      }}>
+                        <button
+                          type="button"
+                          onClick={() => toggleRoleChangeDropdown(user.id)}
                           disabled={operationLoading === user.id}
-                          className="appearance-none bg-lightwhite border border-darkaccentwhite rounded-md px-4 py-2 pr-10 text-sm focus:outline-none focus:ring-1 focus:ring-lightblack focus:border-transparent disabled:bg-lightaccentwhite disabled:cursor-not-allowed cursor-pointer text-lightblack transition-colors hover:border-darkaccentwhite w-full shadow-lg"
+                          className="w-full flex items-center justify-between px-4 py-2 bg-lightwhite border border-darkaccentwhite rounded-md focus:outline-none focus:ring-1 focus:ring-lightblack focus:border-transparent text-lightblack transition-all duration-200 hover:border-darkaccentwhite text-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          {ROLES.map((role) => (
-                            <option key={role.value} value={role.value}>
-                              {role.label}
-                            </option>
-                          ))}
-                        </select>
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                          <ChevronDown className="h-4 w-4 text-lightblack" />
-                        </div>
-                        {operationLoading === user.id && (
-                          <div className="absolute right-10 top-1/2 transform -translate-y-1/2">
-                            <Loader2 className="h-4 w-4 animate-spin text-verylightblack" />
+                          <span>
+                            {ROLES.find(r => r.value === selectedRole)?.label || "Seleccionar rol"}
+                          </span>
+                          <div className="flex items-center space-x-2">
+                            {operationLoading === user.id && (
+                              <Loader2 className="h-4 w-4 animate-spin text-verylightblack" />
+                            )}
+                            <ChevronDown className="h-4 w-4 text-verylightblack" />
+                          </div>
+                        </button>
+                        {showRoleChangeDropdowns[user.id] && (
+                          <div className="absolute z-[60] mt-2 w-full bg-lightwhite border border-darkaccentwhite rounded-md shadow-lg">
+                            {ROLES.map((role, index) => (
+                              <button
+                                key={role.value}
+                                type="button"
+                                onClick={() => handleRoleChange(user.id, role.value)}
+                                className={`w-full text-left px-4 py-2 text-sm transition-colors cursor-pointer block ${
+                                  index === 0 ? 'rounded-t-md' : ''
+                                } ${
+                                  index === ROLES.length - 1 ? 'rounded-b-md' : ''
+                                } ${
+                                  selectedRole === role.value
+                                    ? "bg-lightblack text-lightwhite"
+                                    : "text-lightblack hover:bg-lightaccentwhite hover:text-lightblack"
+                                }`}
+                              >
+                                {role.label}
+                              </button>
+                            ))}
                           </div>
                         )}
                       </div>

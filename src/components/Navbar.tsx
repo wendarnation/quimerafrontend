@@ -98,6 +98,13 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
                 >
                   Acerca de
                 </a>
+                <a
+                  href="/contacta"
+                  className="text-lightblack text-md font-medium transition-colors hover:text-blueneon"
+                  title="Contacta"
+                >
+                  Contacta
+                </a>
 
                 {/* Enlace de administración - solo visible para administradores */}
                 {user && !permissionsLoading && hasAdminPermission() && (
@@ -305,6 +312,13 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
                 onClick={closeMobileMenu}
               >
                 Acerca de
+              </a>
+              <a
+                href="/contacta"
+                className="block w-full text-left px-6 py-3 text-lightblack hover:bg-darkwhite hover:text-verylightblack transition-colors duration-200 font-medium"
+                onClick={closeMobileMenu}
+              >
+                Contacta
               </a>
 
               {/* Enlace de administración - solo visible para administradores */}
