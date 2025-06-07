@@ -60,7 +60,7 @@ export default function AdminUsersPage() {
   
   // Refs para los dropdowns
   const roleFilterDropdownRef = useRef<HTMLDivElement>(null);
-  const roleChangeDropdownRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
+  const roleChangeDropdownRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
   // Cargar usuarios al montar el componente
   useEffect(() => {
@@ -79,11 +79,16 @@ export default function AdminUsersPage() {
       Object.entries(roleChangeDropdownRefs.current).forEach(([refKey, ref]) => {
         if (ref && !ref.contains(event.target as Node)) {
           // Extraer el userId real del refKey (puede ser "userId" o "mobile-userId")
-          const userId = refKey.startsWith('mobile-') ? parseInt(refKey.replace('mobile-', '')) : parseInt(refKey);
-          setShowRoleChangeDropdowns(prev => ({
-            ...prev,
-            [userId]: false
-          }));
+          const userId = refKey.startsWith('mobile-') 
+            ? parseInt(refKey.replace('mobile-', '')) 
+            : parseInt(refKey);
+          
+          if (!isNaN(userId)) {
+            setShowRoleChangeDropdowns(prev => ({
+              ...prev,
+              [userId]: false
+            }));
+          }
         }
       });
     }
@@ -483,7 +488,7 @@ export default function AdminUsersPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="relative" ref={(el) => {
-                          if (el) roleChangeDropdownRefs.current[user.id] = el;
+                          if (el) roleChangeDropdownRefs.current[user.id.toString()] = el;
                         }}>
                           <button
                             type="button"
