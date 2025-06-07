@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Search, User, Heart, Menu, X } from "lucide-react";
-import Image from "next/image";
 import { usePermissions } from "../hooks/usePermissions";
 import { useUserProfile } from "../hooks/useUserProfile";
 import { AuthUser } from "../types/auth";
@@ -85,7 +84,7 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
               {/* Enlaces adicionales y Usuario (Derecha) */}
               <div className="flex items-center space-x-6">
                 <a
-                  href="#"
+                  href="/noticias"
                   className="text-lightblack text-md font-medium transition-colors"
                   title="Noticias"
                   data-tour="nav-news"
@@ -140,18 +139,20 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
                     >
                       <div className="h-10 w-10 rounded-full overflow-hidden border-2 border-transparent hover:border-verylightblack">
                         {user.picture ? (
-                          <Image
+                          <img
                             src={user.picture}
                             alt={user.name || "Avatar de usuario"}
-                            width={32}
-                            height={32}
                             className="h-full w-full object-cover"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                              const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                              if (fallback) fallback.style.display = 'flex';
+                            }}
                           />
-                        ) : (
-                          <div className="h-full w-full bg-gray-600 flex items-center justify-center">
-                            <User className="h-5 w-5 text-gray-300" />
-                          </div>
-                        )}
+                        ) : null}
+                        <div className="h-full w-full bg-gray-600 flex items-center justify-center" style={{ display: user.picture ? 'none' : 'flex' }}>
+                          <User className="h-5 w-5 text-gray-300" />
+                        </div>
                       </div>
                     </a>
                   </div>
@@ -303,7 +304,7 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
           <div className="flex-1 py-4">
             <div className="space-y-1">
               <a
-                href="#"
+                href="/noticias"
                 className="block px-6 py-3 text-lightblack hover:bg-darkwhite hover:text-verylightblack transition-colors duration-200 font-medium"
                 onClick={closeMobileMenu}
               >
@@ -355,20 +356,22 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
                 <div className="flex items-center space-x-3 px-2">
                   <div className="h-10 w-10 rounded-full overflow-hidden border-2 border-lightaccentwhite">
                     {user.picture ? (
-                      <Image
+                      <img
                         src={user.picture}
                         alt={
                           profile?.nickname || user.name || "Avatar de usuario"
                         }
-                        width={40}
-                        height={40}
                         className="h-full w-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                          const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                          if (fallback) fallback.style.display = 'flex';
+                        }}
                       />
-                    ) : (
-                      <div className="h-full w-full bg-verylightblack flex items-center justify-center">
-                        <User className="h-5 w-5 text-lightwhite" />
-                      </div>
-                    )}
+                    ) : null}
+                    <div className="h-full w-full bg-verylightblack flex items-center justify-center" style={{ display: user.picture ? 'none' : 'flex' }}>
+                      <User className="h-5 w-5 text-lightwhite" />
+                    </div>
                   </div>
                   <div className="flex-1">
                     <p className="text-lightblack font-medium text-sm">

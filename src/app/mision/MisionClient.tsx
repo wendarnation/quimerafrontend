@@ -1,8 +1,6 @@
 // app/mision/MisionClient.tsx
 "use client";
 
-import Image from "next/image";
-
 interface Auth0User {
   name?: string;
   email?: string;
@@ -107,13 +105,10 @@ export default function MisionClient({ user }: MisionClientProps) {
             {/* Imagen al final */}
             <div className="mt-12 pt-8 border-t border-lightaccentwhite">
               <div className="w-full">
-                <Image
+                <img
                   src="/jordan1-logout.webp"
                   alt="Jordan 1 - Quimera Sneakers"
-                  width={800}
-                  height={400}
                   className="w-full h-auto object-cover rounded-lg"
-                  priority={false}
                 />
               </div>
             </div>

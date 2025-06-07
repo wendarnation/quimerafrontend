@@ -2,7 +2,15 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Mail, Send, User, AlertTriangle, CheckCircle, MessageCircle, ChevronDown } from "lucide-react";
+import {
+  Mail,
+  Send,
+  User,
+  AlertTriangle,
+  CheckCircle,
+  MessageCircle,
+  ChevronDown,
+} from "lucide-react";
 import { useContactMutation } from "@/hooks/useContact";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { ContactReason, CONTACT_REASONS } from "@/types/contact";
@@ -37,7 +45,7 @@ export default function ContactClient({ user }: ContactClientProps) {
   // Actualizar formulario cuando se carga el usuario o perfil
   useEffect(() => {
     if (user || profile) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         name: profile?.nombre_completo || profile?.nickname || user?.name || "",
         email: user?.email || profile?.email || "",
@@ -48,22 +56,31 @@ export default function ContactClient({ user }: ContactClientProps) {
   // Click fuera para cerrar dropdown
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (reasonDropdownRef.current && !reasonDropdownRef.current.contains(event.target as Node)) {
+      if (
+        reasonDropdownRef.current &&
+        !reasonDropdownRef.current.contains(event.target as Node)
+      ) {
         setShowReasonDropdown(false);
       }
     }
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    
-    if (!formData.name.trim() || !formData.email.trim() || !formData.reason || !formData.message.trim() || isSubmitting) {
+
+    if (
+      !formData.name.trim() ||
+      !formData.email.trim() ||
+      !formData.reason ||
+      !formData.message.trim() ||
+      isSubmitting
+    ) {
       setError("Todos los campos son obligatorios");
       return;
     }
@@ -78,7 +95,7 @@ export default function ContactClient({ user }: ContactClientProps) {
         message: formData.message.trim(),
         isRegisteredUser: isLoggedIn,
       });
-      
+
       // Limpiar solo los campos editables
       if (!isLoggedIn) {
         setFormData({
@@ -88,22 +105,22 @@ export default function ContactClient({ user }: ContactClientProps) {
           message: "",
         });
       } else {
-        setFormData(prev => ({
+        setFormData((prev) => ({
           ...prev,
           reason: "" as ContactReason,
           message: "",
         }));
       }
     } catch (error) {
-      console.error('Error al enviar mensaje de contacto:', error);
-      setError('Error al enviar el mensaje. Por favor, inténtalo de nuevo.');
+      console.error("Error al enviar mensaje de contacto:", error);
+      setError("Error al enviar el mensaje. Por favor, inténtalo de nuevo.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
@@ -114,7 +131,7 @@ export default function ContactClient({ user }: ContactClientProps) {
   };
 
   const handleReasonChange = (reason: ContactReason) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       reason,
     }));
@@ -231,7 +248,8 @@ export default function ContactClient({ user }: ContactClientProps) {
                   Contacta con nosotros
                 </h1>
                 <p className="text-verylightblack mt-1 text-sm sm:text-base">
-                  ¿Tienes alguna consulta, sugerencia o problema? Estamos aquí para ayudarte
+                  ¿Tienes alguna consulta, sugerencia o problema? Estamos aquí
+                  para ayudarte
                 </p>
               </div>
             </div>
@@ -241,7 +259,6 @@ export default function ContactClient({ user }: ContactClientProps) {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
         {/* Error Message */}
         {error && (
           <div className="mb-6 bg-lightwhite border border-redneon/20 rounded-xl p-4">
@@ -290,7 +307,9 @@ export default function ContactClient({ user }: ContactClientProps) {
                         type="text"
                         id="contact-name"
                         value={formData.name}
-                        onChange={(e) => handleInputChange('name', e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("name", e.target.value)
+                        }
                         placeholder="Tu nombre completo"
                         className="w-full pl-10 px-4 py-2 bg-lightwhite border border-lightaccentwhite rounded-md focus:outline-none focus:ring-1 focus:ring-lightblack focus:border-transparent text-lightblack transition-all duration-200 hover:border-darkaccentwhite text-sm"
                         required
@@ -299,7 +318,8 @@ export default function ContactClient({ user }: ContactClientProps) {
                   )}
                   {isLoggedIn && (
                     <p className="text-xs text-verylightblack mt-1">
-                      Como usuario registrado, este campo se rellena automáticamente
+                      Como usuario registrado, este campo se rellena
+                      automáticamente
                     </p>
                   )}
                 </div>
@@ -327,7 +347,9 @@ export default function ContactClient({ user }: ContactClientProps) {
                         type="email"
                         id="contact-email"
                         value={formData.email}
-                        onChange={(e) => handleInputChange('email', e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("email", e.target.value)
+                        }
                         placeholder="tu@email.com"
                         className="w-full pl-10 px-4 py-2 bg-lightwhite border border-lightaccentwhite rounded-md focus:outline-none focus:ring-1 focus:ring-lightblack focus:border-transparent text-lightblack transition-all duration-200 hover:border-darkaccentwhite text-sm"
                         required
@@ -353,8 +375,16 @@ export default function ContactClient({ user }: ContactClientProps) {
                   >
                     <div className="flex items-center space-x-2">
                       <MessageCircle className="h-4 w-4 text-verylightblack" />
-                      <span className={formData.reason ? "text-lightblack" : "text-darkaccentwhite"}>
-                        {formData.reason ? CONTACT_REASONS[formData.reason] : "Selecciona una opción"}
+                      <span
+                        className={
+                          formData.reason
+                            ? "text-lightblack"
+                            : "text-darkaccentwhite"
+                        }
+                      >
+                        {formData.reason
+                          ? CONTACT_REASONS[formData.reason]
+                          : "Selecciona una opción"}
                       </span>
                     </div>
                     <ChevronDown className="h-4 w-4 text-verylightblack" />
@@ -365,7 +395,9 @@ export default function ContactClient({ user }: ContactClientProps) {
                         <button
                           key={value}
                           type="button"
-                          onClick={() => handleReasonChange(value as ContactReason)}
+                          onClick={() =>
+                            handleReasonChange(value as ContactReason)
+                          }
                           className={`w-full text-left px-4 py-2 text-sm transition-colors cursor-pointer ${
                             formData.reason === value
                               ? "bg-lightblack text-lightwhite"
@@ -394,14 +426,15 @@ export default function ContactClient({ user }: ContactClientProps) {
                 <textarea
                   id="contact-message"
                   value={formData.message}
-                  onChange={(e) => handleInputChange('message', e.target.value)}
+                  onChange={(e) => handleInputChange("message", e.target.value)}
                   placeholder="Describe tu consulta, queja, sugerencia o problema en detalle..."
                   className="w-full px-4 py-3 bg-lightwhite border border-lightaccentwhite rounded-md focus:outline-none focus:ring-1 focus:ring-lightblack focus:border-transparent text-lightblack transition-all duration-200 hover:border-darkaccentwhite text-sm resize-none"
                   rows={6}
                   required
                 />
                 <p className="text-xs text-verylightblack mt-1">
-                  Cuéntanos en detalle lo que necesitas. Cuanta más información proporciones, mejor podremos ayudarte.
+                  Cuéntanos en detalle lo que necesitas. Cuanta más información
+                  proporciones, mejor podremos ayudarte.
                 </p>
               </div>
 
@@ -409,8 +442,14 @@ export default function ContactClient({ user }: ContactClientProps) {
               <div className="flex justify-end pt-4">
                 <button
                   type="submit"
-                  disabled={!formData.name.trim() || !formData.email.trim() || !formData.reason || !formData.message.trim() || isSubmitting}
-                  className="inline-flex items-center bg-blueneon cursor-pointer hover:bg-blue-600 text-lightwhite px-6 py-3 rounded-lg font-semibold transition-all duration-500 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                  disabled={
+                    !formData.name.trim() ||
+                    !formData.email.trim() ||
+                    !formData.reason ||
+                    !formData.message.trim() ||
+                    isSubmitting
+                  }
+                  className="inline-flex items-center bg-lightblack cursor-pointer hover:bg-pinkneon text-lightwhite px-6 py-3 rounded-lg font-semibold transition-all duration-500 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed text-sm"
                 >
                   <Send className="h-4 w-4 mr-2" />
                   {isSubmitting ? "Enviando mensaje..." : "Enviar mensaje"}
@@ -428,12 +467,22 @@ export default function ContactClient({ user }: ContactClientProps) {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-verylightblack">
               <div>
-                <h4 className="font-medium text-lightblack mb-2">Tiempo de respuesta</h4>
-                <p>Normalmente respondemos en un plazo de 24-48 horas durante días laborables.</p>
+                <h4 className="font-medium text-lightblack mb-2">
+                  Tiempo de respuesta
+                </h4>
+                <p>
+                  Normalmente respondemos en un plazo de 24-48 horas durante
+                  días laborables.
+                </p>
               </div>
               <div>
-                <h4 className="font-medium text-lightblack mb-2">Tipos de consulta</h4>
-                <p>Aceptamos consultas generales, reportes de problemas técnicos, sugerencias y propuestas de colaboración.</p>
+                <h4 className="font-medium text-lightblack mb-2">
+                  Tipos de consulta
+                </h4>
+                <p>
+                  Aceptamos consultas generales, reportes de problemas técnicos,
+                  sugerencias y propuestas de colaboración.
+                </p>
               </div>
             </div>
           </div>
