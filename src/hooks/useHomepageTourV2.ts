@@ -3,7 +3,7 @@ import { driver } from 'driver.js';
 
 // Interfaz para el tipo de paso del driver
 interface DriverStep {
-  element?: string;
+  element?: string | Element | (() => Element);
   popover: {
     title: string;
     description: string;
@@ -21,7 +21,7 @@ export const useHomepageTourV2 = () => {
   const isGoingForwardRef = useRef<boolean>(true);
 
   // Función para obtener elemento de noticias dinámicamente
-  const getNewsElement = () => {
+  const getNewsElement = (): Element => {
     if (isMobile) {
       // Asegurar que el menú esté abierto
       const menuContainer = document.querySelector('div.fixed.top-0.left-0.h-full.w-full.bg-lightwhite.shadow-xl.z-50');
@@ -30,11 +30,11 @@ export const useHomepageTourV2 = () => {
       }
     }
     
-    return document.querySelector('[data-tour="mobile-news"]');
+    return document.querySelector('[data-tour="mobile-news"]') || document.body;
   };
 
   // Función para obtener elemento "Acerca de" dinámicamente
-  const getAboutElement = () => {
+  const getAboutElement = (): Element => {
     if (isMobile) {
       const menuContainer = document.querySelector('div.fixed.top-0.left-0.h-full.w-full.bg-lightwhite.shadow-xl.z-50');
       if (!menuContainer || !menuContainer.classList.contains('translate-x-0')) {
@@ -42,11 +42,11 @@ export const useHomepageTourV2 = () => {
       }
     }
     
-    return document.querySelector('[data-tour="mobile-about"]');
+    return document.querySelector('[data-tour="mobile-about"]') || document.body;
   };
 
   // Función para obtener elemento "Contacta" dinámicamente
-  const getContactElement = () => {
+  const getContactElement = (): Element => {
     if (isMobile) {
       const menuContainer = document.querySelector('div.fixed.top-0.left-0.h-full.w-full.bg-lightwhite.shadow-xl.z-50');
       if (!menuContainer || !menuContainer.classList.contains('translate-x-0')) {
@@ -54,11 +54,11 @@ export const useHomepageTourV2 = () => {
       }
     }
     
-    return document.querySelector('[data-tour="mobile-contact"]');
+    return document.querySelector('[data-tour="mobile-contact"]') || document.body;
   };
 
   // Función para obtener elemento "Favoritos" dinámicamente
-  const getFavoritesElement = () => {
+  const getFavoritesElement = (): Element => {
     if (isMobile) {
       const menuContainer = document.querySelector('div.fixed.top-0.left-0.h-full.w-full.bg-lightwhite.shadow-xl.z-50');
       if (!menuContainer || !menuContainer.classList.contains('translate-x-0')) {
@@ -66,11 +66,11 @@ export const useHomepageTourV2 = () => {
       }
     }
     
-    return document.querySelector('[data-tour="mobile-favorites"]');
+    return document.querySelector('[data-tour="mobile-favorites"]') || document.body;
   };
 
   // Función para obtener elemento "Usuario" dinámicamente
-  const getUserSectionElement = () => {
+  const getUserSectionElement = (): Element => {
     if (isMobile) {
       const menuContainer = document.querySelector('div.fixed.top-0.left-0.h-full.w-full.bg-lightwhite.shadow-xl.z-50');
       if (!menuContainer || !menuContainer.classList.contains('translate-x-0')) {
@@ -78,7 +78,7 @@ export const useHomepageTourV2 = () => {
       }
     }
     
-    return document.querySelector('[data-tour="mobile-user-section"]');
+    return document.querySelector('[data-tour="mobile-user-section"]') || document.body;
   };
 
   // Función para mantener el menú abierto
