@@ -18,6 +18,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Quimera Sneakers",
   description: "Compara tus precios de zapatillas aquí",
+  icons: {
+    icon: '/favicon.svg',
+  },
 };
 
 export default function RootLayout({
