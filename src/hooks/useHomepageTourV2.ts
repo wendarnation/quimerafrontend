@@ -513,9 +513,9 @@ export const useHomepageTourV2 = () => {
         replaceButtonsWithIcons();
         
         // Ajuste específico para móvil cuando estamos en el menú
-        if (isMobile && element?.element) {
+        if (isMobile && element) {
           const popover = document.querySelector('.driverjs-theme.driver-popover');
-          if (popover && element.element.closest('.fixed.top-0.left-0')) {
+          if (popover && element.closest('.fixed.top-0.left-0')) {
             // Asegurar que el popover esté visible sobre el menú móvil
             (popover as HTMLElement).style.zIndex = '9999';
             (popover as HTMLElement).style.position = 'fixed';
