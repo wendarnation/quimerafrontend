@@ -47,6 +47,24 @@ export default function MobileFiltersOverlay({
   tempSize,
   setTempSize,
 }: MobileFiltersOverlayProps) {
+  const [isVisible, setIsVisible] = React.useState(false);
+  const [isAnimating, setIsAnimating] = React.useState(false);
+
+  // Manejar la visibilidad y animación del componente
+  React.useEffect(() => {
+    if (isOpen) {
+      setIsVisible(true);
+      // Pequeño delay para permitir que el DOM se actualice antes de animar
+      const timer = setTimeout(() => setIsAnimating(true), 10);
+      return () => clearTimeout(timer);
+    } else {
+      setIsAnimating(false);
+      // Esperar a que termine la animación antes de ocultar
+      const timer = setTimeout(() => setIsVisible(false), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
+
   // Bloquear scroll del body cuando el overlay está abierto
   React.useEffect(() => {
     if (isOpen) {
@@ -61,7 +79,7 @@ export default function MobileFiltersOverlay({
     };
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  if (!isVisible) return null;
 
   const getTempFiltersCount = () => {
     let count = 0;
@@ -72,14 +90,23 @@ export default function MobileFiltersOverlay({
 
   return (
     <>
-      {/* Backdrop */}
-      <div className="fixed inset-0 bg-black/50 z-40" onClick={onClose} />
+      {/* Backdrop con transición de opacidad */}
+      <div 
+        className={`fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 ease-out ${
+          isAnimating ? "opacity-100" : "opacity-0"
+        }`} 
+        onClick={onClose} 
+      />
 
       {/* Overlay - Pantalla completa con animación desde abajo */}
       <div
-        className={`fixed inset-0 z-50 bg-lightwhite transition-transform duration-300 ease-out flex flex-col ${
-          isOpen ? "translate-y-0" : "translate-y-full"
+        className={`fixed top-0 left-0 h-full w-full bg-lightwhite shadow-xl z-50 transform transition-transform duration-300 ease-out flex flex-col ${
+          isAnimating ? "translate-y-0" : "translate-y-full"
         }`}
+        style={{
+          willChange: "transform",
+          backfaceVisibility: "hidden",
+        }}
       >
         {/* Header - Fijo */}
         <div className="flex items-center justify-between p-4 border-b border-lightaccentwhite flex-shrink-0">
