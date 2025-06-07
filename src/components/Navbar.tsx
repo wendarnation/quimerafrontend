@@ -92,7 +92,7 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
                   Noticias
                 </a>
                 <a
-                  href="#"
+                  href="/mision"
                   className="text-lightblack text-md font-medium transition-colors"
                   title="Acerca de"
                 >
@@ -100,7 +100,7 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
                 </a>
                 <a
                   href="/contacta"
-                  className="text-lightblack text-md font-medium transition-colors hover:text-blueneon"
+                  className="text-lightblack text-md font-medium transition-colors"
                   title="Contacta"
                 >
                   Contacta
@@ -307,7 +307,7 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
                 Noticias
               </a>
               <a
-                href="#"
+                href="/mision"
                 className="block px-6 py-3 text-lightblack hover:bg-darkwhite hover:text-verylightblack transition-colors duration-200 font-medium"
                 onClick={closeMobileMenu}
               >
