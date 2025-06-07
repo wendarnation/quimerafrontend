@@ -67,7 +67,7 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
               </div>
 
               {/* Barra de búsqueda (Centro) */}
-              <div className="flex-1 max-w-4xl mx-8">
+              <div className="flex-1 max-w-4xl mx-8" data-tour="search-bar">
                 <form onSubmit={handleSearchSubmit} className="relative">
                   <div className="relative flex items-center">
                     <Search className="absolute left-3 top-3 h-4 w-4 text-darkaccentwhite z-10" />
@@ -88,6 +88,7 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
                   href="#"
                   className="text-lightblack text-md font-medium transition-colors"
                   title="Noticias"
+                  data-tour="nav-news"
                 >
                   Noticias
                 </a>
@@ -95,6 +96,7 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
                   href="/mision"
                   className="text-lightblack text-md font-medium transition-colors"
                   title="Acerca de"
+                  data-tour="nav-about"
                 >
                   Acerca de
                 </a>
@@ -102,6 +104,7 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
                   href="/contacta"
                   className="text-lightblack text-md font-medium transition-colors"
                   title="Contacta"
+                  data-tour="nav-contact"
                 >
                   Contacta
                 </a>
@@ -119,7 +122,7 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
 
                 {/* Usuario / Login */}
                 {user ? (
-                  <div className="relative flex items-center space-x-4 ml-20">
+                  <div className="relative flex items-center space-x-4 ml-20" data-tour="user-section">
                     {/* Icón de favoritos */}
                     <a
                       href="/favorites"
@@ -153,7 +156,7 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
                     </a>
                   </div>
                 ) : (
-                  <div className="flex items-center space-x-3 ml-5">
+                  <div className="flex items-center space-x-3 ml-5" data-tour="user-section">
                     <a
                       href="/auth/login"
                       className="text-lightblack hover:text-white hover:bg-lightblack border border-lightblack rounded-3xl py-2 px-5 text-md font-medium transition-colors duration-500"

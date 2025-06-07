@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "driver.js/dist/driver.css";
+@import "../styles/tour.css";
 
 :root {
   --background: #ffffff;

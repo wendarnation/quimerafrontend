@@ -6,6 +6,8 @@ import RecommendedSneakers from "@/components/RecommendedSneakers";
 import UserSync from "@/components/auth/UserSync";
 import GlitchText from "@/components/GlitchText";
 import { Zapatilla } from "@/types/zapatilla";
+import { useHomepageTourV2 } from "@/hooks/useHomepageTourV2";
+import { HelpCircle } from "lucide-react";
 
 interface Auth0User {
   name?: string;
@@ -23,6 +25,7 @@ interface HomeProps {
 
 export default function HomePage({ user }: HomeProps) {
   const router = useRouter();
+  const { startTour } = useHomepageTourV2();
 
   const handleViewAll = () => {
     router.push("/browse");
@@ -86,12 +89,21 @@ export default function HomePage({ user }: HomeProps) {
                     <p className="text-sm text-darkwhite md:text-xl font-light lg:text-xl mb-6 text-gray-200">
                       Busca precios. Filtra. Encuentra tus favoritas.
                     </p>
-                    <button
-                      onClick={handleViewAll}
-                      className="inline-block bg-darkwhite cursor-pointer hover:bg-lightblack text-lightblack hover:text-darkwhite px-5 py-2 md:px-8 md:py-3 rounded-lg font-semibold transition-all duration-500 ease-in-out text-sm md:text-lg"
-                    >
-                      VER TODAS
-                    </button>
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <button
+                        onClick={handleViewAll}
+                        className="inline-block bg-darkwhite cursor-pointer hover:bg-lightblack text-lightblack hover:text-darkwhite px-5 py-2 md:px-8 md:py-3 rounded-lg font-semibold transition-all duration-500 ease-in-out text-sm md:text-lg"
+                      >
+                        VER TODAS
+                      </button>
+                      <button
+                        onClick={startTour}
+                        className="inline-flex items-center justify-center gap-2 bg-transparent border-2 border-darkwhite cursor-pointer hover:bg-darkwhite text-darkwhite hover:text-lightblack px-5 py-2 md:px-8 md:py-3 rounded-lg font-semibold transition-all duration-500 ease-in-out text-sm md:text-lg"
+                      >
+                        <HelpCircle className="h-4 w-4 md:h-5 md:w-5 flex-shrink-0" />
+                        <span className="text-center">TOUR GUIADO</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -99,18 +111,22 @@ export default function HomePage({ user }: HomeProps) {
           )}
         </div>
 
-        <TrendingSneakers
-          onViewAll={handleViewAll}
-          onSneakerClick={handleSneakerClick}
-        />
+        <div data-tour="trending-section">
+          <TrendingSneakers
+            onViewAll={handleViewAll}
+            onSneakerClick={handleSneakerClick}
+          />
+        </div>
 
-        <RecommendedSneakers
-          onViewAll={handleViewAll}
-          onSneakerClick={handleSneakerClick}
-        />
+        <div data-tour="recommended-section">
+          <RecommendedSneakers
+            onViewAll={handleViewAll}
+            onSneakerClick={handleSneakerClick}
+          />
+        </div>
 
         {/* Featured Images Section */}
-        <div className="bg-lightwhite py-2">
+        <div className="bg-lightwhite py-2" data-tour="featured-images">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-4 sm:px-6 lg:px-8">
             {/* Jordan Image with Overlay */}
             <div className="relative overflow-hidden rounded-lg">
