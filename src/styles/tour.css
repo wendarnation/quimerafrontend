@@ -1,4 +1,4 @@
-/* Estilos personalizados para Driver.js Tour */
+/* Estilos personalizados para Driver.js Tour - Estilo Browse */
 .driverjs-theme .driver-popover {
   background: #ffffff;
   color: #1a1a1a;
@@ -14,6 +14,7 @@
   color: #1a1a1a;
   margin-bottom: 8px;
   padding: 16px 16px 0 16px;
+  padding-right: 50px; /* Más espacio para separar de la X */
 }
 
 .driverjs-theme .driver-popover-description {
@@ -40,53 +41,74 @@
 
 .driverjs-theme .driver-popover-navigation-btns {
   display: flex;
-  gap: 12px;
+  gap: 8px;
 }
 
-.driverjs-theme .driver-popover-btn {
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-size: 15px;
-  font-weight: 600;
+/* Botón Siguiente - Estilo igual a los botones principales de browse */
+.driverjs-theme .driver-popover-next-btn {
+  background: #191717;
+  color: #ffffff;
+  border: 1px solid #191717;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: none;
+  min-width: 70px;
+  text-align: center;
+}
+
+/* Botón Anterior - Estilo igual a los botones secundarios de browse */
+.driverjs-theme .driver-popover-prev-btn {
+  background: #fafafa;
+  color: #191717;
+  border: 1px solid #d1d5db;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: none;
+  min-width: 70px;
+  text-align: center;
+}
+
+/* Botón cerrar - Sin hover, más grande */
+.driverjs-theme .driver-popover-close-btn {
+  background: transparent;
+  color: #191717;
+  padding: 4px 8px;
+  font-size: 20px;
+  font-weight: 700;
+  border-radius: 6px;
+  min-width: auto;
   border: none;
   cursor: pointer;
-  transition: all 0.3s ease;
-  min-width: 100px;
+  transition: none;
+  position: absolute;
+  top: 12px;
+  right: 12px;
 }
 
-.driverjs-theme .driver-popover-next-btn {
+/* Eliminar todos los hovers */
+.driverjs-theme .driver-popover-next-btn:hover,
+.driverjs-theme .driver-popover-next-btn:focus {
   background: #191717;
   color: #ffffff;
 }
 
-.driverjs-theme .driver-popover-next-btn:hover {
-  background: #444444;
-}
-
-.driverjs-theme .driver-popover-prev-btn {
+.driverjs-theme .driver-popover-prev-btn:hover,
+.driverjs-theme .driver-popover-prev-btn:focus {
   background: #fafafa;
   color: #191717;
-  border: 2px solid #d1d5db;
+  border-color: #d1d5db;
 }
 
-.driverjs-theme .driver-popover-prev-btn:hover {
-  background: #f5f5f5;
-  border-color: #9ca3af;
-}
-
-.driverjs-theme .driver-popover-close-btn {
+.driverjs-theme .driver-popover-close-btn:hover,
+.driverjs-theme .driver-popover-close-btn:focus {
   background: transparent;
   color: #191717;
-  padding: 6px 10px;
-  font-size: 16px;
-  font-weight: 700;
-  border-radius: 6px;
-  min-width: 60px;
-  border: none;
-}
-
-.driverjs-theme .driver-popover-close-btn:hover {
-  background: #f5f5f5;
 }
 
 /* Estilo para el highlight */
@@ -120,31 +142,24 @@
   
   .driverjs-theme .driver-popover-title {
     font-size: 18px;
+    padding-right: 45px; /* Más espacio para el botón cerrar en móvil */
   }
   
   .driverjs-theme .driver-popover-description {
     font-size: 15px;
   }
   
-  .driverjs-theme .driver-popover-btn {
-    padding: 10px 18px;
-    font-size: 14px;
-    min-width: 85px;
+  .driverjs-theme .driver-popover-next-btn,
+  .driverjs-theme .driver-popover-prev-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+    min-width: 65px;
   }
   
   .driverjs-theme .driver-popover-close-btn {
-    padding: 5px 8px;
-    font-size: 14px;
-    min-width: 50px;
-  }
-  
-  /* Ajustes específicos para popovers en novedades y recomendaciones en móvil */
-  .driverjs-theme .driver-popover[data-side="bottom"] {
-    margin-top: 50px;
-  }
-  
-  /* Ajuste para el popover de colecciones destacadas en el centro */
-  .driverjs-theme .driver-popover[data-align="center"] {
-    transform: translateX(-50%);
+    font-size: 18px;
+    top: 10px;
+    right: 10px;
+    padding: 2px 6px;
   }
 }
