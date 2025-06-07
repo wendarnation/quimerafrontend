@@ -307,6 +307,7 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
                 href="/noticias"
                 className="block px-6 py-3 text-lightblack hover:bg-darkwhite hover:text-verylightblack transition-colors duration-200 font-medium"
                 onClick={closeMobileMenu}
+                data-tour="mobile-news"
               >
                 Noticias
               </a>
@@ -314,6 +315,7 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
                 href="/mision"
                 className="block px-6 py-3 text-lightblack hover:bg-darkwhite hover:text-verylightblack transition-colors duration-200 font-medium"
                 onClick={closeMobileMenu}
+                data-tour="mobile-about"
               >
                 Acerca de
               </a>
@@ -321,6 +323,7 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
                 href="/contacta"
                 className="block w-full text-left px-6 py-3 text-lightblack hover:bg-darkwhite hover:text-verylightblack transition-colors duration-200 font-medium"
                 onClick={closeMobileMenu}
+                data-tour="mobile-contact"
               >
                 Contacta
               </a>
@@ -341,6 +344,7 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
                   href="/favorites"
                   className="block px-6 py-3 text-lightblack hover:bg-darkwhite hover:text-verylightblack transition-colors duration-200 font-medium"
                   onClick={closeMobileMenu}
+                  data-tour="mobile-favorites"
                 >
                   Favoritos
                 </a>
@@ -349,7 +353,7 @@ export default function Navbar({ user, onSearch }: NavbarProps) {
           </div>
 
           {/* Footer del menú móvil - Usuario / Login */}
-          <div className="border-t border-lightaccentwhite p-4">
+          <div className="border-t border-lightaccentwhite p-4" data-tour="mobile-user-section">
             {user ? (
               <div className="space-y-3">
                 {/* Info del usuario */}

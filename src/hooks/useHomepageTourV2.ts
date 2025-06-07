@@ -17,6 +17,69 @@ interface DriverStep {
 export const useHomepageTourV2 = () => {
   const driverRef = useRef<any>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const lastStepRef = useRef<number>(0);
+  const isGoingForwardRef = useRef<boolean>(true);
+
+  // Función para obtener elemento de noticias dinámicamente
+  const getNewsElement = () => {
+    if (isMobile) {
+      // Asegurar que el menú esté abierto
+      const menuContainer = document.querySelector('div.fixed.top-0.left-0.h-full.w-full.bg-lightwhite.shadow-xl.z-50');
+      if (!menuContainer || !menuContainer.classList.contains('translate-x-0')) {
+        openMobileMenu();
+      }
+    }
+    
+    return document.querySelector('[data-tour="mobile-news"]');
+  };
+
+  // Función para obtener elemento "Acerca de" dinámicamente
+  const getAboutElement = () => {
+    if (isMobile) {
+      const menuContainer = document.querySelector('div.fixed.top-0.left-0.h-full.w-full.bg-lightwhite.shadow-xl.z-50');
+      if (!menuContainer || !menuContainer.classList.contains('translate-x-0')) {
+        openMobileMenu();
+      }
+    }
+    
+    return document.querySelector('[data-tour="mobile-about"]');
+  };
+
+  // Función para obtener elemento "Contacta" dinámicamente
+  const getContactElement = () => {
+    if (isMobile) {
+      const menuContainer = document.querySelector('div.fixed.top-0.left-0.h-full.w-full.bg-lightwhite.shadow-xl.z-50');
+      if (!menuContainer || !menuContainer.classList.contains('translate-x-0')) {
+        openMobileMenu();
+      }
+    }
+    
+    return document.querySelector('[data-tour="mobile-contact"]');
+  };
+
+  // Función para obtener elemento "Favoritos" dinámicamente
+  const getFavoritesElement = () => {
+    if (isMobile) {
+      const menuContainer = document.querySelector('div.fixed.top-0.left-0.h-full.w-full.bg-lightwhite.shadow-xl.z-50');
+      if (!menuContainer || !menuContainer.classList.contains('translate-x-0')) {
+        openMobileMenu();
+      }
+    }
+    
+    return document.querySelector('[data-tour="mobile-favorites"]');
+  };
+
+  // Función para obtener elemento "Usuario" dinámicamente
+  const getUserSectionElement = () => {
+    if (isMobile) {
+      const menuContainer = document.querySelector('div.fixed.top-0.left-0.h-full.w-full.bg-lightwhite.shadow-xl.z-50');
+      if (!menuContainer || !menuContainer.classList.contains('translate-x-0')) {
+        openMobileMenu();
+      }
+    }
+    
+    return document.querySelector('[data-tour="mobile-user-section"]');
+  };
 
   // Función para mantener el menú abierto
   const keepMenuOpen = () => {
@@ -45,18 +108,8 @@ export const useHomepageTourV2 = () => {
       }
 
       if (closeBtn) {
-        // Reemplazar X con icono SVG más grande
-        const closeIcon = document.createElement('div');
-        closeIcon.className = closeBtn.className;
-        closeIcon.style.cssText = closeBtn.getAttribute('style') || '';
-        closeIcon.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 6-12 12"/><path d="m6 6 12 12"/></svg>';
-        
-        // Simular click en el botón original cuando se hace click en el icono
-        closeIcon.addEventListener('click', () => {
-          (closeBtn as HTMLElement).click();
-        });
-        
-        closeBtn.parentNode?.replaceChild(closeIcon, closeBtn);
+        // Mantener el tamaño y estilo original de la X
+        closeBtn.textContent = '×';
       }
     }, 100);
   };
@@ -233,6 +286,12 @@ export const useHomepageTourV2 = () => {
           description: 'Toca aquí para desplegar la barra de búsqueda y buscar sneakers por marca, modelo o SKU.',
           side: 'bottom',
           align: 'center'
+        },
+        onHighlighted: () => {
+          // Abrir el menú cuando retrocedemos desde Noticias (solo hacia atrás)
+          if (isMobile && !isGoingForwardRef.current) {
+            openMobileMenu();
+          }
         }
       },
       {
@@ -245,71 +304,114 @@ export const useHomepageTourV2 = () => {
         },
         onDeselected: () => {
           if (isMobile) {
-            setTimeout(openMobileMenu, 300);
+            setTimeout(() => {
+              openMobileMenu();
+              // Asegurar que el menú esté completamente abierto antes del siguiente paso
+              setTimeout(() => {
+                const menuContainer = document.querySelector('div.fixed.top-0.left-0.h-full.w-full.bg-lightwhite.shadow-xl.z-50');
+                if (menuContainer && !menuContainer.classList.contains('translate-x-0')) {
+                  openMobileMenu();
+                  
+                  // Si el menú no se abrió, intentar una vez más
+                  setTimeout(() => {
+                    if (menuContainer && !menuContainer.classList.contains('translate-x-0')) {
+                      openMobileMenu();
+                    }
+                  }, 200);
+                }
+              }, 300);
+            }, 200);
           }
         }
       },
       {
-        element: '.fixed .space-y-1 a[href="#"]',
+        element: getNewsElement,
         popover: {
           title: '📰 Noticias',
           description: 'Mantente al día con las últimas noticias del mundo de las sneakers.',
-          side: 'right',
-          align: 'start'
+          side: 'left',
+          align: 'center'
         },
         onHighlighted: () => {
           if (isMobile) {
-            setTimeout(openMobileMenu, 100);
-            // Verificar cada 500ms que el menú siga abierto
-            const interval = setInterval(keepMenuOpen, 500);
-            setTimeout(() => clearInterval(interval), 3000);
+            // Cerrar el menú cuando retrocedemos hacia "Abrir menú"
+            if (!isGoingForwardRef.current) {
+              closeMobileMenu();
+            }
+            
+            // Ajuste adicional del popover para el elemento de noticias
+            setTimeout(() => {
+              const popover = document.querySelector('.driverjs-theme.driver-popover');
+              if (popover) {
+                (popover as HTMLElement).style.zIndex = '10000';
+                (popover as HTMLElement).style.position = 'fixed';
+              }
+            }, 100);
           }
         }
       },
       {
-        element: '.fixed .space-y-1 a[href="/mision"]',
+        element: getAboutElement,
         popover: {
           title: '🎯 Acerca de',
           description: 'Conoce nuestra misión de democratizar el acceso a las sneakers.',
-          side: 'right',
-          align: 'start'
+          side: 'left',
+          align: 'center'
         },
         onHighlighted: () => {
           if (isMobile) {
-            setTimeout(openMobileMenu, 100);
+            setTimeout(() => {
+              const popover = document.querySelector('.driverjs-theme.driver-popover');
+              if (popover) {
+                (popover as HTMLElement).style.zIndex = '10000';
+                (popover as HTMLElement).style.position = 'fixed';
+              }
+            }, 100);
           }
         }
       },
       {
-        element: '.fixed .space-y-1 a[href="/contacta"]',
+        element: getContactElement,
         popover: {
           title: '📧 Contacta',
           description: '¿Tienes preguntas? Contáctanos a través de esta sección.',
-          side: 'right',
-          align: 'start'
+          side: 'left',
+          align: 'center'
         },
         onHighlighted: () => {
           if (isMobile) {
-            setTimeout(openMobileMenu, 100);
+            setTimeout(() => {
+              const popover = document.querySelector('.driverjs-theme.driver-popover');
+              if (popover) {
+                (popover as HTMLElement).style.zIndex = '10000';
+                (popover as HTMLElement).style.position = 'fixed';
+              }
+            }, 100);
           }
         }
       },
       {
-        element: '.fixed .space-y-1 a[href="/favorites"]',
+        element: getFavoritesElement,
         popover: {
           title: '❤️ Favoritos',
           description: 'Aquí puedes acceder a todas las sneakers que has guardado como favoritas.',
-          side: 'right',
-          align: 'start'
+          side: 'left',
+          align: 'center'
         },
         onHighlighted: () => {
           if (isMobile) {
-            setTimeout(openMobileMenu, 100);
+            setTimeout(() => {
+              const popover = document.querySelector('.driverjs-theme.driver-popover');
+              if (popover) {
+                (popover as HTMLElement).style.zIndex = '10000';
+                (popover as HTMLElement).style.position = 'fixed';
+              }
+            }, 100);
           }
         }
       },
       {
-        element: '.fixed .border-t',
+        element: getUserSectionElement,
         popover: {
           title: '👤 Perfil de Usuario',
           description: 'Gestiona tu perfil, configuración y accede a los ajustes de tu cuenta.',
@@ -318,12 +420,18 @@ export const useHomepageTourV2 = () => {
         },
         onHighlighted: () => {
           if (isMobile) {
-            setTimeout(openMobileMenu, 100);
-          }
-        },
-        onDeselected: () => {
-          if (isMobile) {
-            setTimeout(closeMobileMenu, 300);
+            // Abrir el menú cuando retrocedemos desde Novedades
+            if (!isGoingForwardRef.current) {
+              openMobileMenu();
+            }
+            
+            setTimeout(() => {
+              const popover = document.querySelector('.driverjs-theme.driver-popover');
+              if (popover) {
+                (popover as HTMLElement).style.zIndex = '10000';
+                (popover as HTMLElement).style.position = 'fixed';
+              }
+            }, 100);
           }
         }
       },
@@ -334,6 +442,17 @@ export const useHomepageTourV2 = () => {
           description: 'Las sneakers más recientes y en tendencia. Desliza horizontalmente para ver más modelos.',
           side: 'bottom',
           align: 'center'
+        },
+        onHighlighted: () => {
+          if (isMobile) {
+            if (isGoingForwardRef.current) {
+              // Cerrar el menú cuando avanzamos desde el menú hacia Novedades
+              closeMobileMenu();
+            } else {
+              // Abrir el menú cuando retrocedemos desde pasos posteriores hacia Novedades
+              // No hacemos nada aquí porque queremos que el menú se abra cuando retrocedamos al último elemento del menú
+            }
+          }
         }
       }
     ];
@@ -378,7 +497,7 @@ export const useHomepageTourV2 = () => {
     // Inicializar driver.js con configuración responsive
     driverRef.current = driver({
       showProgress: true,
-      stagePadding: 4,
+      stagePadding: isMobile ? 2 : 4,
       stageRadius: 10,
       allowClose: true,
       overlayColor: 'black',
@@ -390,11 +509,103 @@ export const useHomepageTourV2 = () => {
       doneBtnText: 'X',
       popoverClass: 'driverjs-theme',
       steps: isMobile ? mobileSteps : desktopSteps,
-      onHighlighted: () => {
+      onHighlighted: (element) => {
         replaceButtonsWithIcons();
+        
+        // Ajuste específico para móvil cuando estamos en el menú
+        if (isMobile && element?.element) {
+          const popover = document.querySelector('.driverjs-theme.driver-popover');
+          if (popover && element.element.closest('.fixed.top-0.left-0')) {
+            // Asegurar que el popover esté visible sobre el menú móvil
+            (popover as HTMLElement).style.zIndex = '9999';
+            (popover as HTMLElement).style.position = 'fixed';
+          }
+        }
       },
       onDeselected: () => {
         replaceButtonsWithIcons();
+      },
+      // Configuración para manejar elementos que necesitan tiempo para cargar
+      onBeforeHighlight: (element, step) => {
+        // Rastrear dirección del movimiento ANTES de cada paso
+        if (driverRef.current) {
+          const currentStep = driverRef.current.getActiveIndex();
+          const previousStep = lastStepRef.current;
+          isGoingForwardRef.current = currentStep > previousStep;
+          lastStepRef.current = currentStep;
+        }
+        
+        if (isMobile && step && step.element) {
+          const elementSelector = step.element;
+          
+          // Si es uno de los elementos del menú móvil, asegurar que el menú esté abierto
+          if (typeof elementSelector === 'string' && elementSelector.includes('mobile-')) {
+            return new Promise((resolve) => {
+              // Forzar apertura del menú
+              openMobileMenu();
+              
+              // Dar tiempo para que la animación del menú termine
+              setTimeout(() => {
+                openMobileMenu(); // Segundo intento por si acaso
+                
+                // Verificar que el elemento esté disponible
+                const checkElement = (attempts = 0) => {
+                  const targetElement = document.querySelector(elementSelector);
+                  const menuContainer = document.querySelector('div.fixed.top-0.left-0.h-full.w-full.bg-lightwhite.shadow-xl.z-50');
+                  
+                  if (targetElement && 
+                      menuContainer && 
+                      menuContainer.classList.contains('translate-x-0') &&
+                      targetElement.offsetParent !== null) {
+                    resolve(true);
+                  } else if (attempts < 20) { // Máximo 20 intentos (2 segundos)
+                    if (!menuContainer?.classList.contains('translate-x-0')) {
+                      openMobileMenu();
+                    }
+                    setTimeout(() => checkElement(attempts + 1), 100);
+                  } else {
+                    resolve(true);
+                  }
+                };
+                
+                checkElement();
+              }, 500); // Esperar 500ms para la animación
+            });
+          }
+          
+          // Si es una función dinámica (nuestros getters), también manejarla
+          if (typeof elementSelector === 'function') {
+            return new Promise((resolve) => {
+              openMobileMenu();
+              
+              setTimeout(() => {
+                openMobileMenu();
+                
+                const checkElement = (attempts = 0) => {
+                  const targetElement = elementSelector();
+                  const menuContainer = document.querySelector('div.fixed.top-0.left-0.h-full.w-full.bg-lightwhite.shadow-xl.z-50');
+                  
+                  if (targetElement && 
+                      menuContainer && 
+                      menuContainer.classList.contains('translate-x-0') &&
+                      targetElement.offsetParent !== null) {
+                    resolve(true);
+                  } else if (attempts < 20) {
+                    if (!menuContainer?.classList.contains('translate-x-0')) {
+                      openMobileMenu();
+                    }
+                    setTimeout(() => checkElement(attempts + 1), 100);
+                  } else {
+                    resolve(true);
+                  }
+                };
+                
+                checkElement();
+              }, 500);
+            });
+          }
+        }
+        return Promise.resolve(true);
       }
     });
 
