@@ -288,10 +288,8 @@ export const useHomepageTourV2 = () => {
           align: 'center'
         },
         onHighlighted: () => {
-          // Abrir el menú cuando retrocedemos desde Noticias (solo hacia atrás)
-          if (isMobile && !isGoingForwardRef.current) {
-            openMobileMenu();
-          }
+          // Este paso solo necesita lógica si vienen desde el menú
+          // En la mayoría de casos no hace nada
         }
       },
       {
@@ -304,23 +302,30 @@ export const useHomepageTourV2 = () => {
         },
         onDeselected: () => {
           if (isMobile) {
-            setTimeout(() => {
-              openMobileMenu();
-              // Asegurar que el menú esté completamente abierto antes del siguiente paso
-              setTimeout(() => {
-                const menuContainer = document.querySelector('div.fixed.top-0.left-0.h-full.w-full.bg-lightwhite.shadow-xl.z-50');
-                if (menuContainer && !menuContainer.classList.contains('translate-x-0')) {
+            // Solo abrir el menú cuando salimos del paso "Abrir menú" (paso 2, índice 2)
+            if (driverRef.current) {
+              const currentStep = driverRef.current.getActiveIndex();
+              // Si estamos en el paso "Abrir menú" (paso 2), abrir el menú
+              if (currentStep === 2) {
+                setTimeout(() => {
                   openMobileMenu();
-                  
-                  // Si el menú no se abrió, intentar una vez más
+                  // Asegurar que el menú esté completamente abierto antes del siguiente paso
                   setTimeout(() => {
+                    const menuContainer = document.querySelector('div.fixed.top-0.left-0.h-full.w-full.bg-lightwhite.shadow-xl.z-50');
                     if (menuContainer && !menuContainer.classList.contains('translate-x-0')) {
                       openMobileMenu();
+                      
+                      // Si el menú no se abrió, intentar una vez más
+                      setTimeout(() => {
+                        if (menuContainer && !menuContainer.classList.contains('translate-x-0')) {
+                          openMobileMenu();
+                        }
+                      }, 200);
                     }
-                  }, 200);
-                }
-              }, 300);
-            }, 200);
+                  }, 300);
+                }, 200);
+              }
+            }
           }
         }
       },
@@ -334,12 +339,7 @@ export const useHomepageTourV2 = () => {
         },
         onHighlighted: () => {
           if (isMobile) {
-            // Cerrar el menú cuando retrocedemos hacia "Abrir menú"
-            if (!isGoingForwardRef.current) {
-              closeMobileMenu();
-            }
-            
-            // Ajuste adicional del popover para el elemento de noticias
+            // Si el menú está abierto, asegurar que el popover esté visible
             setTimeout(() => {
               const popover = document.querySelector('.driverjs-theme.driver-popover');
               if (popover) {
@@ -420,11 +420,6 @@ export const useHomepageTourV2 = () => {
         },
         onHighlighted: () => {
           if (isMobile) {
-            // Abrir el menú cuando retrocedemos desde Novedades
-            if (!isGoingForwardRef.current) {
-              openMobileMenu();
-            }
-            
             setTimeout(() => {
               const popover = document.querySelector('.driverjs-theme.driver-popover');
               if (popover) {
@@ -445,13 +440,8 @@ export const useHomepageTourV2 = () => {
         },
         onHighlighted: () => {
           if (isMobile) {
-            if (isGoingForwardRef.current) {
-              // Cerrar el menú cuando avanzamos desde el menú hacia Novedades
-              closeMobileMenu();
-            } else {
-              // Abrir el menú cuando retrocedemos desde pasos posteriores hacia Novedades
-              // No hacemos nada aquí porque queremos que el menú se abra cuando retrocedamos al último elemento del menú
-            }
+            // Cerrar el menú cuando llegamos a este paso
+            closeMobileMenu();
           }
         }
       }
@@ -524,88 +514,6 @@ export const useHomepageTourV2 = () => {
       },
       onDeselected: () => {
         replaceButtonsWithIcons();
-      },
-      // Configuración para manejar elementos que necesitan tiempo para cargar
-      onBeforeHighlight: (element, step) => {
-        // Rastrear dirección del movimiento ANTES de cada paso
-        if (driverRef.current) {
-          const currentStep = driverRef.current.getActiveIndex();
-          const previousStep = lastStepRef.current;
-          isGoingForwardRef.current = currentStep > previousStep;
-          lastStepRef.current = currentStep;
-        }
-        
-        if (isMobile && step && step.element) {
-          const elementSelector = step.element;
-          
-          // Si es uno de los elementos del menú móvil, asegurar que el menú esté abierto
-          if (typeof elementSelector === 'string' && elementSelector.includes('mobile-')) {
-            return new Promise((resolve) => {
-              // Forzar apertura del menú
-              openMobileMenu();
-              
-              // Dar tiempo para que la animación del menú termine
-              setTimeout(() => {
-                openMobileMenu(); // Segundo intento por si acaso
-                
-                // Verificar que el elemento esté disponible
-                const checkElement = (attempts = 0) => {
-                  const targetElement = document.querySelector(elementSelector);
-                  const menuContainer = document.querySelector('div.fixed.top-0.left-0.h-full.w-full.bg-lightwhite.shadow-xl.z-50');
-                  
-                  if (targetElement && 
-                      menuContainer && 
-                      menuContainer.classList.contains('translate-x-0') &&
-                      targetElement.offsetParent !== null) {
-                    resolve(true);
-                  } else if (attempts < 20) { // Máximo 20 intentos (2 segundos)
-                    if (!menuContainer?.classList.contains('translate-x-0')) {
-                      openMobileMenu();
-                    }
-                    setTimeout(() => checkElement(attempts + 1), 100);
-                  } else {
-                    resolve(true);
-                  }
-                };
-                
-                checkElement();
-              }, 500); // Esperar 500ms para la animación
-            });
-          }
-          
-          // Si es una función dinámica (nuestros getters), también manejarla
-          if (typeof elementSelector === 'function') {
-            return new Promise((resolve) => {
-              openMobileMenu();
-              
-              setTimeout(() => {
-                openMobileMenu();
-                
-                const checkElement = (attempts = 0) => {
-                  const targetElement = elementSelector();
-                  const menuContainer = document.querySelector('div.fixed.top-0.left-0.h-full.w-full.bg-lightwhite.shadow-xl.z-50');
-                  
-                  if (targetElement && 
-                      menuContainer && 
-                      menuContainer.classList.contains('translate-x-0') &&
-                      targetElement.offsetParent !== null) {
-                    resolve(true);
-                  } else if (attempts < 20) {
-                    if (!menuContainer?.classList.contains('translate-x-0')) {
-                      openMobileMenu();
-                    }
-                    setTimeout(() => checkElement(attempts + 1), 100);
-                  } else {
-                    resolve(true);
-                  }
-                };
-                
-                checkElement();
-              }, 500);
-            });
-          }
-        }
-        return Promise.resolve(true);
       }
     });
 
